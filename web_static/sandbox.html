@@ -1,0 +1,40 @@
+<html>
+	<head>
+		<title>BioSET</title>
+		<script type='text/javascript' src='/common/js/jquery.js'></script>
+		<script type='text/javascript' src='/common/js/ajaxHelper.js'></script>
+		<script type='text/javascript' src='/common/js/common.js'></script>
+		<script type='text/javascript' src='/common/js/div.js'></script>
+		<script type='text/javascript' src='js/beast.js'></script>
+		<script>
+			function doOnLoad()
+			{
+				updateDiv('results', '/cgi-bin/beast/sandbox.pl');
+			}
+		</script>
+		<link rel='stylesheet' type='text/css' href='/common/css/stuart_lab_style.css'/>
+	</head>
+	<body onload="doOnLoad();">
+		<div id="topLinks">
+			<span class="navLink" onMouseOver="doMouseOver(this);" onMouseOut="doMouseOut(this);" onClick="updateDiv('results', 'sample_list.pl', '');">Samples</span> |
+			<span class="navLink" onMouseOver="doMouseOver(this);" onMouseOut="doMouseOut(this);" onClick="updateDiv('results', 'db_summary.pl', '');">Database Summary</span> |
+			<span class="navLink" onMouseOver="doMouseOver(this);" onMouseOut="doMouseOut(this);" onClick="updateDiv('results', 'organism_list.pl', '');">Organisms</span> |
+			<span class="navLink" onMouseOver="doMouseOver(this);" onMouseOut="doMouseOut(this);" onClick="updateDiv('results', 'pathway_list.pl');">Pathways</span> |
+			<span class="navLink" onMouseOver="doMouseOver(this);" onMouseOut="doMouseOut(this);" onClick="updateDiv('results', 'queries.pl');">Queries</span> |
+			<span class="navLink" onMouseOver="doMouseOver(this);" onMouseOut="doMouseOut(this);" onClick="clearDiv('results');">Clear</span>
+			| <span class="navLink" onMouseOver="doMouseOver(this);" onMouseOut="doMouseOut(this);" onClick="updateDiv('results', 'sandbox.pl');">TEST</span>
+		</div> <!-- topLinks -->
+
+		<div id="options">
+			<form>
+
+			</form>
+		</div> <!-- options -->
+		
+		<div id="results">
+		</div> <!-- results -->
+		<div id="supplement">
+		</div> <!-- supplement -->
+	</body>
+</html>
+
