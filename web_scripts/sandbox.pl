@@ -39,6 +39,36 @@ sub doFilterCategories();
 sub doFilterCategories()
 {
 	
+# Create Jquery tabbed box with 2 tabs
+	print <<EOF;
+<script type="text/javascript">
+
+	\$(
+		function()
+		{
+			\$("#tabs").tabs();
+		}
+	);
+</script>
+
+
+
+<div class="demo">
+
+<div id="tabs">
+	<ul>
+		<li><a href="#tabs-1">Search</a></li>
+		<li><a href="#tabs-2">Browse/Filter</a></li>
+	</ul>
+	<div id="tabs-1">	
+		<p>Search Box here....</p>
+	</div>
+	<div id="tabs-2">
+
+EOF
+# In the second tab: add dropdown filter/search arrow
+# menu
+
 	htmlHelper::beginSection("Species", FALSE);
 
 	my $body = <<EOF;
@@ -48,6 +78,12 @@ sub doFilterCategories()
 EOF
 	print $body."\n";
 	htmlHelper::endSection("Species");
+
+	print <<EOF;
+	</div> <!-- tabs-2 -->
+</div>  <!-- tabs -->
+<!-- end of tabs -->
+EOF
 	
 }
 
