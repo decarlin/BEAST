@@ -49,11 +49,9 @@ sub doFilterCategories()
 			\$("#tabs").tabs();
 		}
 	);
+
 </script>
 
-
-
-<div class="demo">
 
 <div id="tabs">
 	<ul>
@@ -69,17 +67,23 @@ EOF
 # In the second tab: add dropdown filter/search arrow
 # menu
 
+
+	print <<EOF;
+	<form id="filtercategories">
+	<input type='button' value="Select/Deselect All" onclick="checkAll('filtercategories');">
+EOF
+
 	htmlHelper::beginSection("Species", FALSE);
 
-	my $body = <<EOF;
-	<br>Human<br>
-	<br>Mouse<br>
-	<br>Platypus<br>
+	print <<EOF;
+	<input type=checkbox name="Human">Human<br>
+	<input type=checkbox name="Mouse">Mouse<br>
+	<input type=checkbox name="Platypus">Platypus<br>
 EOF
-	print $body."\n";
 	htmlHelper::endSection("Species");
 
 	print <<EOF;
+	</form>
 	</div> <!-- tabs-2 -->
 </div>  <!-- tabs -->
 <!-- end of tabs -->

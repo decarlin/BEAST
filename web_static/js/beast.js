@@ -1,3 +1,16 @@
-<link type="text/css" href="css/themename/jquery-ui-1.8.custom.css" rel="Stylesheet" />	
-<script type="text/javascript" src="js/jquery-1.4.2.min.js"></script>
-<script type="text/javascript" src="js/jquery-ui-1.8.custom.min.js"></script>
+var checked = false;
+function checkAll(formId) {
+    if (checked == false)
+    {
+        checked = true
+    }
+    else
+    {
+        checked = false
+    }
+    var form = document.getElementById(formId);
+    for (var i=0; i < form.elements.length; i++) 
+    {
+        form.elements[i].checked = checked;
+    }
+}
