@@ -7,6 +7,7 @@ use strict;
 use warnings;
 use CGI;
 use CGI::Carp qw(fatalsToBrowser);	#the die could be used safely in web envrionment
+use Data::Dumper;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use utils;		  #contains useful, simple functions such as trim, max, min, and log_base
 use htmlHelper;
@@ -14,18 +15,20 @@ use htmlHelper;
 my $input = new CGI();
 my $results;
 
-sub doFilterCategories();
+sub doFilterCategories($);
 
 #main
 {
 	print $input->header();
-	
+
+	# debug
+	#print Data::Dumper->Dump([$input]);
 
 	#run some query, get the set of categories	
 	#@my $sql = 
 	#$results = runSQL($sql, $dbh);
 
-	doFilterCategories();	
+	doFilterCategories(\$input);	
 
 	my $timestamp = localtime;
 	print "<br><div class='footer'>$timestamp</div>";
@@ -38,7 +41,14 @@ sub doFilterCategories();
 
 sub doFilterCategories()
 {
-	
+	my $input = ${(shift)};
+
+	my $activetab = $input->param('tab');	
+	my $selected = 1;
+	if ($activetab == 'browse') {
+		$selected = 2;
+	}
+		
 # Create Jquery tabbed box with 2 tabs
 	print <<EOF;
 <script type="text/javascript">
@@ -46,7 +56,7 @@ sub doFilterCategories()
 	\$(
 		function()
 		{
-			\$("#tabs").tabs();
+			\$("#tabs").tabs($selected);
 		}
 	);
 </script>
@@ -54,8 +64,8 @@ sub doFilterCategories()
 
 <div id="tabs">
 	<ul>
-		<li><a href="#tabs-1">Search</a></li>
-		<li><a href="#tabs-2">Browse/Filter</a></li>
+		<li><a href="#tabs-1">Import</a></li>
+		<li><a href="#tabs-2">Browse</a></li>
 	</ul>
 	<div id="tabs-1">	
 		<p>Search Box here....</p>
@@ -68,10 +78,11 @@ EOF
 
 
 	print <<EOF;
-	<form id="filtercategories" onSubmit="return onImportFilters();" >
-	<input type='button' value="Select/Deselect All" onclick="checkAll('filtercategories');">
+	<form id="searchcategories" onSubmit="return onSearchSets();" >
+	<input type='button' value="Select/Deselect All" onclick="checkAll('searchcategories');">
+	<b> Search: </b><input type='text' name="searchtext" value="" size="25">
 	<!-- Send selected filter categories to display pannel via ajax -->
-	<input type='submit' name='import' value='Import'">
+	<input type='submit' name='activetab' value='browse'">
 EOF
 
 	my $data = {
@@ -79,18 +90,18 @@ EOF
 		'Kind'		=> ['Coexpression', 'Annotation']
 	};
 
-	htmlHelper::beginSection("Species", FALSE);
-	foreach (@{$data->{'Species'}}) { 
-		print "<input type=checkbox id=\"Species:$_\" name=\"$_\">$_<br>\n";
+	foreach (keys %$data) {
+	  my $key = $_;
+	  htmlHelper::beginSection($key, FALSE);
+	  foreach (@{$data->{$key}}) { 
+		my $checked = "";
+		if ( $input->param($key.$_) && $input->param($key.$_) == 'on') {
+			$checked = "checked='yes'";
+		}
+		print "<input type=checkbox name=\"$key:$_\" $checked>$_<br>\n";
+	  }
+	  htmlHelper::endSection($key);
 	}
-	htmlHelper::endSection("Species");
-
-	htmlHelper::beginSection("Kind", FALSE);
-	my @species = qw(Coexpression Mouse Platypus);
-	foreach (@{$data->{'Kind'}}) { 
-		print "<input type=checkbox id=\"Kind:$_\" name=\"$_\">$_<br>\n";
-	}
-	htmlHelper::endSection("Kind");
 
 	print <<EOF;
 	</form>

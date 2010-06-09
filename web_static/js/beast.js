@@ -14,6 +14,7 @@ function checkAll(formId) {
         form.elements[i].checked = checked;
     }
 }
-function onImportFilters() {
-	alert("imported!");
+function onSearchSets() {
+	var form = document.getElementById('searchcategories');
+	alert("searched for:" + form.searchtext.value);
 }
