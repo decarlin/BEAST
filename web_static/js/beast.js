@@ -14,3 +14,6 @@ function checkAll(formId) {
         form.elements[i].checked = checked;
     }
 }
+function onImportFilters() {
+	alert("imported!");
+}

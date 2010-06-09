@@ -49,7 +49,6 @@ sub doFilterCategories()
 			\$("#tabs").tabs();
 		}
 	);
-
 </script>
 
 
@@ -69,18 +68,29 @@ EOF
 
 
 	print <<EOF;
-	<form id="filtercategories">
+	<form id="filtercategories" onSubmit="return onImportFilters();" >
 	<input type='button' value="Select/Deselect All" onclick="checkAll('filtercategories');">
+	<!-- Send selected filter categories to display pannel via ajax -->
+	<input type='submit' name='import' value='Import'">
 EOF
+
+	my $data = {
+		'Species' 	=> ['Human', 'Mouse', 'Platypus'],
+		'Kind'		=> ['Coexpression', 'Annotation']
+	};
 
 	htmlHelper::beginSection("Species", FALSE);
-
-	print <<EOF;
-	<input type=checkbox name="Human">Human<br>
-	<input type=checkbox name="Mouse">Mouse<br>
-	<input type=checkbox name="Platypus">Platypus<br>
-EOF
+	foreach (@{$data->{'Species'}}) { 
+		print "<input type=checkbox id=\"Species:$_\" name=\"$_\">$_<br>\n";
+	}
 	htmlHelper::endSection("Species");
+
+	htmlHelper::beginSection("Kind", FALSE);
+	my @species = qw(Coexpression Mouse Platypus);
+	foreach (@{$data->{'Kind'}}) { 
+		print "<input type=checkbox id=\"Kind:$_\" name=\"$_\">$_<br>\n";
+	}
+	htmlHelper::endSection("Kind");
 
 	print <<EOF;
 	</form>
