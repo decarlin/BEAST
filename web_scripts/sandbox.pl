@@ -12,7 +12,8 @@ use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use utils;		  #contains useful, simple functions such as trim, max, min, and log_base
 use htmlHelper;
 
-my $input = new CGI();
+# global variable
+our $input = new CGI();
 my $results;
 
 sub doTabbedMenu();
@@ -24,13 +25,13 @@ sub doBrowseTab();
 	print $input->header();
 
 	# debug
-	#print Data::Dumper->Dump([$input]);
+	print Data::Dumper->Dump([$input]);
 
 	#run some query, get the set of categories	
 	#@my $sql = 
 	#$results = runSQL($sql, $dbh);
 
-	if ($input->param('search')) {
+	if ($input->param('browse')) {
 		# replace the browse tab to include the search results
 		doBrowseTab();
 	} else {
@@ -94,11 +95,15 @@ EOF
 
 sub doBrowseTab() 
 {
+	my $searchtext = "";
+	if ($input->param('searchtext')) {
+		$searchtext = $input->param('searchtext');
+	}
 
 	print <<EOF;
 	<form id="searchcategories">
 	<input type='button' value="Select/Deselect All" onclick="checkAll('searchcategories');">
-	<b> Search: </b><input type='text' name="searchtext" value="" size="25">
+	<b> Search: </b><input type='text' name="searchtext" value="$searchtext" size="25">
 	<!-- Send selected filter categories to display pannel via ajax -->
 	<input type='button' name='activetab' value='browse' onClick="return onSearchSets();">
 EOF
