@@ -16,5 +16,6 @@ function checkAll(formId) {
 }
 function onSearchSets() {
 	var form = document.getElementById('searchcategories');
+	$('#browse').load('/cgi-bin/BEAST/sandbox.pl', { search:"yes" } );
 	alert("searched for:" + form.searchtext.value);
 }

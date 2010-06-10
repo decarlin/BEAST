@@ -15,7 +15,9 @@ use htmlHelper;
 my $input = new CGI();
 my $results;
 
-sub doFilterCategories($);
+sub doTabbedMenu();
+sub doImportTab();
+sub doBrowseTab();
 
 #main
 {
@@ -28,7 +30,19 @@ sub doFilterCategories($);
 	#@my $sql = 
 	#$results = runSQL($sql, $dbh);
 
-	doFilterCategories(\$input);	
+	if ($input->param('search')) {
+		# replace the browse tab to include the search results
+		doBrowseTab();
+	} else {
+		# default; on page creation	
+		doTabbedMenu();	
+	}
+
+	#my $activetab = $input->param('tab');	
+	#my $selected = 1;
+	#if ($activetab == 'browse') {
+	#	$selected = 2;
+	#}
 
 	my $timestamp = localtime;
 	print "<br><div class='footer'>$timestamp</div>";
@@ -39,15 +53,8 @@ sub doFilterCategories($);
 
 
 
-sub doFilterCategories()
+sub doTabbedMenu()
 {
-	my $input = ${(shift)};
-
-	my $activetab = $input->param('tab');	
-	my $selected = 1;
-	if ($activetab == 'browse') {
-		$selected = 2;
-	}
 		
 # Create Jquery tabbed box with 2 tabs
 	print <<EOF;
@@ -56,7 +63,7 @@ sub doFilterCategories()
 	\$(
 		function()
 		{
-			\$("#tabs").tabs($selected);
+			\$("#tabs").tabs();
 		}
 	);
 </script>
@@ -64,25 +71,36 @@ sub doFilterCategories()
 
 <div id="tabs">
 	<ul>
-		<li><a href="#tabs-1">Import</a></li>
-		<li><a href="#tabs-2">Browse</a></li>
+		<li><a href="#import">Import</a></li>
+		<li><a href="#browse">Browse</a></li>
 	</ul>
-	<div id="tabs-1">	
-		<p>Search Box here....</p>
-	</div>
-	<div id="tabs-2">
-
 EOF
-# In the second tab: add dropdown filter/search arrow
-# menu
 
+	print "<div id=\"import\">";
+	doImportTab();
+	print "</div>";
+	print "<div id=\"browse\">";
+	doBrowseTab();
+	print "</div>";
+print "</div>";
+}
+
+sub doImportTab()
+{
+	print <<EOF;
+		<p>Search Box here....</p>
+EOF
+}
+
+sub doBrowseTab() 
+{
 
 	print <<EOF;
-	<form id="searchcategories" onSubmit="return onSearchSets();" >
+	<form id="searchcategories">
 	<input type='button' value="Select/Deselect All" onclick="checkAll('searchcategories');">
 	<b> Search: </b><input type='text' name="searchtext" value="" size="25">
 	<!-- Send selected filter categories to display pannel via ajax -->
-	<input type='submit' name='activetab' value='browse'">
+	<input type='button' name='activetab' value='browse' onClick="return onSearchSets();">
 EOF
 
 	my $data = {
@@ -105,10 +123,6 @@ EOF
 
 	print <<EOF;
 	</form>
-	</div> <!-- tabs-2 -->
-</div>  <!-- tabs -->
-<!-- end of tabs -->
 EOF
-	
 }
 
