@@ -13,6 +13,15 @@ function checkAll(formId) {
         form.elements[i].checked = checked;
     }
 }
+function onImportSets() {
+	var form = document.getElementById('importform');
+
+	$('#import').load('/cgi-bin/BEAST/sandbox.pl', 
+		{'import':'yes',
+		 importtext: form.importtext.value }
+	);
+}
+
 function onSearchSets() {
 	var form = document.getElementById('searchcategories');
 
@@ -21,8 +30,10 @@ function onSearchSets() {
 	var j = 0;
     	for (var i=0; i < form.elements.length; i++) {
 		if (form.elements[i].type == "checkbox") {
-			checkedFilters[j] = form.elements[i].name;
-			j++;
+			if (form.elements[i].checked == 1) {
+				checkedFilters[j] = form.elements[i].name;
+				j++;
+			}
 		}
 	}	
 

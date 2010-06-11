@@ -19,6 +19,7 @@ my $results;
 sub doTabbedMenu();
 sub doImportTab();
 sub doBrowseTab();
+sub doSearchResult();
 
 #main
 {
@@ -34,6 +35,9 @@ sub doBrowseTab();
 	if ($input->param('browse')) {
 		# replace the browse tab to include the search results
 		doBrowseTab();
+		doSearchResult();
+	} elsif ($input->param('import')) {
+		doImportTab();
 	} else {
 		# default; on page creation	
 		doTabbedMenu();	
@@ -89,6 +93,10 @@ print "</div>";
 sub doImportTab()
 {
 	print <<EOF;
+	<form id="importform">
+	<textarea name="importtext" cols="40" rows="5"></textarea>
+	<input type='button' value='import' onClick="return onImportSets();">
+	</form>
 		<p>Search Box here....</p>
 EOF
 }
@@ -113,27 +121,34 @@ EOF
 		'Kind'		=> ['Coexpression', 'Annotation']
 	};
 
-	my %checked;
+	my @checked;
 	if ($input->param('checkedfilters[]')) {
-		%checked = $input->param('checkedfilters[]');
-		#print Data::Dumper->Dump([%checked]);
+		@checked = $input->param('checkedfilters[]');
 	}
 
 	foreach (keys %$data) {
 	  my $key = $_;
 	  htmlHelper::beginSection($key, FALSE);
 	  foreach (@{$data->{$key}}) { 
+		my $name = $_;
 		my $checkedon = "";
-		if ($checked{"$key:$_"}) {
+		if (grep(/$key\:$name/, @checked)) {
 			$checkedon = "checked='yes'";
 		}
-		print "<input type=checkbox name=\"$key:$_\" $checkedon>$_<br>\n";
+		print "<input type=checkbox name=\"$key:$name\" $checkedon>$name<br>\n";
 	  }
 	  htmlHelper::endSection($key);
 	}
 
 	print <<EOF;
 	</form>
+EOF
+}
+
+sub doSearchResult()
+{
+	print <<EOF;
+	<br><b>Search Results:</b><br>
 EOF
 }
 
