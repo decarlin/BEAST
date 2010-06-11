@@ -25,7 +25,7 @@ sub doBrowseTab();
 	print $input->header();
 
 	# debug
-	print Data::Dumper->Dump([$input]);
+	#print Data::Dumper->Dump([$input]);
 
 	#run some query, get the set of categories	
 	#@my $sql = 
@@ -113,15 +113,21 @@ EOF
 		'Kind'		=> ['Coexpression', 'Annotation']
 	};
 
+	my %checked;
+	if ($input->param('checkedfilters[]')) {
+		%checked = $input->param('checkedfilters[]');
+		#print Data::Dumper->Dump([%checked]);
+	}
+
 	foreach (keys %$data) {
 	  my $key = $_;
 	  htmlHelper::beginSection($key, FALSE);
 	  foreach (@{$data->{$key}}) { 
-		my $checked = "";
-		if ( $input->param($key.$_) && $input->param($key.$_) == 'on') {
-			$checked = "checked='yes'";
+		my $checkedon = "";
+		if ($checked{"$key:$_"}) {
+			$checkedon = "checked='yes'";
 		}
-		print "<input type=checkbox name=\"$key:$_\" $checked>$_<br>\n";
+		print "<input type=checkbox name=\"$key:$_\" $checkedon>$_<br>\n";
 	  }
 	  htmlHelper::endSection($key);
 	}
