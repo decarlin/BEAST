@@ -20,6 +20,9 @@ sub doTabbedMenu();
 sub doImportTab();
 sub doBrowseTab();
 sub doSearchResult();
+sub doMySets();
+
+sub buildDropDown($$);
 
 #main
 {
@@ -73,7 +76,12 @@ sub doTabbedMenu()
 	);
 </script>
 
+<div id="mysets">
+EOF
+	doMySets();
 
+print <<EOF;
+</div>
 <div id="tabs">
 	<ul>
 		<li><a href="#import">Import</a></li>
@@ -181,10 +189,89 @@ EOF
 EOF
 }
 
+sub doMySets()
+{
+	# build a drop down, hierarchical list of the current sets in the working
+	# environment, sorted 
+
+	# bullshit test data...
+	my $data = {
+		'Bread' 	=> ['Rye', 'Wheat', 'Sourdough'],
+		'Cereal'	=> ['RiceCrispies', 'CocoPuffs'],
+		'Cars' 		=> { 'Honda' => ['Civic','Accord']}
+	};
+	buildDropDown($data, "");
+}
+
 sub doSearchResult()
 {
 	print <<EOF;
 	<br><b>Search Results:</b><br>
 EOF
+}
+
+###
+### Build drop down list below this item
+###
+sub buildDropDown($$)
+{
+	my $dataRef = shift;
+	my $key = shift;
+
+	die "$dataRef not a hash ref!" unless (ref $dataRef eq 'HASH');
+	my @keys;
+
+	unless ($key eq "") {
+		$keys[0] = $key;
+		if ($key =~ /:/) {
+			@keys = split(/:/,$key);
+		}
+	}
+
+	# dig down through the keys supplied, updating the reference through each
+	my $ref = $dataRef;
+	foreach (@keys) {
+		$ref = $ref->{$_};	
+	}
+
+	unless ($key eq "") {
+	  htmlHelper::beginSection($key, FALSE);
+	}
+
+	my @list;
+
+	if ($key eq "") { 
+		# in this case we're starting at the top of the hash -- key is blank
+		@list = keys %{$ref}; 
+	} else {
+		if (ref($ref) eq 'HASH') {
+			@list = keys %$ref;
+		} elsif (ref($ref) eq 'ARRAY') {
+			@list = @{$ref};
+		} elsif (ref($ref) eq 'SCALAR') {
+			$list[0] = $ref;
+		} else {
+			die "Improper data type!";
+		}
+	}
+
+	foreach (@list) { 
+
+		my $name = $_;
+
+		print "<input type=checkbox name=\"";
+		($key eq "") ? print $name : print "$key:$name";
+		print "\">$name<br>\n";
+
+		if (ref($ref) eq 'HASH') {
+			my $index = ($key eq "") ? $name : "$key:$name";
+			buildDropDown($dataRef, $index); 
+		}
+
+	}
+	unless ($key eq "") {
+	  htmlHelper::endSection($key);
+	  print "<br><br>";
+	}
 }
 
