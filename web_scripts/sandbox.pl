@@ -26,7 +26,7 @@ sub doSearchResult();
 	print $input->header();
 
 	# debug
-	#print Data::Dumper->Dump([$input]);
+	# print Data::Dumper->Dump([$input]);
 
 	#run some query, get the set of categories	
 	#@my $sql = 
@@ -94,8 +94,12 @@ sub doImportTab()
 {
 	my $importtext = "";
 
-	if ($input->param('importtext')) {
-		$importtext = $input->param('importtext');
+	if ($input->param('importtype') eq 'text') {
+		if ($input->param('importtext')) {
+			$importtext = $input->param('importtext');
+		}
+	} else {
+		#my $uploaded_filehandle = $input->upload('importtext');
 	}
 
 	print <<EOF;
@@ -110,8 +114,9 @@ sub doImportTab()
 	<input type='radio' name='importType' value='file' onclick='chooseFileImport(this.form)'>
 	Or import from a local file:
 	</p>
-	<input type='file' name="importtext" id="setsImportFromFile" value="file" onclick="selectImportFile(this.form)">
-	<input type='button' value='import' onClick="return onImportSets();"><br>
+	<input type='hidden' name='MAX_FILE_SIZE" value='200'>
+	<input type='file' name="importtext" accept="text" id="setsImportFromFile" value="file" onclick="selectImportFile(this.form)">
+	<input type='button' value='import' onClick="return onImportSets(this.form);"><br>
 	</form>
 		<p>Search Box here....</p>
 EOF

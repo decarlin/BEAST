@@ -53,12 +53,21 @@ function chooseTextImport(form) {
 	} catch(e){ log(e); }
 }
 
-function onImportSets() {
-	var form = document.getElementById('importform');
+function onImportSets(form) {
+	var importtext;
+	var importtype;
+	if (form.importType[0].checked == true) {
+		importtext  = document.getElementById('setsImportFromText');
+		importtype = 'text';
+	} else {
+		importtext  = document.getElementById('setsImportFromFile');
+		importtype = 'file';
+	}
 
 	$('#import').load('/cgi-bin/BEAST/sandbox.pl', 
 		{'import':'yes',
-		 importtext: form.importtext.value }
+		 'importtext': importtext.value, 
+		 'importtype': importtype }
 	);
 }
 
