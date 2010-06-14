@@ -92,10 +92,26 @@ print "</div>";
 
 sub doImportTab()
 {
+	my $importtext = "";
+
+	if ($input->param('importtext')) {
+		$importtext = $input->param('importtext');
+	}
+
 	print <<EOF;
 	<form id="importform">
-	<textarea name="importtext" cols="40" rows="5"></textarea>
-	<input type='button' value='import' onClick="return onImportSets();">
+        <p style='margin:2px;float:none;color:gray;font-style:italic' id='textStyle'> 
+	<input type='radio' name='importType' checked='checked' value='text' onclick='chooseTextImport(this.form)'>
+	Enter sets to import
+	</p>	
+	<textarea name="importtext" id="setsImportFromText" cols="40" rows="5">$importtext</textarea><br>
+	<p>
+        <p style='margin:2px;float:none;color:gray;font-style:italic' id='fileStyle'> 
+	<input type='radio' name='importType' value='file' onclick='chooseFileImport(this.form)'>
+	Or import from a local file:
+	</p>
+	<input type='file' name="importtext" id="setsImportFromFile" value="file" onclick="selectImportFile(this.form)">
+	<input type='button' value='import' onClick="return onImportSets();"><br>
 	</form>
 		<p>Search Box here....</p>
 EOF
@@ -104,8 +120,23 @@ EOF
 sub doBrowseTab() 
 {
 	my $searchtext = "";
+	my @checked;
+
 	if ($input->param('searchtext')) {
 		$searchtext = $input->param('searchtext');
+	}
+	if ($input->param('checkedfilters[]')) {
+		@checked = $input->param('checkedfilters[]');
+	}
+
+	# build search opts data structure
+	my $activeFilters = {};
+	foreach (@checked) {
+		my ($category, $type) = split(/:/,$_);
+		unless ($activeFilters->{$category}) { 
+			$activeFilters->{$category} => []; 
+		}
+		push @{$activeFilters->{$category}}, $type;
 	}
 
 	print <<EOF;

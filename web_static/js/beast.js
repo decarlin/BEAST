@@ -13,6 +13,46 @@ function checkAll(formId) {
         form.elements[i].checked = checked;
     }
 }
+
+function selectStyle(selected, deselected)
+{
+    var el = document.getElementById(selected);
+    if(el != null)
+        el.style.fontWeight = "bold";
+    el = document.getElementById(deselected);
+    if(el != null)
+        el.style.fontWeight = "normal";
+}
+
+
+function chooseFileImport(form) {
+	try {
+		form.importType[1].checked = true;
+		var file = document.getElementById("setsImportFromFile");
+		var text = document.getElementById("setsImportFromText");
+		file.disabled = false;
+		text.disabled = true;
+		file.select();
+		file.focus();
+		// grey-out the unselected item
+		selectStyle("fileStyle", "textStyle");
+	} catch(e){ log(e); }
+}
+
+function chooseTextImport(form) {
+	try {
+		form.importType[0].checked = true;
+		var file = document.getElementById("setsImportFromFile");
+		var text = document.getElementById("setsImportFromText");
+		file.disabled = true;
+		text.disabled = false;
+		text.select();
+		text.focus();
+		// grey-out the unselected item
+		selectStyle("textStyle", "fileStyle");
+	} catch(e){ log(e); }
+}
+
 function onImportSets() {
 	var form = document.getElementById('importform');
 
