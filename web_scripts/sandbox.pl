@@ -52,10 +52,6 @@ sub buildDropDown($$);
 	#	$selected = 2;
 	#}
 
-	my $timestamp = localtime;
-	print "<br><div class='footer'>$timestamp</div>";
-
-#	printFooter();
 }# end main
 
 
@@ -72,17 +68,23 @@ sub doTabbedMenu()
 		function()
 		{
 			\$("#tabs").tabs();
+			\$("#mysets").tabs();
 		}
 	);
 </script>
 
-<div id="mysets">
+<div class="mysets_div" id="mysets">
+	<ul>
+		<li><a href="#mysets">MySets</a></li>
+	</ul>
+	<div id="mysets">
 EOF
 	doMySets();
+print "</div>";
 
 print <<EOF;
 </div>
-<div id="tabs">
+<div class="myopstabs_div" id="tabs">
 	<ul>
 		<li><a href="#import">Import</a></li>
 		<li><a href="#browse">Browse</a></li>

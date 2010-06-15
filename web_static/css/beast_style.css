@@ -6,3 +6,19 @@
 	color:gray;
 	font-style:italic;
 }
+
+.mysets_div
+{
+	float:left;
+	width:200px;
+	height:800px;
+	padding: 10px;
+}
+
+.myopstabs_div
+{
+	float:left;
+	width:600px;
+	height:800px;
+	padding: 10px;
+}
