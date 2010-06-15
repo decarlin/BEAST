@@ -16,7 +16,7 @@ use CGI::Carp qw(fatalsToBrowser);
 our @ISA		= qw(Exporter);
 #our @EXPORT	= qw(printHeader printFooter $WEB_ROOT $WEB_CGI $WEB_STATIC $WEB_TEMP $PATH_CGI $PATH_STATIC $PATH_TEMP $TEMP_CHMOD );
 #our @EXPORT	= qw(printHeader printFooter WEB_ROOT WEB_CGI WEB_STATIC WEB_TEMP PATH_CGI PATH_STATIC PATH_TEMP TEMP_CHMOD );
-our @EXPORT		= qw(printHeader printFooter DEBUG beginSection endSection);
+our @EXPORT		= qw(printHeader printFooter DEBUG beginSection beginTreeSection endSection);
 our @EXPORT_OK	= qw();
 our $VERSION	= 1.00;
 
@@ -56,12 +56,33 @@ sub printFooter()
     print "</html>\n";
 }
 
+sub beginTreeSection($$)
+{
+	my($section, $display) = @_;
+	my $fullName = $section;
+
+	my @nameComponents;
+	my $marginleft = "margin-left:0px;";
+	if (@nameComponents = split(/:/, $section)) {
+		$section = $nameComponents[-1];
+		$marginleft = "margin-left:".($#nameComponents*10)."px;";
+	}
+	
+	
+	my $arrow = $display ? "images/down_arrow.png" : "images/right_arrow.png";
+	$display = $display ? "block":"none";
+	print "<div id='$section' style='$marginleft' onclick=\"swapDiv2('$section\_content', '$section\_arrow');\" class='expandable_header'><h3><img id='$section\_arrow' src='$arrow' height='10px' width='10px'>";
+	print "<input type=checkbox name=\"$fullName\">&nbsp;$section </h3></div>\n";
+	print "</h3></div>\n";
+	print "<div id='$section\_content' style='display:$display'>\n";
+
+}
 sub beginSection($$)
 {
 	my($section, $display) = @_;
 	my $arrow = $display ? "images/down_arrow.png" : "images/right_arrow.png";
 	$display = $display ? "block":"none";
-	print "<div id='$section' onclick=\"swapDiv2('$section\_content', '$section\_arrow');\" class='expandable_header'><h3><img id='$section\_arrow' src='$arrow' height='10px' width='10px'>&nbsp;$section</h3></div>\n";
+	print "<div id='$section' onclick=\"swapDiv2('$section\_content', '$section\_arrow');\" class='expandable_header'><h3><img id='$section\_arrow' src='$arrow' height='10px' width='10px'>&nbsp;$section </h3></div>\n";
 	print "<div id='$section\_content' style='display:$display'>\n";
 
 }

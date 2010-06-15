@@ -221,10 +221,13 @@ sub buildDropDown($$)
 	die "$dataRef not a hash ref!" unless (ref $dataRef eq 'HASH');
 	my @keys;
 
+	my $marginleft = "margin-left:20px;";
+
 	unless ($key eq "") {
 		$keys[0] = $key;
 		if ($key =~ /:/) {
 			@keys = split(/:/,$key);
+			$marginleft = "margin-left:".(($#keys+2)*10)."px;";
 		}
 	}
 
@@ -235,7 +238,7 @@ sub buildDropDown($$)
 	}
 
 	unless ($key eq "") {
-	  htmlHelper::beginSection($key, FALSE);
+	  htmlHelper::beginTreeSection($key, FALSE);
 	}
 
 	my @list;
@@ -259,13 +262,16 @@ sub buildDropDown($$)
 
 		my $name = $_;
 
-		print "<input type=checkbox name=\"";
-		($key eq "") ? print $name : print "$key:$name";
-		print "\">$name<br>\n";
-
 		if (ref($ref) eq 'HASH') {
+			## print another drop-down arrow, which includes a checkbox for 
+			## this element as well
 			my $index = ($key eq "") ? $name : "$key:$name";
 			buildDropDown($dataRef, $index); 
+		} else {
+			## print the tag and move on
+			print "<input style='$marginleft' type=checkbox name=\"";
+			($key eq "") ? print $name : print "$key:$name";
+			print "\">$name<br>\n";
 		}
 
 	}
