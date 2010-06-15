@@ -112,13 +112,13 @@ sub doImportTab()
 
 	print <<EOF;
 	<form id="importform">
-        <p style='margin:2px;float:none;color:gray;font-style:italic' id='textStyle'> 
+        <p class='radiO_selectors' id='textStyle'> 
 	<input type='radio' name='importType' checked='checked' value='text' onclick='chooseTextImport(this.form)'>
 	Enter sets to import
 	</p>	
 	<textarea name="importtext" id="setsImportFromText" cols="40" rows="5">$importtext</textarea><br>
 	<p>
-        <p style='margin:2px;float:none;color:gray;font-style:italic' id='fileStyle'> 
+        <p class='radiO_selectors' id='fileStyle'> 
 	<input type='radio' name='importType' value='file' onclick='chooseFileImport(this.form)'>
 	Or import from a local file:
 	</p>
