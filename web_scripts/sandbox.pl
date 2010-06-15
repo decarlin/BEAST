@@ -271,13 +271,13 @@ sub buildDropDown($$)
 			## print the tag and move on
 			print "<input style='$marginleft' type=checkbox name=\"";
 			($key eq "") ? print $name : print "$key:$name";
-			print "\">$name<br>\n";
+			print "\">$name<br/>\n";
 		}
 
 	}
 	unless ($key eq "") {
 	  htmlHelper::endSection($key);
-	  print "<br><br>";
+#	  print "<br><br>";
 	}
 }
 

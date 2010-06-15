@@ -71,9 +71,12 @@ sub beginTreeSection($$)
 	
 	my $arrow = $display ? "images/down_arrow.png" : "images/right_arrow.png";
 	$display = $display ? "block":"none";
-	print "<div id='$section' style='$marginleft' onclick=\"swapDiv2('$section\_content', '$section\_arrow');\" class='expandable_header'><h3><img id='$section\_arrow' src='$arrow' height='10px' width='10px'>";
-	print "<input type=checkbox name=\"$fullName\">&nbsp;$section </h3></div>\n";
-	print "</h3></div>\n";
+	print "<div id='$section' style='$marginleft'>";
+	print "<input type=checkbox name=\"$fullName\">";
+	print "<span onclick=\"swapDiv2('$section\_content', '$section\_arrow');\" class='expandable_header' >";
+	print "<img id='$section\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$section";
+	print "<span>";
+	print "</div>\n";
 	print "<div id='$section\_content' style='display:$display'>\n";
 
 }
