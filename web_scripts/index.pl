@@ -99,14 +99,19 @@ print <<EOF;
 	<ul>
 		<li><a href="#import">Import</a></li>
 		<li><a href="#browse">Browse</a></li>
+		<li><a href="http://sysbio.soe.ucsc.edu/BEAST/admin_pages/admin.html">Admin</a></li>
 	</ul>
 EOF
 
 	print "<div id=\"import\">";
 	$importObj->printImportTab();
 	print "</div>";
+
 	print "<div id=\"browse\">";
 	$browseObj->printBrowseTab();
+	print "</div>";
+
+	print "<div id=\"admin\">";
 	print "</div>";
 print "</div>";
 }
