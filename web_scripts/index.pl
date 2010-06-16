@@ -12,6 +12,7 @@ use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use utils;		  #contains useful, simple functions such as trim, max, min, and log_base
 use htmlHelper;
 use BEAST::CheckBoxTree;
+use BEAST::BrowseTab;
 
 # global variable
 our $input = new CGI();
@@ -19,24 +20,32 @@ my $results;
 
 sub doTabbedMenu();
 sub doImportTab();
-sub doBrowseTab();
 sub doSearchResult();
 sub doMySets();
+
+my $browseObj;
 
 #main
 {
 	print $input->header();
 
 	# debug
-	# print Data::Dumper->Dump([$input]);
 
 	#run some query, get the set of categories	
 	#@my $sql = 
 	#$results = runSQL($sql, $dbh);
 
+	my $browseSearchFilterCheckboxes = {
+		'Species' 	=> ['Human', 'Mouse', 'Platypus'],
+		'Kind'		=> ['Coexpression', 'Annotation']
+	};
+	$browseObj = BrowseTab->new($browseSearchFilterCheckboxes,$input);
+#print Data::Dumper->Dump([$browseObj]);
+
 	if ($input->param('browse')) {
 		# replace the browse tab to include the search results
-		doBrowseTab();
+
+		$browseObj->printBrowseTab();
 		doSearchResult();
 	} elsif ($input->param('import')) {
 		doImportTab();
@@ -94,7 +103,7 @@ EOF
 	doImportTab();
 	print "</div>";
 	print "<div id=\"browse\">";
-	doBrowseTab();
+	$browseObj->printBrowseTab();
 	print "</div>";
 print "</div>";
 }
@@ -128,65 +137,6 @@ sub doImportTab()
 	<input type='button' value='import' onClick="return onImportSets(this.form);"><br>
 	</form>
 		<p>Search Box here....</p>
-EOF
-}
-
-sub doBrowseTab() 
-{
-	my $searchtext = "";
-	my @checked;
-
-	if ($input->param('searchtext')) {
-		$searchtext = $input->param('searchtext');
-	}
-	if ($input->param('checkedfilters[]')) {
-		@checked = $input->param('checkedfilters[]');
-	}
-
-	# build search opts data structure
-	my $activeFilters = {};
-	foreach (@checked) {
-		my ($category, $type) = split(/:/,$_);
-		unless ($activeFilters->{$category}) { 
-			$activeFilters->{$category} => []; 
-		}
-		push @{$activeFilters->{$category}}, $type;
-	}
-
-	print <<EOF;
-	<form id="searchcategories">
-	<input type='button' value="Select/Deselect All" onclick="checkAll('searchcategories');">
-	<b> Search: </b><input type='text' name="searchtext" value="$searchtext" size="25">
-	<!-- Send selected filter categories to display pannel via ajax -->
-	<input type='button' name='activetab' value='browse' onClick="return onSearchSets();">
-EOF
-
-	my $data = {
-		'Species' 	=> ['Human', 'Mouse', 'Platypus'],
-		'Kind'		=> ['Coexpression', 'Annotation']
-	};
-
-	my @checked;
-	if ($input->param('checkedfilters[]')) {
-		@checked = $input->param('checkedfilters[]');
-	}
-
-	foreach (keys %$data) {
-	  my $key = $_;
-	  htmlHelper::beginSection($key, FALSE);
-	  foreach (@{$data->{$key}}) { 
-		my $name = $_;
-		my $checkedon = "";
-		if (grep(/$key\:$name/, @checked)) {
-			$checkedon = "checked='yes'";
-		}
-		print "<input type=checkbox name=\"$key:$name\" $checkedon>$name<br>\n";
-	  }
-	  htmlHelper::endSection($key);
-	}
-
-	print <<EOF;
-	</form>
 EOF
 }
 
