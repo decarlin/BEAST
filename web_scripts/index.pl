@@ -13,6 +13,7 @@ use utils;		  #contains useful, simple functions such as trim, max, min, and log
 use htmlHelper;
 use BEAST::CheckBoxTree;
 use BEAST::BrowseTab;
+use BEAST::ImportTab;
 
 # global variable
 our $input = new CGI();
@@ -24,6 +25,7 @@ sub doSearchResult();
 sub doMySets();
 
 my $browseObj;
+my $importObj;
 
 #main
 {
@@ -40,6 +42,7 @@ my $browseObj;
 		'Kind'		=> ['Coexpression', 'Annotation']
 	};
 	$browseObj = BrowseTab->new($browseSearchFilterCheckboxes,$input);
+	$importObj = ImportTab->new($input);
 #print Data::Dumper->Dump([$browseObj]);
 
 	if ($input->param('browse')) {
@@ -48,7 +51,7 @@ my $browseObj;
 		$browseObj->printBrowseTab();
 		doSearchResult();
 	} elsif ($input->param('import')) {
-		doImportTab();
+		$importObj->printImportTab();
 	} else {
 		# default; on page creation	
 		doTabbedMenu();	
@@ -100,44 +103,12 @@ print <<EOF;
 EOF
 
 	print "<div id=\"import\">";
-	doImportTab();
+	$importObj->printImportTab();
 	print "</div>";
 	print "<div id=\"browse\">";
 	$browseObj->printBrowseTab();
 	print "</div>";
 print "</div>";
-}
-
-sub doImportTab()
-{
-	my $importtext = "";
-
-	if ($input->param('importtype') eq 'text') {
-		if ($input->param('importtext')) {
-			$importtext = $input->param('importtext');
-		}
-	} else {
-		#my $uploaded_filehandle = $input->upload('importtext');
-	}
-
-	print <<EOF;
-	<form id="importform">
-        <p class='radiO_selectors' id='textStyle'> 
-	<input type='radio' name='importType' checked='checked' value='text' onclick='chooseTextImport(this.form)'>
-	Enter sets to import
-	</p>	
-	<textarea name="importtext" id="setsImportFromText" cols="40" rows="5">$importtext</textarea><br>
-	<p>
-        <p class='radiO_selectors' id='fileStyle'> 
-	<input type='radio' name='importType' value='file' onclick='chooseFileImport(this.form)'>
-	Or import from a local file:
-	</p>
-	<input type='hidden' name='MAX_FILE_SIZE" value='200'>
-	<input type='file' name="importtext" accept="text" id="setsImportFromFile" value="file" onclick="selectImportFile(this.form)">
-	<input type='button' value='import' onClick="return onImportSets(this.form);"><br>
-	</form>
-		<p>Search Box here....</p>
-EOF
 }
 
 sub doMySets()

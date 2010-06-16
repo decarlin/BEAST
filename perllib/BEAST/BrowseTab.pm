@@ -35,8 +35,6 @@ sub printBrowseTab
 	my $checkboxdata = $self->{'_data_ref'};
 	my $input = $self->{'_input'};
 
-	print Data::Dumper->Dump([$self]);
-
 	my $searchtext = "";
 	my @checked;
 
