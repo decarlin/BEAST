@@ -64,7 +64,7 @@ function onImportSets(form) {
 		importtype = 'file';
 	}
 
-	$('#import').load('/cgi-bin/BEAST/sandbox.pl', 
+	$('#import').load('/cgi-bin/BEAST/index.pl', 
 		{'import':'yes',
 		 'importtext': importtext.value, 
 		 'importtype': importtype }
@@ -86,7 +86,7 @@ function onSearchSets() {
 		}
 	}	
 
-	$('#browse').load('/cgi-bin/BEAST/sandbox.pl', 
+	$('#browse').load('/cgi-bin/BEAST/index.pl', 
 		{browse:"yes",
 		 searchtext: form.searchtext.value, 
 		 'checkedfilters[]': checkedFilters} 

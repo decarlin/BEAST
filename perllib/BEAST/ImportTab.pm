@@ -10,6 +10,9 @@ use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use htmlHelper;
 use Data::Dumper;
 
+use BEAST::ImportSets;
+use BEAST::Set;
+
 ###
 ### Build the Browse Tab
 ###
@@ -34,9 +37,12 @@ sub printImportTab
 	my $input = $self->{'_input'};
 
 	my $importtext = "";
+	my @sets;
 	if ($input->param('importtype') eq 'text') {
 		if ($input->param('importtext')) {
 			$importtext = $input->param('importtext');
+			my @lines = split(/\n/, $importtext);
+			@sets = ImportSets::parseSetLines(@lines);	
 		}
 	} else {
 		#my $uploaded_filehandle = $input->upload('importtext');
@@ -58,9 +64,15 @@ sub printImportTab
 	<input type='file' name="importtext" accept="text" id="setsImportFromFile" value="file" onclick="selectImportFile(this.form)">
 	<input type='button' value='import' onClick="return onImportSets(this.form);"><br>
 	</form>
-		<p>Search Box here....</p>
+	<p>Imported Sets:</p>
+	<p>
 EOF
+	MySets::display_my_sets(@sets);
+	print "</p>";
 	
+
+	## send back the sets here
+	return @sets;	
 }
 
 1;

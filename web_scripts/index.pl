@@ -19,7 +19,7 @@ use BEAST::Set;
 
 # global variable
 our $input = new CGI();
-my $results;
+our @sets;
 
 sub doTabbedMenu();
 sub doImportTab();
@@ -45,7 +45,6 @@ my $importObj;
 	};
 	$browseObj = BrowseTab->new($browseSearchFilterCheckboxes,$input);
 	$importObj = ImportTab->new($input);
-#print Data::Dumper->Dump([$browseObj]);
 
 	if ($input->param('browse')) {
 		# replace the browse tab to include the search results

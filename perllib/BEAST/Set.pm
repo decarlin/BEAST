@@ -28,9 +28,6 @@ sub new
 		'_elements'	=> $elements,
 		# '_elements'	=> { 'name' 	=>  $setObj1,
 		#		     'name2' 	=>  $setObj2
-
-
-		
 	};
 
 	bless $self, $class;

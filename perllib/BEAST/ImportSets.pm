@@ -7,8 +7,22 @@ use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use DBI;
 
-package BEAST::ImportSets;
+use BEAST::Set;
 
+package ImportSets;
+
+# 
+# Instance Methods:
+#
+# my $importer ImportSets->new;
+# $importer->connectDB();
+# $importer->importSet($set);
+# $importer->disconnectDB();
+#
+# Static Methods:
+#
+# ImportSets::parseSetLines(@text_lines_from_import_file);
+#
 sub new
 {
 	my $class = shift;
@@ -25,19 +39,22 @@ sub new
 	return $self;
 }
 
+
+#
+# Parse Lines, return set objects
+#
 sub parseSetLines
 {
-	my $self = shift;
 	my @lines = @_;
 
 	my @sets;
 
-	$self->connectDB();
 	foreach (@lines) 
 	{
 		my @components = split(/:/, $_);
 
 		## create a set object
+		my $name;
 		my $metadata = {};
 		my $elements = {};
 		foreach (@components) 
@@ -45,13 +62,21 @@ sub parseSetLines
 			my $component = $_;
 			# metadata goes in with key/value pairs
 			if ($component =~ /(.*)=(.*)/) {
-				$metadata->{$1} = $2;
+				if ($1 eq "name") {
+				  $name = $2;
+				} else {
+				  $metadata->{$1} = $2;
+				}
 			} else {
-				$elements->{$component} = "";	
+				# tab delineated elements
+				foreach (split(/\s+/, $component)) {
+					next unless ($_ =~ /\S+/);
+					$elements->{$_} = "";	
+				}
 			}
 		}
 
-		my $set = BEAST::Set->new($components[0], $elements, $metadata);
+		my $set = Set->new($name, $metadata, $elements);
 		push @sets, $set;
 	}
 
@@ -59,24 +84,27 @@ sub parseSetLines
 }
 
 
-sub importSimpleSetToDB($)
+#
+# DB Connection must already be open before this function is called
+#  
+#
+sub importSetToDB($)
 {
 	my $self = shift;
 	## Set class obj
 	my $set = shift;
 
+	my $sqlCommand;
 	my $setnameinsert = "INSERT INTO ..".$set->get_name;
 
 	foreach (@{$set->get_elements}) 
 	{
 		my $elem = $_;
-		if (ref $elem eq 'HASH') {
-			$self->importSetToDB($set->get_element($elem));
-		}
 
 	}
 
 	## run SQL
+	$self->runSQL($sqlCommand);
 }
 
 sub connectDB()
@@ -89,7 +117,7 @@ sub connectDB()
 	my $user = $self->{'_username'};
 	my $pass = $self->{'_pass'};
 	my $dsn = "DBI:mysql:database=$database;host=$hostname;port=$port";
-	my $db_handle  = DBI->connect($dsn, $user, $password) or die "Unable to connect $DBI::errstr\n";
+	my $db_handle  = DBI->connect($dsn, $user, $pass) or die "Unable to connect $DBI::errstr\n";
 	$self->{'_db_handle'} = $db_handle;
 }
 
@@ -112,3 +140,4 @@ sub runSQL($$)
 	return $statement;
 }
 
+1;
