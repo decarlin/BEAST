@@ -14,6 +14,8 @@ use htmlHelper;
 use BEAST::CheckBoxTree;
 use BEAST::BrowseTab;
 use BEAST::ImportTab;
+use BEAST::MySets;
+use BEAST::Set;
 
 # global variable
 our $input = new CGI();
@@ -122,12 +124,17 @@ sub doMySets()
 	# environment, sorted 
 
 	# bullshit test data...
-	my $data = {
-		'Bread' 	=> ['Rye', 'Wheat', 'Sourdough'],
-		'Cereal'	=> ['RiceCrispies', 'CocoPuffs'],
-		'Cars' 		=> { 'Honda' => ['Civic','Accord']}
-	};
-	CheckBoxTree::buildCheckBoxTree($data, "");
+	# set 1
+
+	my @sets;	
+	my $set1 = Set->new('Bread', { 'type' => 'food' }, { 'Rye' => "", 'Wheat' => "", 'Sourdough' => "" });
+	my $set2 = Set->new('Cereal', { 'type' => 'food' }, { 'RiceCrispies' => "", 'CocoPuffs' => ""});
+
+	push @sets, $set1;
+	push @sets, $set2;
+
+	MySets::display_my_sets(@sets);
+
 }
 
 sub doSearchResult()

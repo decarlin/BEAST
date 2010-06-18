@@ -9,6 +9,8 @@ use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use htmlHelper;
 
+sub buildCheckBoxTree($$);
+
 ###
 ### Build drop down list below this item
 ###

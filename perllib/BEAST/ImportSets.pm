@@ -25,45 +25,56 @@ sub new
 	return $self;
 }
 
-sub importSetsToDB
+sub parseSetLines
 {
 	my $self = shift;
-	my @sets = @_;
+	my @lines = @_;
+
+	my @sets;
 
 	$self->connectDB();
-	foreach (@sets) 
+	foreach (@lines) 
 	{
-		my $set = {};
 		my @components = split(/:/, $_);
-		my $query = "";
-		$set->{'name'} = $components[0];
-		my @elements;
-		my @metadata;
+
+		## create a set object
+		my $metadata = {};
+		my $elements = {};
 		foreach (@components) 
 		{
 			my $component = $_;
 			# metadata goes in with key/value pairs
-			if ($component =~ /=)/) {
-				push @metadata, $component;
+			if ($component =~ /(.*)=(.*)/) {
+				$metadata->{$1} = $2;
 			} else {
-				push @elements, $component;	
+				$elements->{$component} = "";	
 			}
 		}
-		$set->{'elements'} = [ @elements ];
-		$set->{'metadata'} = [ @metadata ];
 
-		$self->importSetToDB($set);
+		my $set = BEAST::Set->new($components[0], $elements, $metadata);
+		push @sets, $set;
 	}
-	$self->disconnectDB();
+
+	return @sets;
 }
 
-sub importSetToDB($)
+
+sub importSimpleSetToDB($)
 {
 	my $self = shift;
+	## Set class obj
 	my $set = shift;
 
-	my $setnameinsert = "INSERT INTO $set->{'name'}";
-	my $name = $set->{'name'};
+	my $setnameinsert = "INSERT INTO ..".$set->get_name;
+
+	foreach (@{$set->get_elements}) 
+	{
+		my $elem = $_;
+		if (ref $elem eq 'HASH') {
+			$self->importSetToDB($set->get_element($elem));
+		}
+
+	}
 
 	## run SQL
 }
