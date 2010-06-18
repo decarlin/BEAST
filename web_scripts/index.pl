@@ -124,11 +124,35 @@ sub doMySets()
 	# environment, sorted 
 
 	# bullshit test data...
-	# set 1
-
+	
 	my @sets;	
-	my $set1 = Set->new('Bread', { 'type' => 'food' }, { 'Rye' => "", 'Wheat' => "", 'Sourdough' => "" });
-	my $set2 = Set->new('Cereal', { 'type' => 'food' }, { 'RiceCrispies' => "", 'CocoPuffs' => ""});
+	my $gmSet = Set->new(
+		'GeneralMills', 
+		{ 'type' => 'manuf' }, 
+		{ 
+			'Cheerios' 	=> "", 
+			'Trix'		=> "",
+			'Wheaties'	=> ""
+		}
+	);
+	my $set1 = Set->new(
+		'Bread', 
+		{ 'type' => 'food' }, 
+		{ 
+			'Rye' => "", 
+			'Wheat' => "", 
+			'Sourdough' => "" 
+		}
+	);
+	my $set2 = Set->new(
+		'Cereal', 
+		{ 'type' => 'food' }, 
+		{ 
+			'RiceCrispies' => "", 
+			'CocoPuffs' => "", 
+			$gmSet->get_name => $gmSet,
+		}
+	);
 
 	push @sets, $set1;
 	push @sets, $set2;

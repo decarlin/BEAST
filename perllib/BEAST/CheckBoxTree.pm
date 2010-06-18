@@ -50,9 +50,7 @@ sub buildCheckBoxTree($$)
 	} else {
 		if (ref($ref) eq 'HASH') {
 			@list = keys %$ref;
-		} elsif (ref($ref) eq 'ARRAY') {
-			@list = @{$ref};
-		} elsif (ref($ref) eq 'SCALAR') {
+		} elsif (!ref($ref)) {
 			$list[0] = $ref;
 		} else {
 			die "Improper data type!";
@@ -63,7 +61,7 @@ sub buildCheckBoxTree($$)
 
 		my $name = $_;
 
-		if (ref($ref) eq 'HASH') {
+		if ( (ref($ref) eq 'HASH') && ref($ref->{$name}) ) {
 			## print another drop-down arrow, which includes a checkbox for 
 			## this element as well
 			my $index = ($key eq "") ? $name : "$key:$name";

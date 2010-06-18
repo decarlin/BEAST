@@ -5,6 +5,7 @@
 use strict;
 use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
+use Data::Dumper;
 use BEAST::Set;
 use BEAST::CheckBoxTree;
 
@@ -18,12 +19,39 @@ sub display_my_sets
 
 	foreach (@sets) {
 		my $set = $_;
-		my $name = $set->get_name;
-		my @element_names = $set->get_element_names;
-		$displayData->{$name} = [ @element_names ];
+ 		my $name = $set->get_name;
+
+		$displayData->{$name} = getDisplayHash($set);
 	}
 
 	CheckBoxTree::buildCheckBoxTree($displayData, "");
+}
+
+sub getDisplayHash
+{
+	my $set = shift;
+
+	my $displayData = {};
+
+	my $setname = $set->get_name;
+	my @element_names = $set->get_element_names;
+
+	foreach (@element_names) {
+		my $element_name = $_;	
+		my ($retval, $element) = $set->get_element($element_name);
+		die "Can't retrieve element: $element_name! from $setname!" unless ($retval);
+		# element is either a set object or a string null string
+
+			
+		if (ref($element) eq 'Set') {
+			# element is a set -- add the sub-data hash to this 
+			$displayData->{$element_name} = getDisplayHash($element);
+		} else {
+			$displayData->{$element_name} = "";
+		}
+	}
+
+	return $displayData;
 }
 
 1;

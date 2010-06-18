@@ -48,7 +48,7 @@ sub get_element
 	my $self = shift;
 	my $element_name = shift;
 
-	unless (exists($self->{'_elements'}->{$element_name})) { return $FALSE; }
+	unless (exists($self->{'_elements'}->{$element_name})) { return ($FALSE, ""); }
 	return ($TRUE, $self->{'_elements'}->{$element_name});
 }
 
