@@ -22,14 +22,13 @@ sub buildCheckBoxTree($$)
 	die "$dataRef not a hash ref!" unless (ref $dataRef eq 'HASH');
 	my @keys;
 
-	my $marginleft = "margin-left:20px;";
-
+	my $marginleft = "margin-left:20px;"; 
 	unless ($key eq "") {
 		$keys[0] = $key;
 		if ($key =~ /:/) {
 			@keys = split(/:/,$key);
 			$marginleft = "margin-left:".(($#keys+2)*10)."px;";
-		}
+	  	}
 	}
 
 	# dig down through the keys supplied, updating the reference through each

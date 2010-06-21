@@ -65,14 +65,14 @@ sub beginTreeSection($$)
 	my $marginleft = "margin-left:0px;";
 	if (@nameComponents = split(/:/, $section)) {
 		$section = $nameComponents[-1];
-		$marginleft = "margin-left:".($#nameComponents*10)."px;";
+		$marginleft = "margin-left:".(($#nameComponents)*10)."px;";
 	}
 	
 	
 	my $arrow = $display ? "images/down_arrow.png" : "images/right_arrow.png";
 	$display = $display ? "block":"none";
 	print "<div id='$section' style='$marginleft'>";
-	print "<input type=checkbox name=\"$fullName\">";
+	print "<input style='$marginleft' type=checkbox name=\"$fullName\">";
 	print "<span onclick=\"swapDiv2('$section\_content', '$section\_arrow');\" class='expandable_header' >";
 	print "<img id='$section\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$section";
 	print "<span>";
