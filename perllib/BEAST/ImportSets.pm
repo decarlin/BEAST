@@ -49,24 +49,25 @@ sub parseSetLines
 
 	my @sets;
 
+
 	foreach (@lines) 
 	{
-		my @components = split(/:/, $_);
+		my @components = split(/\^/, $_);
 
 		## create a set object
-		my $name;
+		my $name = $components[0];
 		my $metadata = {};
 		my $elements = {};
-		foreach (@components) 
+		my $i = 0;
+		for (@components) 
 		{
+			# the first element is the name
+			if ($i == 0) { $i++; next; }
+
 			my $component = $_;
 			# metadata goes in with key/value pairs
 			if ($component =~ /(.*)=(.*)/) {
-				if ($1 eq "name") {
-				  $name = $2;
-				} else {
-				  $metadata->{$1} = $2;
-				}
+				$metadata->{$1} = $2;
 			} else {
 				# tab delineated elements
 				foreach (split(/\s+/, $component)) {

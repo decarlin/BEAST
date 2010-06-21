@@ -62,9 +62,9 @@ sub printImportTab
 	</p>
 	<input type='hidden' name='MAX_FILE_SIZE" value='200'>
 	<input type='file' name="importtext" accept="text" id="setsImportFromFile" value="file" onclick="selectImportFile(this.form)">
-	<input type='button' value='import' onClick="return onImportSets(this.form);"><br>
+	<input type='button' value='Submit' onClick="return onImportSets(this.form);"><br>
 	</form>
-	<p>Imported Sets:</p>
+	<p>Sets:</p>
 	<p>
 EOF
 	MySets::display_my_sets(@sets);
