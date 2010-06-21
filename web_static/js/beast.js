@@ -71,6 +71,44 @@ function onImportSets(form) {
 	);
 }
 
+function getSelected(form, selectedOrUnselected) {
+
+	var checkedElements = new Array();
+	var j = 0;
+    	for (var i=0; i < form.elements.length; i++) {
+		if (form.elements[i].type == "checkbox") {
+			if (form.elements[i].checked == selectedOrUnselected) {
+				checkedElements[j] = form.elements[i].name;
+				j++;
+			}
+		}
+	}	
+
+	return checkedElements;
+}
+
+function getUnchecked(form) {
+	return getSelected(form, 0);
+}
+
+function getChecked(form) {
+	return getSelected(form, 1);
+}
+
+function onUpdateMySets(form) {
+
+	<!-- build search opts data structure -->
+	var checkedElements = getChecked(form);
+	var uncheckedElements = getUnchecked(form);
+
+	$('#mysets').load('/cgi-bin/BEAST/index.pl', 
+		{mysets:"yes",
+		 'checkedelements[]': checkedElements,
+		 'uncheckedelements[]': uncheckedElements} 
+	);
+
+}
+
 function onSearchSets() {
 	var form = document.getElementById('searchcategories');
 

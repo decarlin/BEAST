@@ -53,6 +53,8 @@ my $importObj;
 		doSearchResult();
 	} elsif ($input->param('import')) {
 		$importObj->printImportTab();
+	} elsif ($input->param('mysets')) {
+		doMySets();
 	} else {
 		# default; on page creation	
 		doTabbedMenu();	
@@ -127,36 +129,45 @@ sub doMySets()
 	my @sets;	
 	my $gmSet = Set->new(
 		'GeneralMills', 
+		1,
 		{ 'type' => 'manuf' }, 
 		{ 
-			'Cheerios' 	=> "", 
-			'Trix'		=> "",
-			'Wheaties'	=> ""
+			'Cheerios' 	=> 1, 
+			'Trix'		=> 0,
+			'Wheaties'	=> 1 
 		}
 	);
 	my $set1 = Set->new(
 		'Bread', 
+		1,
 		{ 'type' => 'food' }, 
 		{ 
-			'Rye' => "", 
-			'Wheat' => "", 
-			'Sourdough' => "" 
+			'Rye' => 1, 
+			'Wheat' => 0, 
+			'Sourdough' => 0 
 		}
 	);
 	my $set2 = Set->new(
 		'Cereal', 
+		0,
 		{ 'type' => 'food' }, 
 		{ 
-			'RiceCrispies' => "", 
-			'CocoPuffs' => "", 
+			'RiceCrispies' => 1, 
+			'CocoPuffs' => 1, 
 			$gmSet->get_name => $gmSet,
 		}
 	);
 
+	
 	push @sets, $set1;
 	push @sets, $set2;
 
+	print "<form id=\"mysetsform\">";
+
 	MySets::display_my_sets(@sets);
+
+	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\"><br>";
+	print "</form>";
 
 }
 

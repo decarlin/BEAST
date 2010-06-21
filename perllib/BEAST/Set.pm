@@ -17,11 +17,14 @@ sub new
 	my $class = shift;
 	# hash ref
 	my $name = shift;
+	my $active = shift;
 	my $metadata = shift;
 	my $elements = shift;
 
 	my $self = {
 		'_name' 	=> $name,
+		# boolean 1=yes, 0=no 
+		'_active'	=> $active,
 	 	'_metadata' 	=> $metadata,
 		#'_metadata' 	=> { 'key2 => 'value1',
 		# 		     'key2 => 'value2

@@ -72,12 +72,12 @@ sub parseSetLines
 				# tab delineated elements
 				foreach (split(/\s+/, $component)) {
 					next unless ($_ =~ /\S+/);
-					$elements->{$_} = "";	
+					$elements->{$_} = 1;	
 				}
 			}
 		}
 
-		my $set = Set->new($name, $metadata, $elements);
+		my $set = Set->new($name, 1, $metadata, $elements);
 		push @sets, $set;
 	}
 

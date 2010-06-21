@@ -56,11 +56,17 @@ sub printFooter()
     print "</html>\n";
 }
 
-sub beginTreeSection($$)
+sub beginTreeSection($$$)
 {
-	my($section, $display) = @_;
+	my $section = shift;
+	my $display = shift;
+	my $checkedBool = shift;
 	my $fullName = $section;
 
+	my $checkedText = "";
+	if ($checkedBool == 1) {
+		$checkedText = "checked";
+	}
 	## string to boolean conversion: can't pass bareword 'FALSE'/'TRUE' as argument
 	if ($display eq 'FALSE') { 
 		$display = 0;
@@ -79,7 +85,7 @@ sub beginTreeSection($$)
 	my $arrow = $display ? "images/down_arrow.png" : "images/right_arrow.png";
 	$display = $display ? "block":"none";
 	print "<div id='$section' style='$marginleft'>";
-	print "<input style='$marginleft' type=checkbox name=\"$fullName\">";
+	print "<input style='$marginleft' type=checkbox name=\"$fullName\" $checkedText>";
 	print "<span onclick=\"swapDiv2('$section\_content', '$section\_arrow');\" class='expandable_header' >";
 	print "<img id='$section\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$section";
 	print "<span>";

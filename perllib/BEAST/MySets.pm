@@ -22,8 +22,10 @@ sub display_my_sets
  		my $name = $set->get_name;
 
 		$displayData->{$name} = getDisplayHash($set);
+		$displayData->{$name}->{'_active'} = $set->{'_active'};
 	}
 
+	#print Data::Dumper->Dump([$displayData]);
 	CheckBoxTree::buildCheckBoxTree($displayData, "");
 }
 
@@ -45,9 +47,11 @@ sub getDisplayHash
 			
 		if (ref($element) eq 'Set') {
 			# element is a set -- add the sub-data hash to this 
-			$displayData->{$element_name} = getDisplayHash($element);
+			$displayData->{$element_name} = getDisplayHash($element);	
+			$displayData->{$element_name}->{'_active'} = $element->{'_active'};
 		} else {
-			$displayData->{$element_name} = "";
+			# element is either 0 or 1 depending on whether it's active
+			$displayData->{$element_name} = $element;
 		}
 	}
 

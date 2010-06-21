@@ -37,9 +37,7 @@ sub buildCheckBoxTree($$)
 		$ref = $ref->{$_};	
 	}
 
-	unless ($key eq "") {
-	  htmlHelper::beginTreeSection($key, 'FALSE');
-	}
+	my $isActiveElement;
 
 	my @list;
 
@@ -49,6 +47,8 @@ sub buildCheckBoxTree($$)
 	} else {
 		if (ref($ref) eq 'HASH') {
 			@list = keys %$ref;
+			# value is 1 or 0 depending on whether this set is active
+			$isActiveElement = $ref->{'_active'};
 		} elsif (!ref($ref)) {
 			$list[0] = $ref;
 		} else {
@@ -56,9 +56,14 @@ sub buildCheckBoxTree($$)
 		}
 	}
 
+	unless ($key eq "") {
+	  htmlHelper::beginTreeSection($key, 'FALSE', $isActiveElement);
+	}
+
 	foreach (@list) { 
 
 		my $name = $_;
+		next if ($name eq '_active');
 
 		if ( (ref($ref) eq 'HASH') && ref($ref->{$name}) ) {
 			## print another drop-down arrow, which includes a checkbox for 
@@ -66,10 +71,20 @@ sub buildCheckBoxTree($$)
 			my $index = ($key eq "") ? $name : "$key:$name";
 			buildCheckBoxTree($dataRef, $index); 
 		} else {
+
+			## determine if this element is checked or not
+			my $checkedText;
+			$isActiveElement = $ref->{$name};
+			if ($isActiveElement == 1) {
+				$checkedText = "checked";	
+			} else {
+				$checkedText = "";
+			}
+	
 			## print the tag and move on
 			print "<input style='$marginleft' type=checkbox name=\"";
 			($key eq "") ? print $name : print "$key:$name";
-			print "\">$name<br/>\n";
+			print "\"$checkedText>$name<br/>\n";
 		}
 
 	}
