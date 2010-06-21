@@ -61,6 +61,13 @@ sub beginTreeSection($$)
 	my($section, $display) = @_;
 	my $fullName = $section;
 
+	## string to boolean conversion: can't pass bareword 'FALSE'/'TRUE' as argument
+	if ($display eq 'FALSE') { 
+		$display = 0;
+	} else {
+		$display = 1;
+	}
+
 	my @nameComponents;
 	my $marginleft = "margin-left:0px;";
 	if (@nameComponents = split(/:/, $section)) {
@@ -83,6 +90,14 @@ sub beginTreeSection($$)
 sub beginSection($$)
 {
 	my($section, $display) = @_;
+
+	## string to boolean conversion: can't pass bareword 'FALSE'/'TRUE' as argument
+	if ($display eq 'FALSE') { 
+		$display = 0;
+	} else {
+		$display = 1;
+	}
+
 	my $arrow = $display ? "images/down_arrow.png" : "images/right_arrow.png";
 	$display = $display ? "block":"none";
 	print "<div id='$section' onclick=\"swapDiv2('$section\_content', '$section\_arrow');\" class='expandable_header'><h3><img id='$section\_arrow' src='$arrow' height='10px' width='10px'>&nbsp;$section </h3></div>\n";
