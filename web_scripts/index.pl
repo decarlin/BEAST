@@ -163,8 +163,16 @@ sub doMySets()
 	push @sets, $set2;
 
 	print "<form id=\"mysetsform\">";
+	if ($input->param('checkedelements[]')) {
+		my $checked = {};
+		my @checked = $input->param('checkedelements[]');	
+		foreach (@checked) {
+			$checked->{$_} = 1;
+		}
+		MySets::updateActiveElements($checked, \@sets);	
+	}
+	MySets::displayMySets(@sets);
 
-	MySets::display_my_sets(@sets);
 
 	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\"><br>";
 	print "</form>";

@@ -99,12 +99,10 @@ function onUpdateMySets(form) {
 
 	<!-- build search opts data structure -->
 	var checkedElements = getChecked(form);
-	var uncheckedElements = getUnchecked(form);
 
 	$('#mysets').load('/cgi-bin/BEAST/index.pl', 
 		{mysets:"yes",
-		 'checkedelements[]': checkedElements,
-		 'uncheckedelements[]': uncheckedElements} 
+		 'checkedelements[]': checkedElements}
 	);
 
 }

@@ -52,6 +52,15 @@ sub get_element
 	return ($TRUE, $self->{'_elements'}->{$element_name});
 }
 
+sub set_element
+{
+	my $self = shift;
+	my $element_name = shift;
+	my $element = shift;
+
+	$self->{'_elements'}->{$element_name} = $element;
+}
+
 sub get_element_names
 {
 	my $self = shift;

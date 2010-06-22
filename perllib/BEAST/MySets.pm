@@ -11,7 +11,61 @@ use BEAST::CheckBoxTree;
 
 package MySets;
 
-sub display_my_sets
+#
+# Apply checkbox updates to the active sets
+#
+sub updateActiveElements
+{
+	# hash ref 
+	my $checkedHash = shift;
+	my $sets = shift;
+
+	foreach (@$sets)
+	{
+		my $set = $_;
+		my $name = $set->get_name;	
+		my $checked;
+		if (exists $checkedHash->{$name}) {
+			$checked = 1;
+		} else {
+			$checked = 0;
+		}
+		$set->{'_active'} = $checked;
+		updateActive($checkedHash, $set, $set->get_name);
+	}
+}
+
+sub updateActive 
+{
+	my $checkedHash = shift;
+	my $set = shift;
+	my $key = shift;
+	
+	my @element_names = $set->get_element_names;
+	foreach (@element_names)
+	{ 
+		my $name = $_;
+		my $element = $set->get_element($name);
+
+		my $checked;
+		if (exists $checkedHash->{$key.":".$name}) {
+			$checked = 1;
+		} else {
+			$checked = 0;
+		}
+
+		if (ref($element) eq 'Set') {
+			$element->{'_active'} = $checked;
+			updateActive($checkedHash, $element, $key.":".$element->get_name);
+		} else {
+			#print "setting $name to $checked! with key: $key:$name<br>\n";
+			$set->set_element($name, $checked);
+		}
+	}
+}
+
+
+sub displayMySets
 {
 	my @sets = @_;
 

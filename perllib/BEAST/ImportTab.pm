@@ -67,7 +67,7 @@ sub printImportTab
 	<p>Sets:</p>
 	<p>
 EOF
-	MySets::display_my_sets(@sets);
+	MySets::displayMySets(@sets);
 	print "</p>";
 	
 
