@@ -53,6 +53,26 @@ sub printImportTab
         <p class='radiO_selectors' id='textStyle'> 
 	<input type='radio' name='importType' checked='checked' value='text' onclick='chooseTextImport(this.form)'>
 	Enter sets to import
+	<br>
+EOF
+
+	my $metadata = {
+		'db_origin' => [ 'kegg', 'wikipathways', 'reactone' ],
+		'genespace' => [ 'entrez' ],
+	};
+
+	foreach (keys %$metadata) 
+	{
+		my $type = $_;
+		print 
+		print "<b>$type&nbsp&nbsp</b><select name='metadata_$type'>";
+		foreach (@{$metadata->{$_}}) {
+			print "<option value='$_'>$_</option>";
+		}
+		print "</select><br>";
+	}
+
+	print <<EOF;
 	</p>	
 	<textarea name="importtext" id="setsImportFromText" cols="40" rows="5">$importtext</textarea><br>
 	<p>

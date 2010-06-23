@@ -30,8 +30,16 @@ function chooseFileImport(form) {
 		form.importType[1].checked = true;
 		var file = document.getElementById("setsImportFromFile");
 		var text = document.getElementById("setsImportFromText");
+		
 		file.disabled = false;
 		text.disabled = true;
+
+		for (i=0; i < form.elements.length; i++) {
+			if (form.elements[i].type == "select-one") {
+				form.elements[i].disabled = true;
+			}	
+		}
+
 		file.select();
 		file.focus();
 		// grey-out the unselected item
@@ -44,8 +52,16 @@ function chooseTextImport(form) {
 		form.importType[0].checked = true;
 		var file = document.getElementById("setsImportFromFile");
 		var text = document.getElementById("setsImportFromText");
+
 		file.disabled = true;
 		text.disabled = false;
+
+		for (i=0; i < form.elements.length; i++) {
+			if (form.elements[i].type == "select-one") {
+				form.elements[i].disabled = false;
+			}	
+		}
+
 		text.select();
 		text.focus();
 		// grey-out the unselected item
