@@ -36,13 +36,18 @@ sub printImportTab
 	# Hash reference: keys are refs to arrays of strings
 	my $input = $self->{'_input'};
 
+	my $metadata = {
+		'db_origin' => [ 'kegg', 'wikipathways', 'reactone' ],
+		'genespace' => [ 'entrez' ],
+	};
+
 	my $importtext = "";
 	my @sets;
 	if ($input->param('importtype') eq 'text') {
 		if ($input->param('importtext')) {
 			$importtext = $input->param('importtext');
 			my @lines = split(/\n/, $importtext);
-			@sets = ImportSets::parseSetLines(@lines);	
+			@sets = ImportSets::parseSetLines($metadata, @lines);	
 		}
 	} else {
 		#my $uploaded_filehandle = $input->upload('importtext');
@@ -56,18 +61,24 @@ sub printImportTab
 	<br>
 EOF
 
-	my $metadata = {
-		'db_origin' => [ 'kegg', 'wikipathways', 'reactone' ],
-		'genespace' => [ 'entrez' ],
-	};
+	my $formMetadata = {};
+	my @formMetadata = $input->param('metadata[]');
+	foreach (@formMetadata) {
+		my ($key, $value) = split(/:/, $_);
+		$formMetadata->{$key} = $value;
+	}
 
 	foreach (keys %$metadata) 
 	{
 		my $type = $_;
-		print 
-		print "<b>$type&nbsp&nbsp</b><select name='metadata_$type'>";
-		foreach (@{$metadata->{$_}}) {
-			print "<option value='$_'>$_</option>";
+		my $key = "metadata_".$type;
+		print "<b>$type&nbsp&nbsp</b><select name='$key'>";
+		foreach (@{$metadata->{$type}}) {
+			if ($formMetadata->{$key} eq $_) {
+				print "<option value='$_' selected>$_</option>";
+			} else {
+				print "<option value='$_'>$_</option>";
+			}
 		}
 		print "</select><br>";
 	}

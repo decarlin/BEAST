@@ -80,10 +80,21 @@ function onImportSets(form) {
 		importtype = 'file';
 	}
 
+	// serialize the metadata selects
+	var selects = new Array();
+	var j=0;
+	for (i=0; i < form.elements.length; i++) {
+		if (form.elements[i].type == "select-one") {
+			selects[j] = form.elements[i].name+":"+form.elements[i].value;
+			j++;
+		}	
+	}
+
 	$('#import').load('/cgi-bin/BEAST/index.pl', 
 		{'import':'yes',
 		 'importtext': importtext.value, 
-		 'importtype': importtype }
+		 'importtype': importtype,
+		 'metadata[]': selects }
 	);
 }
 
