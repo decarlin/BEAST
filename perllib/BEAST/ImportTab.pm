@@ -98,7 +98,7 @@ EOF
 	<p>Sets:</p>
 	<p>
 EOF
-	MySets::displayMySets(@sets);
+	MySets::displaySets(@sets);
 	print "</p>";
 	
 

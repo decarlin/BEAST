@@ -65,7 +65,7 @@ sub updateActive
 }
 
 
-sub displayMySets
+sub displaySets
 {
 	my @sets = @_;
 

@@ -82,22 +82,24 @@ sub doTabbedMenu()
 		function()
 		{
 			\$("#tabs").tabs();
-			\$("#mysets").tabs();
+			\$("#mysets_tab").tabs();
 		}
 	);
 </script>
 
-<div class="mysets_div" id="mysets">
+<div class="mysets_div" id="mysets_tab">
 	<ul>
 		<li><a href="#mysets">MySets</a></li>
 	</ul>
 	<div id="mysets">
 EOF
 	doMySets();
+# mysets
+print "</div>";
+# surrounding div
 print "</div>";
 
 print <<EOF;
-</div>
 <div class="myopstabs_div" id="tabs">
 	<ul>
 		<li><a href="#import">Import</a></li>
@@ -171,7 +173,7 @@ sub doMySets()
 		}
 		MySets::updateActiveElements($checked, \@sets);	
 	}
-	MySets::displayMySets(@sets);
+	MySets::displaySets(@sets);
 
 
 	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\"><br>";

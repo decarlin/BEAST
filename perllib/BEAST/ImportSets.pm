@@ -122,12 +122,13 @@ sub loadSetFromDB()
 	my $elements = {};
 
 	my $sqlCommand;
-	my $elements = "SELECT ..".$set->get_name;
+	my $elements = "SELECT ..";
 	## run SQL
 	$self->runSQL($sqlCommand);
 	## 
 	
 
+	my $name;
 	my $set = Set->new($name, 1, $metadata, $elements);
 	return $set;
 }
