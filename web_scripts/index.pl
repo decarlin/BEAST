@@ -11,6 +11,9 @@ use Data::Dumper;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use utils;		  #contains useful, simple functions such as trim, max, min, and log_base
 use htmlHelper;
+
+# don't have permission to install, so this has to be packaged
+use CGI::Session;
 use BEAST::CheckBoxTree;
 use BEAST::BrowseTab;
 use BEAST::ImportTab;
@@ -18,7 +21,15 @@ use BEAST::MySets;
 use BEAST::Set;
 
 # global variable
-our $input = new CGI();
+our $cgi = new CGI();
+#my $sid = $cgi->cookie("CGISESSID") || undef;
+### restore their session, or create a new one if it doesn't exist yet
+#our $session = new CGI::Session(undef, $sid, {Directory=>'/tmp'});
+#
+### save sid in the users cookie
+#our $cookie = $cgi->cookie(CGISESSID => $session->id);
+#print $cgi->header( -cookie=>$cookie );
+
 our @sets;
 
 sub doTabbedMenu();
@@ -31,7 +42,7 @@ my $importObj;
 
 #main
 {
-	print $input->header();
+	print $cgi->header();
 
 	# debug
 
@@ -43,24 +54,24 @@ my $importObj;
 		'Species' 	=> ['Human', 'Mouse', 'Platypus'],
 		'Kind'		=> ['Coexpression', 'Annotation']
 	};
-	$browseObj = BrowseTab->new($browseSearchFilterCheckboxes,$input);
-	$importObj = ImportTab->new($input);
+	$browseObj = BrowseTab->new($browseSearchFilterCheckboxes,$cgi);
+	$importObj = ImportTab->new($cgi);
 
-	if ($input->param('browse')) {
+	if ($cgi->param('browse')) {
 		# replace the browse tab to include the search results
 
 		$browseObj->printBrowseTab();
 		doSearchResult();
-	} elsif ($input->param('import')) {
+	} elsif ($cgi->param('import')) {
 		$importObj->printImportTab();
-	} elsif ($input->param('mysets')) {
+	} elsif ($cgi->param('mysets')) {
 		doMySets();
 	} else {
 		# default; on page creation	
 		doTabbedMenu();	
 	}
 
-	#my $activetab = $input->param('tab');	
+	#my $activetab = $cgi->param('tab');	
 	#my $selected = 1;
 	#if ($activetab == 'browse') {
 	#	$selected = 2;
@@ -165,9 +176,9 @@ sub doMySets()
 	push @sets, $set2;
 
 	print "<form id=\"mysetsform\">";
-	if ($input->param('checkedelements[]')) {
+	if ($cgi->param('checkedelements[]')) {
 		my $checked = {};
-		my @checked = $input->param('checkedelements[]');	
+		my @checked = $cgi->param('checkedelements[]');	
 		foreach (@checked) {
 			$checked->{$_} = 1;
 		}
