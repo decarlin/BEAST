@@ -52,7 +52,9 @@ sub parseSetLines
 
 	foreach (@lines) 
 	{
-		my @components = split(/\^/, $_);
+		my $line = $_;
+		next unless ($line =~ /\S+\s+/);
+		my @components = split(/\^/, $line);
 
 		## create a set object
 		my $name = $components[0];
@@ -87,7 +89,6 @@ sub parseSetLines
 
 #
 # DB Connection must already be open before this function is called
-#  
 #
 sub importSetToDB($)
 {
@@ -106,6 +107,29 @@ sub importSetToDB($)
 
 	## run SQL
 	$self->runSQL($sqlCommand);
+}
+
+#
+# DB Connection must already be open before this function is called
+#
+sub loadSetFromDB()
+{
+	my $self = shift;
+	## Set class obj
+
+	## populate these
+	my $metadata = {};
+	my $elements = {};
+
+	my $sqlCommand;
+	my $elements = "SELECT ..".$set->get_name;
+	## run SQL
+	$self->runSQL($sqlCommand);
+	## 
+	
+
+	my $set = Set->new($name, 1, $metadata, $elements);
+	return $set;
 }
 
 sub connectDB()
