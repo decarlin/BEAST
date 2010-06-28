@@ -7,6 +7,7 @@ use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use DBI;
 
+use Data::Dumper;
 use BEAST::Set;
 
 package ImportSets;
@@ -32,7 +33,7 @@ sub new
 		'_hostname'	=> 'localhost',
 		'_port'		=> '$port',
 		'_username'	=> 'stuartLabMember',
-		'_pass'		=> '',
+		'_pass'		=> 'sysbio',
 	};
 
 	bless $self, $class;
@@ -165,5 +166,32 @@ sub runSQL($$)
     
 	return $statement;
 }
+
+sub insertSQL($$)
+{
+	my $self = shift;
+	my($sql) = @_;
+
+	$self->runSQL($sql);
+	my $results = $self->runSQL("SELECT last_insert_id();");
+	
+	my (@data) = $results->fetchrow_array();
+
+	return $data[0];
+}
+
+sub insertMeta($$)
+{
+	my $self = shift;
+	my ($external_id, $name) = @_;
+
+	my $template = "INSERT INTO meta (external_id, name) VALUES (var1, var2);";
+	
+	$template =~ s/var1/'$external_id'/;
+	$template =~ s/var2/'$name'/;
+
+	return $self->insertSQL($template);	
+}
+
 
 1;
