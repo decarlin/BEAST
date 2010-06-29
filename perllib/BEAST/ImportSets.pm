@@ -155,6 +155,8 @@ sub disconnectDB()
 	$self->{'_db_handle'}->disconnect or die "Failed to disconnect DBH!";
 }
 
+
+
 sub runSQL($$)
 {
 	my $self = shift;
@@ -177,7 +179,17 @@ sub insertSQL($$)
 	
 	my (@data) = $results->fetchrow_array();
 
+	# return the id of the newly created element
 	return $data[0];
+}
+
+sub escapeSQLString
+{
+	my $string = shift;
+
+	$string =~ s/'/\\'/g; 
+
+	return $string;
 }
 
 sub insertMeta($$)
@@ -186,11 +198,27 @@ sub insertMeta($$)
 	my ($external_id, $name) = @_;
 
 	my $template = "INSERT INTO meta (external_id, name) VALUES (var1, var2);";
-	
+
+	$name = escapeSQLString($name);
+
 	$template =~ s/var1/'$external_id'/;
 	$template =~ s/var2/'$name'/;
 
 	return $self->insertSQL($template);	
+}
+
+sub insertMetaMeta($$$)
+{
+	my $self = shift;
+	my ($parent, $set_child, $meta_child) = @_;
+
+	my $template = "INSERT INTO meta_sets (sets_meta_id, sets_id, meta_meta_id) VALUES (var1, var2, var3);";
+	
+	$template =~ s/var1/'$parent'/;
+	$template =~ s/var2/'$set_child'/;
+	$template =~ s/var3/'$meta_child'/;
+
+	$self->runSQL($template);	
 }
 
 
