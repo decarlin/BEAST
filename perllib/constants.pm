@@ -15,7 +15,8 @@ use English;
 our @ISA        = qw(Exporter);
 our @EXPORT     = qw(	TEMP_DIR
 						WEB_STATIC_DIR
-						WEB_SCRIPT_DIR);
+						WEB_SCRIPT_DIR
+						DEBUG);
 our @EXPORT_OK  = qw();
 our $VERSION    = 1.0;
 
