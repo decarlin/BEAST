@@ -48,16 +48,31 @@ close (METAS);
 
 # create the meta mappings 
 open (META_MAPPINGS, $meta_mappings) || die "can't open $meta_mappings!";
+open (FAILED, ">failed-mappings.txt") || die "can't open failed-mappings.txt";
 while (<META_MAPPINGS>) {
-	my ($parent, $null, $child) = split(/\t/, $_ ); 
+	my $line = $_;
+	my ($parent, $null, $child) = split(/\t/, $line ); 
 	chomp($parent);
 	chomp($child);
-	my $id_parent = $metas->{$parent};
-	my $id_child = $metas->{$child};
 
 	print "Adding parent child meta-meta relation: $parent:$child\n";
+
+	my $id_parent = $metas->{$parent};
+	my $id_child = $metas->{$child};
+	if ($id_parent eq "") {
+		print "no entry for meta: $parent, skipping relation...\n";
+		print FAILED "$parent:$child\n";
+		next;
+	} elsif ($id_child eq "") {
+		print "no entry for meta: $child, skipping relation...\n";
+		print FAILED "$parent:$child\n";
+		next;
+	}
+
 	$importer->insertMetaMeta($id_parent, "NULL", $id_child);
+	print "done\n";
 }
+close (FAILED);
 close (META_MAPPINGS);
 
 $importer->disconnectDB();
