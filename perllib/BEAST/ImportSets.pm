@@ -87,7 +87,6 @@ sub parseSetLines
 	return @sets;
 }
 
-
 #
 # DB Connection must already be open before this function is called
 #

@@ -19,17 +19,19 @@ use BEAST::BrowseTab;
 use BEAST::ImportTab;
 use BEAST::MySets;
 use BEAST::Set;
+use BEAST::BeastSession;
 
 # global variable
 our $cgi = new CGI();
-#my $sid = $cgi->cookie("CGISESSID") || undef;
+
+my $sid = $cgi->cookie("CGISESSID") || undef;
 ### restore their session, or create a new one if it doesn't exist yet
-#our $session = new CGI::Session("driver:File", $sid, {Directory=>'/tmp'});
-#$session->expire('+1h');
+our $session = new CGI::Session(undef, $sid, {Directory=>'/tmp'});
+$session->expire('+1h');
 #
 ### save sid in the users cookie
-#our $cookie = $cgi->cookie(CGISESSID => $session->id);
-#print $cgi->header( -cookie=>$cookie );
+our $cookie = $cgi->cookie(CGISESSID => $session->id);
+print $cgi->header( -cookie=>$cookie );
 
 our @sets;
 
@@ -43,7 +45,7 @@ my $importObj;
 
 #main
 {
-	print $cgi->header();
+	#print $cgi->header();
 
 	# debug
 
@@ -139,8 +141,7 @@ sub doMySets()
 	# environment, sorted 
 
 	# bullshit test data...
-	
-	my @sets;	
+
 	my $gmSet = Set->new(
 		'GeneralMills', 
 		1,
@@ -173,8 +174,10 @@ sub doMySets()
 	);
 
 	
-	push @sets, $set1;
-	push @sets, $set2;
+	unless (BeastSession::loadMySets($session, \@sets) > 0) {
+		push @sets, $set1;
+		push @sets, $set2;
+	}
 
 	print "<form id=\"mysetsform\">";
 	if ($cgi->param('checkedelements[]')) {
@@ -187,6 +190,9 @@ sub doMySets()
 	}
 	MySets::displaySets(@sets);
 
+
+	BeastSession::saveMySets($session, @sets);
+	# save sets data in the session
 
 	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\"><br>";
 	print "</form>";

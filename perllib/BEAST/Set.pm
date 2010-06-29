@@ -31,10 +31,26 @@ sub new
 		'_elements'	=> $elements,
 		# '_elements'	=> { 'name' 	=>  $setObj1,
 		#		     'name2' 	=>  $setObj2
+		'_delim'	=> '^',
 	};
 
 	bless $self, $class;
 	return $self;
+}
+
+sub serialize
+{
+	my $self = shift;
+	
+	my $str = $self->{'_name'}.$self->{'_delim'};
+	foreach (keys %{$self->{'_metadata'}}) {
+		$str = $str.$_."=".$self->{'_metadata'}->{$_}.$self->{'_delim'};
+	}
+	foreach (keys %{$self->{'_elements'}}) {
+		$str = $str."\t".$_;
+	}
+
+	return $str;
 }
 
 sub get_name
