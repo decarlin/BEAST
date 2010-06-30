@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 #Author:	Evan Paull (epaull@soe.ucsc.edu)
-#Create Date:	6.16.2010
+#Create Date:	6.29.2010
 
 use strict;
 use warnings;
@@ -191,6 +191,24 @@ sub escapeSQLString
 	return $string;
 }
 
+# return the id created
+sub insertSet($$)
+{
+	my $self = shift;
+	my $name = shift;
+	my $external_id = shift;
+
+	my $template = "INSERT INTO sets (name, external_id) VALUES (var1, var2);";
+
+	$name = escapeSQLString($name);
+
+	$template =~ s/var1/'$name'/;
+	$template =~ s/var2/'$external_id'/;
+
+	return $self->insertSQL($template);	
+}
+
+# return the id created
 sub insertMeta($$)
 {
 	my $self = shift;
@@ -206,7 +224,44 @@ sub insertMeta($$)
 	return $self->insertSQL($template);	
 }
 
-sub insertMetaMeta($$$)
+# return the id created
+sub insertEntity($$$$)
+{
+	my $self = shift;
+	my ($name, $desc, $key, $keyspace) = @_;
+
+	my $template = "INSERT INTO entity (name, description, entity_key, keyspace_id) VALUES (var1, var2, var3, var4);";
+
+	$name = escapeSQLString($name);
+	$desc = escapeSQLString($desc);
+
+	$template =~ s/var1/'$name'/;
+	$template =~ s/var2/'$desc'/;
+	$template =~ s/var3/'$key'/;
+	$template =~ s/var4/'$keyspace'/;
+
+	return $self->insertSQL($template);	
+}
+
+sub insertSetEntityRel($$$)
+{
+	my $self = shift;
+	my ($set_id, $entity_id, $membership_value) = @_;
+
+	my $template = "INSERT INTO set_entity (sets_id, entity_id, member_value) VALUES (var1, var2, var3);";
+	
+	$template =~ s/var1/'$set_id'/;
+	$template =~ s/var2/'$entity_id'/;
+	if ($membership_value eq "NULL") {
+		$template =~ s/var3/NULL/;
+	} else {
+		$template =~ s/var3/'$membership_value'/;
+	}
+
+	$self->runSQL($template);	
+}
+
+sub insertMetaMetaRel($$$)
 {
 	my $self = shift;
 	my ($parent, $set_child, $meta_child) = @_;
@@ -214,9 +269,16 @@ sub insertMetaMeta($$$)
 	my $template = "INSERT INTO meta_sets (sets_meta_id, sets_id, meta_meta_id) VALUES (var1, var2, var3);";
 	
 	$template =~ s/var1/'$parent'/;
-	$template =~ s/var2/'$set_child'/;
-	$template =~ s/var3/'$meta_child'/;
-
+	if ($set_child eq "NULL") {
+		$template =~ s/var2/$set_child/;
+	} else {
+		$template =~ s/var2/'$set_child'/;
+	}
+	if ($meta_child eq "NULL") {
+		$template =~ s/var3/$meta_child/;
+	} else {
+		$template =~ s/var3/'$meta_child'/;
+	}
 	$self->runSQL($template);	
 }
 

@@ -69,7 +69,7 @@ while (<META_MAPPINGS>) {
 		next;
 	}
 
-	$importer->insertMetaMeta($id_parent, "NULL", $id_child);
+	$importer->insertMetaMetaRel($id_parent, "NULL", $id_child);
 	print "done\n";
 }
 close (FAILED);
