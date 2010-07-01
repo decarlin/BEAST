@@ -10,7 +10,7 @@ use DBI;
 use Data::Dumper;
 use BEAST::Set;
 
-package ImportSets;
+package BeastDB;
 
 # 
 # Instance Methods:
@@ -58,30 +58,6 @@ sub importSetToDB($)
 
 	## run SQL
 	$self->runSQL($sqlCommand);
-}
-
-#
-# DB Connection must already be open before this function is called
-#
-sub loadSetFromDB()
-{
-	my $self = shift;
-	## Set class obj
-
-	## populate these
-	my $metadata = {};
-	my $elements = {};
-
-	my $sqlCommand;
-	my $elements = "SELECT ..";
-	## run SQL
-	$self->runSQL($sqlCommand);
-	## 
-	
-
-	my $name;
-	my $set = Set->new($name, 1, $metadata, $elements);
-	return $set;
 }
 
 sub connectDB()
@@ -148,6 +124,9 @@ sub getMetaIdFromExternalId($)
 	return $data[0];
 }
 
+#
+# Wrapper for SQL statement to get the id of the last insert
+#
 sub insertSQL($$)
 {
 	my $self = shift;
@@ -170,6 +149,10 @@ sub escapeSQLString
 
 	return $string;
 }
+
+##
+## Functions for Table inserts
+##
 
 # return the id created
 sub insertSet($$)
@@ -223,6 +206,10 @@ sub insertEntity($$$$)
 	return $self->insertSQL($template);	
 }
 
+##
+## DB Functions for Relation mapping inserts
+##
+
 sub insertSetEntityRel($$$)
 {
 	my $self = shift;
@@ -260,6 +247,38 @@ sub insertMetaMetaRel($$$)
 		$template =~ s/var3/'$meta_child'/;
 	}
 	$self->runSQL($template);	
+}
+
+##
+## Parent search functions
+##
+
+sub getParentsForSet($$)
+{
+	my $self = shift;
+	my $set_id = shift;
+
+	my $template = "SELECT sets_meta_id FROM meta_sets WHERE sets_id='var1';";
+
+	$template =~ s/var1/$set_id/;
+
+	my $results = $self->runSQL($template);
+	my (@data) = $results->fetchrow_array();
+	return @data;
+}
+
+sub getParentsForMeta($$)
+{
+	my $self = shift;
+	my $meta_id = shift;
+
+	my $template = "SELECT sets_meta_id FROM meta_sets WHERE meta_meta_id='var1';";
+
+	$template =~ s/var1/$meta_id/;
+
+	my $results = $self->runSQL($template);
+	my (@data) = $results->fetchrow_array();
+	return @data;
 }
 
 
