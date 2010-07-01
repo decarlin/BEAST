@@ -12,7 +12,7 @@ EOF
 }
 
 
-use BEAST::ImportSets;
+use BEAST::BeastDB;
 
 use Getopt::Long;
 
@@ -25,7 +25,7 @@ GetOptions("meta=s" => \$metas_file,
 die &usage() unless (-f $metas_file);
 die &usage() unless (-f $meta_mappings);
 
-our $importer = ImportSets->new;
+our $importer = BeastDB->new;
 $importer->connectDB();
 
 ## mapping between internal keys and external

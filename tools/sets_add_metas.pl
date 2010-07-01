@@ -1,8 +1,8 @@
 #!/usr/local/bin/perl
 
-use BEAST::ImportSets;
+use BEAST::BeastDB;
 
-our $importer = ImportSets->new;
+our $importer = BeastDB->new;
 $importer->connectDB();
 
 # GO:0090077	NULL	human:GO:0090077
