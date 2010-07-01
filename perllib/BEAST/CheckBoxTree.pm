@@ -11,6 +11,7 @@ use htmlHelper;
 
 sub buildCheckBoxTree($$);
 
+our $delim = "<>";
 ###
 ### Build drop down list below this item
 ###
@@ -25,8 +26,8 @@ sub buildCheckBoxTree($$)
 	my $marginleft = "margin-left:20px;"; 
 	unless ($key eq "") {
 		$keys[0] = $key;
-		if ($key =~ /:/) {
-			@keys = split(/:/,$key);
+		if ($key =~ /$delim/) {
+			@keys = split(/$delim/,$key);
 			$marginleft = "margin-left:".(($#keys+2)*10)."px;";
 	  	}
 	}
@@ -68,7 +69,7 @@ sub buildCheckBoxTree($$)
 		if ( (ref($ref) eq 'HASH') && ref($ref->{$name}) ) {
 			## print another drop-down arrow, which includes a checkbox for 
 			## this element as well
-			my $index = ($key eq "") ? $name : "$key:$name";
+			my $index = ($key eq "") ? $name : $key.$delim.$name;
 			buildCheckBoxTree($dataRef, $index); 
 		} else {
 
@@ -83,7 +84,7 @@ sub buildCheckBoxTree($$)
 	
 			## print the tag and move on
 			print "<input style='$marginleft' type=checkbox name=\"";
-			($key eq "") ? print $name : print "$key:$name";
+			($key eq "") ? print $name : print $key.$delim.$name;
 			print "\"$checkedText>$name<br/>\n";
 		}
 

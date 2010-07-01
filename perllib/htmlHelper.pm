@@ -76,7 +76,7 @@ sub beginTreeSection($$$)
 
 	my @nameComponents;
 	my $marginleft = "margin-left:0px;";
-	if (@nameComponents = split(/:/, $section)) {
+	if (@nameComponents = split(/<>/, $section)) {
 		$section = $nameComponents[-1];
 		$marginleft = "margin-left:".(($#nameComponents)*10)."px;";
 	}
