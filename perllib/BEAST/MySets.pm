@@ -48,7 +48,7 @@ sub updateActive
 		my $element = $set->get_element($name);
 
 		my $checked;
-		if (exists $checkedHash->{$key.":".$name}) {
+		if (exists $checkedHash->{$key."^".$name}) {
 			$checked = 1;
 		} else {
 			$checked = 0;
@@ -56,7 +56,7 @@ sub updateActive
 
 		if (ref($element) eq 'Set') {
 			$element->{'_active'} = $checked;
-			updateActive($checkedHash, $element, $key.":".$element->get_name);
+			updateActive($checkedHash, $element, $key."^".$element->get_name);
 		} else {
 			#print "setting $name to $checked! with key: $key:$name<br>\n";
 			$set->set_element($name, $checked);

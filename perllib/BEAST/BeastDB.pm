@@ -108,6 +108,17 @@ sub getSetIdFromExternalId($)
 	return $data[0];
 }
 
+sub getSetNameExtIdFromID($)
+{
+	my $self = shift;
+	my $set_id = shift;
+	
+	my $results = $self->runSQL("SELECT name,external_id FROM sets WHERE id='".$set_id."'");	
+
+	my (@data) = $results->fetchrow_array();
+	return ($data[0], $data[1]);
+}
+
 #
 # Return meta.id integer value, from the external ID
 #
@@ -122,6 +133,17 @@ sub getMetaIdFromExternalId($)
 
 	my (@data) = $results->fetchrow_array();
 	return $data[0];
+}
+
+sub getMetaNameExtIDFromID($)
+{
+	my $self = shift;
+	my $meta_id = shift;
+	
+	my $results = $self->runSQL("SELECT name, external_id FROM meta WHERE id='".$meta_id."'");	
+
+	my (@data) = $results->fetchrow_array();
+	return ($data[0], $data[1]);
 }
 
 #

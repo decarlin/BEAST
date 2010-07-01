@@ -84,4 +84,12 @@ sub get_element_names
 	return (keys %{$self->{'_elements'}});	
 }
 
+sub get_metadata_value
+{
+	my $self = shift;
+	my $key = shift;
+
+	return $self->{'_metadata'}->{$key};
+}
+
 1;

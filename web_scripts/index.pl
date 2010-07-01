@@ -174,10 +174,10 @@ sub doMySets()
 	);
 
 	
-	unless (BeastSession::loadMySets($session, \@sets) > 0) {
+	#unless (BeastSession::loadMySets($session, \@sets) > 0) {
 		push @sets, $set1;
 		push @sets, $set2;
-	}
+	#}
 
 	print "<form id=\"mysetsform\">";
 	if ($cgi->param('checkedelements[]')) {
