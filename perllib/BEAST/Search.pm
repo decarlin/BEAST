@@ -36,6 +36,17 @@ sub new
 }
 
 
+sub findParentsForSetByExtID($)
+{
+	my $self = shift;
+	my $ext_id = shift;
+
+	my $beastDB = $self->{'_beast_db'};
+	my $set_id = $beastDB->getSetIdFromExternalId($ext_id);
+
+	return $self->findParentsForSet($set_id);	
+}
+
 #
 # Build the meta heirarchy from the bottom up:
 # start with the leaf (the set) and find all it's parents

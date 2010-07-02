@@ -8,6 +8,7 @@ use strict;
 use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use htmlHelper;
+use BEAST::BeastDB;
 use Data::Dumper;
 
 ###
@@ -81,6 +82,19 @@ EOF
 		print "<input type=checkbox name=\"$key:$name\" $checkedon>$name<br>\n";
 	  }
 	  htmlHelper::endSection($key);
+	}
+
+	if (!$searchtext eq "") {
+		print "<br>";
+	
+		my $beastDB = BeastDB->new;
+		$beastDB->connectDB();
+
+		my $treeBuilder = Search->new($beastDB);
+		my @top_level_nodes = $treeBuilder->findParentsForSetByExtID($searchtext);
+		MySets::displaySets(@top_level_nodes);
+
+		$beastDB->disconnectDB();
 	}
 
 	print <<EOF;

@@ -1,5 +1,6 @@
 #!/usr/local/bin/perl
 
+use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 
 sub usage 
 {

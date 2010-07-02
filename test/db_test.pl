@@ -3,6 +3,8 @@
 use strict;
 use warnings;
 
+use lib "/projects/sysbio/map/Projects/BEAST/perllib";
+
 use BEAST::BeastDB;
 use BEAST::Search;
 use BEAST::MySets;
@@ -13,6 +15,9 @@ our $beastDB = BeastDB->new;
 $beastDB->connectDB();
 
 print "Testing parents for set: $setid\n";
+my @results = $beastDB->getSetNameExtIdFromID($setid);
+print @results;
+
 my @results = $beastDB->getParentsForSet($setid);
 my $meta = $results[0];
 foreach (@results) {

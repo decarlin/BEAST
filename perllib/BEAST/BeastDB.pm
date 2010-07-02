@@ -5,6 +5,9 @@
 use strict;
 use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
+use lib "/projects/sysbio/lib/perl5";
+#use lib "/usr/lib64/perl5/vendor_perl/5.8.8";
+#use lib "/projects/sysbio/lib/perl5/lib64/perl5";
 use DBI;
 
 use Data::Dumper;
