@@ -9,7 +9,11 @@ use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use htmlHelper;
 use BEAST::BeastDB;
+use BEAST::Search;
 use Data::Dumper;
+
+our $TRUE = 1;
+our $FALSE = 0;
 
 ###
 ### Build the Browse Tab
@@ -25,6 +29,18 @@ sub new
 
 	bless $self, $class;
 	return $self;
+}
+
+sub validateSearchResults
+{
+	my @results = @_;
+
+	if ($#results == -1) {
+		print "<br>No Sets Found<br>";
+		return 0;
+	}
+
+	return 1;
 }
 
 sub printBrowseTab
@@ -84,15 +100,20 @@ EOF
 	  htmlHelper::endSection($key);
 	}
 
-	if (!$searchtext eq "") {
+	unless ($searchtext eq "") {
 		print "<br>";
+		chomp($searchtext);
 	
 		my $beastDB = BeastDB->new;
 		$beastDB->connectDB();
 
 		my $treeBuilder = Search->new($beastDB);
 		my @top_level_nodes = $treeBuilder->findParentsForSetByExtID($searchtext);
-		MySets::displaySets(@top_level_nodes);
+		print $#top_level_nodes;
+			
+		if (validateSearchResults(@top_level_nodes) > 0) {	
+			MySets::displaySets(@top_level_nodes);
+		}
 
 		$beastDB->disconnectDB();
 	}

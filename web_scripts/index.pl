@@ -124,6 +124,7 @@ EOF
 
 	print "<div id=\"import\">";
 	$importObj->printImportTab();
+	print `hostname -f`;
 	print "</div>";
 
 	print "<div id=\"browse\">";

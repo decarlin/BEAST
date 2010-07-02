@@ -1,13 +1,11 @@
-#!/usr/bin/perl -w
+#!/usr/local/bin/perl -w
 #Author:	Evan Paull (epaull@soe.ucsc.edu)
 #Create Date:	6.29.2010
 
 use strict;
 use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
-use lib "/projects/sysbio/lib/perl5";
-#use lib "/usr/lib64/perl5/vendor_perl/5.8.8";
-#use lib "/projects/sysbio/lib/perl5/lib64/perl5";
+# DBI + DBD installation
 use DBI;
 
 use Data::Dumper;
@@ -30,10 +28,10 @@ sub new
 
 	my $self = {
 		'_db_name' 	=> 'BEAST_dev',
-		'_hostname'	=> 'localhost',
-		'_port'		=> '$port',
-		'_username'	=> 'stuartLabMember',
-		'_pass'		=> 'sysbio',
+		'_hostname'	=> 'disco.cse.ucsc.edu',
+		'_port'		=> '3306',
+		'_username'	=> 'beast_user',
+		'_pass'		=> 'beast_guest',
 	};
 
 	bless $self, $class;
