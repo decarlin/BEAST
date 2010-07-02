@@ -57,8 +57,12 @@ sub buildCheckBoxTree($$)
 		}
 	}
 
+	my $desc = "()";	
+	if (exists $ref->{'_desc'}) {
+		$desc = "(".$ref->{'_desc'}.")";
+	}
 	unless ($key eq "") {
-	  htmlHelper::beginTreeSection($key, 'FALSE', $isActiveElement);
+	  htmlHelper::beginTreeSection($key, 'FALSE', $isActiveElement, $desc);
 	}
 
 	foreach (@list) { 
@@ -71,6 +75,8 @@ sub buildCheckBoxTree($$)
 			## this element as well
 			my $index = ($key eq "") ? $name : $key.$delim.$name;
 			buildCheckBoxTree($dataRef, $index); 
+		} elsif ($name =~ /_desc|_type|_id/) {
+			next;
 		} else {
 
 			## determine if this element is checked or not
@@ -81,7 +87,7 @@ sub buildCheckBoxTree($$)
 			} else {
 				$checkedText = "";
 			}
-	
+
 			## print the tag and move on
 			print "<input style='$marginleft' type=checkbox name=\"";
 			($key eq "") ? print $name : print $key.$delim.$name;
@@ -89,6 +95,8 @@ sub buildCheckBoxTree($$)
 		}
 
 	}
+
+
 	unless ($key eq "") {
 	  htmlHelper::endSection($key);
 	}

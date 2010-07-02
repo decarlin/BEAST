@@ -37,5 +37,8 @@ my @top_level_nodes = $treeBuilder->findParentsForSet($setid);
 print "<html><body>\n";
 MySets::displaySets(@top_level_nodes);
 print "</body></html>\n";
+
+my @array = $treeBuilder->findParentsForSetByExtID("mouse:GO:0000004");
+print Data::Dumper->Dump([@array]);
 $beastDB->disconnectDB();
 

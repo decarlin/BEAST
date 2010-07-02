@@ -43,6 +43,7 @@ sub findParentsForSetByExtID($)
 
 	my $beastDB = $self->{'_beast_db'};
 	my $set_id = $beastDB->getSetIdFromExternalId($ext_id);
+	unless ($set_id =~ /\d+/) { return $FALSE; }
 
 	return $self->findParentsForSet($set_id);	
 }

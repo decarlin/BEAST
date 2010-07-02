@@ -35,7 +35,7 @@ sub validateSearchResults
 {
 	my @results = @_;
 
-	if ($#results == -1) {
+	if (!ref($results[0])) {
 		print "<br>No Sets Found<br>";
 		return 0;
 	}
@@ -106,11 +106,9 @@ EOF
 	
 		my $beastDB = BeastDB->new;
 		$beastDB->connectDB();
-
 		my $treeBuilder = Search->new($beastDB);
+
 		my @top_level_nodes = $treeBuilder->findParentsForSetByExtID($searchtext);
-		print $#top_level_nodes;
-			
 		if (validateSearchResults(@top_level_nodes) > 0) {	
 			MySets::displaySets(@top_level_nodes);
 		}

@@ -103,6 +103,12 @@ sub getDisplayHash
 			# element is a set -- add the sub-data hash to this 
 			$displayData->{$element_name} = getDisplayHash($element);	
 			$displayData->{$element_name}->{'_active'} = $element->{'_active'};
+
+			## add metadata to display
+			$displayData->{$element_name}->{'_desc'} = $element->get_metadata_value('name');
+			$displayData->{$element_name}->{'_type'} = $element->get_metadata_value('type');
+			$displayData->{$element_name}->{'_id'} = $element->get_metadata_value('id');
+		
 		} else {
 			# element is either 0 or 1 depending on whether it's active
 			$displayData->{$element_name} = $element;

@@ -56,11 +56,12 @@ sub printFooter()
     print "</html>\n";
 }
 
-sub beginTreeSection($$$)
+sub beginTreeSection($$$$)
 {
 	my $section = shift;
 	my $display = shift;
 	my $checkedBool = shift;
+	my $desc = shift || "()";
 	my $fullName = $section;
 
 	my $checkedText = "";
@@ -87,7 +88,7 @@ sub beginTreeSection($$$)
 	print "<div id='$section' style='$marginleft'>";
 	print "<input style='$marginleft' type=checkbox name=\"$fullName\" $checkedText>";
 	print "<span onclick=\"swapDivPlusMinus2('$section\_content', '$section\_arrow');\" class='expandable_header' >";
-	print "<img id='$section\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$section";
+	print "<img id='$section\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$section $desc";
 	print "<span>";
 	print "</div>\n";
 	print "<div id='$section\_content' style='display:$display'>\n";
