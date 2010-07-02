@@ -27,6 +27,39 @@ sub saveMySets
 	$session->param('mysets', $mysetsstr);
 }
 
+sub saveSearchResultSets
+{
+	my $session = shift;
+	my @sets = @_;
+
+	my $mysetsstr;
+	foreach (@sets) {
+		my $set = $_;
+		$mysetsstr = $mysetsstr.$set->serialize()."\n";
+	}
+
+	$session->param('browseresults', $mysetsstr);
+}
+
+#
+# Return: [ retval(0|1), @sets ]
+#
+sub loadSearchResults
+{
+	my $session = shift;
+	my $setsref = shift;
+
+	my $setsstr = $session->param('browseresults');	
+	unless ($setsstr =~ /\n/) { return 0; }
+	my @lines = split (/\n/, $setsstr);
+	my @sets = ImportSets::parseSetLines(@lines);
+
+	foreach (@sets) {
+		push @{$setsref}, $_;
+	}
+
+	return 1;
+}
 #
 # Return: [ retval(0|1), @sets ]
 #

@@ -21,6 +21,12 @@ package Search;
 #
 # Static Methods:
 #
+# DataBase Specifications:
+# 
+# 	The DB has set elements, meta elements and entity's.
+# 	It is assumed that each set's immediate parents are always
+# 	the most specific heirarchy 
+#
 #
 sub new
 {
@@ -147,6 +153,44 @@ sub findParentsForMetas
 			push @collective_parents, $collective_parents->{$_};
 		}
 		return $self->findParentsForMetas(@collective_parents);
+	}
+}
+
+
+#
+# Find a place where they differ, then add the second tree's subsets to the first 
+# tree's subsets
+#
+sub mergeTrees($$)
+{
+	my $tree1 = shift;
+	my $tree2 = shift;
+
+	my @children_of_1 = $tree1->get_element_names;
+	my @children_of_2 = $tree2->get_element_names;
+
+	my @children_only_in_tree_2;
+
+
+	foreach (@children_of_2)
+	{
+		my $child = $_;
+		my $found = $FALSE;
+		
+		foreach (@children_of_1) {
+			if ($child eq $_) {
+				$found = $TRUE;	
+				last;
+			}
+		}
+
+		# this is in tree 2, but not in tree 1, so add the element to tree 1	
+		if ($found == $FALSE) {
+			$tree1->set_element($child, $tree2->get_element($child)); 
+		} else {
+		# otherwise they both have the same node -- merge the subnodes
+			mergeTrees($tree1->get_element($child), $tree2->get_element($child));	
+		}
 	}
 }
 

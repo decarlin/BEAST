@@ -43,6 +43,18 @@ sub validateSearchResults
 	return 1;
 }
 
+sub saveSearchToSession
+{
+	my $self = shift;
+	my $session = shift;
+
+	my @s_results = $self->{'_search_results'};
+	unless ($#s_results > -1 && ref($s_results[0]) eq 'Set') { return $FALSE; }
+	BeastSession::saveSearchResultSets($session, $self->{'_search_results'});
+
+	return $TRUE;
+}
+
 sub printBrowseTab
 {
 	# hash ref to the input form data
@@ -111,10 +123,12 @@ EOF
 		my @top_level_nodes = $treeBuilder->findParentsForSetByExtID($searchtext);
 		if (validateSearchResults(@top_level_nodes) > 0) {	
 			MySets::displaySets(@top_level_nodes);
+			$self->{'_search_results'} = @top_level_nodes;
 		}
 
 		$beastDB->disconnectDB();
 	}
+
 
 	print <<EOF;
 	</form>

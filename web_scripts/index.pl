@@ -37,7 +37,6 @@ our @sets;
 
 sub doTabbedMenu();
 sub doImportTab();
-sub doSearchResult();
 sub doMySets();
 
 my $browseObj;
@@ -64,7 +63,7 @@ my $importObj;
 		# replace the browse tab to include the search results
 
 		$browseObj->printBrowseTab();
-		doSearchResult();
+		$browseObj->saveSearchToSession($session);
 	} elsif ($cgi->param('import')) {
 		$importObj->printImportTab();
 	} elsif ($cgi->param('mysets')) {
@@ -199,12 +198,4 @@ sub doMySets()
 	print "</form>";
 
 }
-
-sub doSearchResult()
-{
-	print <<EOF;
-	<br><b>Search Results:</b><br>
-EOF
-}
-
 
