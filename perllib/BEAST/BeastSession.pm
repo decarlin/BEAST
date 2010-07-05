@@ -9,7 +9,6 @@ use DBI;
 
 use Data::Dumper;
 use BEAST::Set;
-use BEAST::ImportSets;
 
 package BeastSession;
 
@@ -52,7 +51,7 @@ sub loadSearchResults
 	my $setsstr = $session->param('browseresults');	
 	unless ($setsstr =~ /\n/) { return 0; }
 	my @lines = split (/\n/, $setsstr);
-	my @sets = ImportSets::parseSetLines(@lines);
+	my @sets = Set::parseSetLines(@lines);
 
 	foreach (@sets) {
 		push @{$setsref}, $_;
@@ -71,7 +70,7 @@ sub loadMySets
 	my $setsstr = $session->param('mysets');	
 	unless ($setsstr =~ /\n/) { return 0; }
 	my @lines = split (/\n/, $setsstr);
-	my @sets = ImportSets::parseSetLines(@lines);
+	my @sets = Set::parseSetLines(@lines);
 
 	foreach (@sets) {
 		push @{$setsref}, $_;

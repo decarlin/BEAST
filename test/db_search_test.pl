@@ -17,6 +17,13 @@ $beastDB->connectDB();
 my $treeBuilder = Search->new($beastDB);
 
 
+
+my @tree1 = $treeBuilder->findParentsForSet($sets[0]);
+my @tree2 = $treeBuilder->findParentsForSet($sets[1]);
+
+
+exit;
+
 open OUTPUT, ">sets.output";
 foreach (@sets) {
 	my $set = $_;

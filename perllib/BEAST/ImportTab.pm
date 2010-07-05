@@ -10,7 +10,6 @@ use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use htmlHelper;
 use Data::Dumper;
 
-use BEAST::ImportSets;
 use BEAST::Set;
 
 ###
@@ -47,7 +46,7 @@ sub printImportTab
 		if ($input->param('importtext')) {
 			$importtext = $input->param('importtext');
 			my @lines = split(/\n/, $importtext);
-			@sets = ImportSets::parseSetLines($metadata, @lines);	
+			@sets = Set::parseSetLines($metadata, @lines);	
 		}
 	} else {
 		#my $uploaded_filehandle = $input->upload('importtext');

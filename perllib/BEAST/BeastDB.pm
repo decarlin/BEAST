@@ -16,7 +16,6 @@ package BeastDB;
 # 
 # Instance Methods:
 #
-# my $beastDB ImportSets->new;
 # $beastDB->connectDB();
 # $beastDB->importSet($set);
 # $beastDB->disconnectDB();

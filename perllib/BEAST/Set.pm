@@ -12,6 +12,10 @@ our $FALSE = 0;
 
 package Set;
 
+##
+## Static Methods: parseSetLines
+##
+
 sub new
 {
 	my $class = shift;
@@ -90,6 +94,52 @@ sub get_metadata_value
 	my $key = shift;
 
 	return $self->{'_metadata'}->{$key};
+}
+
+#
+# Parse Lines, return set objects
+#
+sub parseSetLines
+{
+	my @lines = @_;
+
+	my @sets;
+
+
+	foreach (@lines) 
+	{
+		my $line = $_;
+		next unless ($line =~ /\S+\s+/);
+		my @components = split(/\^/, $line);
+
+		## create a set object
+		my $name = $components[0];
+		my $metadata = {};
+		my $elements = {};
+		my $i = 0;
+		for (@components) 
+		{
+			# the first element is the name
+			if ($i == 0) { $i++; next; }
+
+			my $component = $_;
+			# metadata goes in with key/value pairs
+			if ($component =~ /(.*)=(.*)/) {
+				$metadata->{$1} = $2;
+			} else {
+				# tab delineated elements
+				foreach (split(/\s+/, $component)) {
+					next unless ($_ =~ /\S+/);
+					$elements->{$_} = 1;	
+				}
+			}
+		}
+
+		my $set = Set->new($name, 1, $metadata, $elements);
+		push @sets, $set;
+	}
+
+	return @sets;
 }
 
 1;
