@@ -51,7 +51,16 @@ sub serialize
 		$str = $str.$_."=".$self->{'_metadata'}->{$_}.$self->{'_delim'};
 	}
 	foreach (keys %{$self->{'_elements'}}) {
-		$str = $str."\t".$_;
+	
+		my $name = $_;
+		my $element = $self->get_element($_);
+		if (ref($element) eq 'Set') {
+			$str = $str."\t"."[ ";
+			$str = $str.$element->serialize();
+			$str = $str." ]";
+		} else {
+			$str = $str."\t".$name;
+		}
 	}
 
 	return $str;
@@ -109,14 +118,18 @@ sub parseSetLines
 	foreach (@lines) 
 	{
 		my $line = $_;
+		chomp($line);
 		next unless ($line =~ /\S+\s+/);
-		my @components = split(/\^/, $line);
+		$line =~ /(\S+)\^\t(.*)/;
+		my @components = split (/\^/,$1);
+		my $subsets = $2;
 
 		## create a set object
 		my $name = $components[0];
 		my $metadata = {};
 		my $elements = {};
 		my $i = 0;
+
 		for (@components) 
 		{
 			# the first element is the name
@@ -126,13 +139,42 @@ sub parseSetLines
 			# metadata goes in with key/value pairs
 			if ($component =~ /(.*)=(.*)/) {
 				$metadata->{$1} = $2;
-			} else {
-				# tab delineated elements
-				foreach (split(/\s+/, $component)) {
-					next unless ($_ =~ /\S+/);
-					$elements->{$_} = 1;	
+			} 
+		}
+
+
+		# tab delineated elements
+		my $parse_state = 0;
+		my $parse_string = "";
+		foreach (split(/\t/, $subsets)) {
+			my $part = $_;
+			if ($part =~ /\[/) {
+				if ($parse_state == 0) {
+					$parse_string = $part;
+				} else {	
+					$parse_string = $parse_string."\t".$part;
 				}
+				$parse_state++;
+				next;
+			} elsif ($part =~ /\]/) {
+				$parse_state--;
+			        $parse_string = $parse_string."\t".$part;
+				if ($parse_state == 0) {
+				  $parse_string =~ /^\[ (.*) \]$/;
+			  	  my @ln = ($1);
+			  	  my @setS = parseSetLines(@ln); 
+				  my $setname = $setS[0]->get_name;
+			  	  $elements->{$setname} = $setS[0];	
+				  $parse_string = "";
+				}
+				next;
+			} elsif ($parse_state > 0) {
+			        $parse_string = $parse_string."\t".$part;
+				next;
 			}
+
+			# else 
+		   	$elements->{$part} = 1;	
 		}
 
 		my $set = Set->new($name, 1, $metadata, $elements);
