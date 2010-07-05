@@ -186,7 +186,8 @@ sub mergeTrees($$)
 
 		# this is in tree 2, but not in tree 1, so add the element to tree 1	
 		if ($found == $FALSE) {
-			$tree1->set_element($child, $tree2->get_element($child)); 
+			my $element = $tree2->get_element($child);
+			$tree1->set_element($child, $element); 
 		} else {
 		# otherwise they both have the same node -- merge the subnodes
 			mergeTrees($tree1->get_element($child), $tree2->get_element($child));	
