@@ -4,7 +4,6 @@ use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 
 use BEAST::Set;
-use BEAST::Search;
 
 my @sets;
 
@@ -91,5 +90,5 @@ print "Testing Tree-Merge Function...\n";
 print "Before merge:\n";
 print "Tree1: ".$tree1->serialize()."\n";
 print "Tree2: ".$tree2->serialize()."\n";
-Search::mergeTrees($tree1, $tree2);
+$tree1->mergeTree($tree2);
 print "After Merge: ".$tree1->serialize()."\n";

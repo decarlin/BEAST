@@ -184,4 +184,43 @@ sub parseSetLines
 	return @sets;
 }
 
+#
+# Find a place where they differ, then add the second tree's subsets to the first 
+# tree's subsets
+#
+sub mergeTree($)
+{
+	my $self = shift;
+	my $tree2 = shift;
+
+	my @children_of_1 = $self->get_element_names;
+	my @children_of_2 = $tree2->get_element_names;
+
+	my @children_only_in_tree_2;
+
+
+	foreach (@children_of_2)
+	{
+		my $child = $_;
+		my $found = $FALSE;
+		
+		foreach (@children_of_1) {
+			if ($child eq $_) {
+				$found = $TRUE;	
+				last;
+			}
+		}
+
+		# this is in tree 2, but not in tree 1, so add the element to tree 1	
+		if ($found == $FALSE) {
+			my $element = $tree2->get_element($child);
+			$self->set_element($child, $element); 
+		} else {
+		# otherwise they both have the same node -- merge the subnodes
+			mergeTrees($self->get_element($child), $tree2->get_element($child));	
+		}
+	}
+}
+
+
 1;
