@@ -193,6 +193,11 @@ sub mergeTree($)
 	my $self = shift;
 	my $tree2 = shift;
 
+	#different head nodes always means we can't merge
+	unless ($self->get_name eq $tree2->get_name) {
+		return $FALSE;
+	}
+
 	my @children_of_1 = $self->get_element_names;
 	my @children_of_2 = $tree2->get_element_names;
 
@@ -212,14 +217,17 @@ sub mergeTree($)
 		}
 
 		# this is in tree 2, but not in tree 1, so add the element to tree 1	
+		my $element = $tree2->get_element($child);
 		if ($found == $FALSE) {
-			my $element = $tree2->get_element($child);
 			$self->set_element($child, $element); 
 		} else {
 		# otherwise they both have the same node -- merge the subnodes
-			mergeTrees($self->get_element($child), $tree2->get_element($child));	
+			my $subtree = $self->get_element($child);
+			$subtree->mergeTree($element);	
 		}
 	}
+
+	return $TRUE;
 }
 
 

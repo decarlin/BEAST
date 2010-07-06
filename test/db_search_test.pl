@@ -17,11 +17,20 @@ $beastDB->connectDB();
 my $treeBuilder = Search->new($beastDB);
 
 
+# 
+my @tree1 = $treeBuilder->findParentsForSet(114009);
+my @tree2 = $treeBuilder->findParentsForSet(142510);
 
-my @tree1 = $treeBuilder->findParentsForSet($sets[0]);
-my @tree2 = $treeBuilder->findParentsForSet($sets[1]);
+if ($tree1[0]->mergeTree($tree2[0]) > 0) {
+	print "Merged Trees: \n";
+	print $tree1[0]->serialize();
+} else {
+	print "Couldn't merge trees:\n";
+	print $tree1[0]->serialize();
+	print $tree2[0]->serialize();
+}
 
-
+$beastDB->disconnectDB();
 exit;
 
 open OUTPUT, ">sets.output";
@@ -49,5 +58,6 @@ foreach (@sets) {
 	`rm $set.tree`;
 }
 close OUTPUT;
+
 $beastDB->disconnectDB();
 

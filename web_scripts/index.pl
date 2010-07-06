@@ -52,11 +52,7 @@ my $importObj;
 	#@my $sql = 
 	#$results = runSQL($sql, $dbh);
 
-	my $browseSearchFilterCheckboxes = {
-		'Species' 	=> ['Human', 'Mouse', 'Platypus'],
-		'Kind'		=> ['Coexpression', 'Annotation']
-	};
-	$browseObj = BrowseTab->new($browseSearchFilterCheckboxes,$cgi);
+	$browseObj = BrowseTab->new($cgi);
 	$importObj = ImportTab->new($cgi);
 
 	if ($cgi->param('browse')) {
@@ -137,48 +133,19 @@ print "</div>";
 
 sub doMySets()
 {
-	# build a drop down, hierarchical list of the current sets in the working
-	# environment, sorted 
 
-	# bullshit test data...
+	my $beastDB = BeastDB->new;
+	$beastDB->connectDB();
+	my $treeBuilder = Search->new($beastDB);
+	my @tree1 = $treeBuilder->findParentsForSet(114005);
+	my @tree2 = $treeBuilder->findParentsForSet(114104);
+	$beastDB->disconnectDB();
 
-	my $gmSet = Set->new(
-		'GeneralMills', 
-		1,
-		{ 'type' => 'manuf' }, 
-		{ 
-			'Cheerios' 	=> 1, 
-			'Trix'		=> 0,
-			'Wheaties'	=> 1 
-		}
-	);
-	my $set1 = Set->new(
-		'Bread', 
-		1,
-		{ 'type' => 'food' }, 
-		{ 
-			'Rye' => 1, 
-			'Wheat' => 0, 
-			'Sourdough' => 0 
-		}
-	);
-	my $set2 = Set->new(
-		'Cereal', 
-		0,
-		{ 'type' => 'food' }, 
-		{ 
-			'RiceCrispies' => 1, 
-			'CocoPuffs' => 1, 
-			$gmSet->get_name => $gmSet,
-		}
-	);
-
+	push @sets, $tree1[0];
+	unless ($tree1[0]->mergeTree($tree2[0]) > 0) {
+		push @sets, $tree2[0];	
+	}
 	
-	#unless (BeastSession::loadMySets($session, \@sets) > 0) {
-		push @sets, $set1;
-		push @sets, $set2;
-	#}
-
 	print "<form id=\"mysetsform\">";
 	if ($cgi->param('checkedelements[]')) {
 		my $checked = {};

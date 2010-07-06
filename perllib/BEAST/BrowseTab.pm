@@ -23,7 +23,6 @@ sub new
 {
 	my $class = shift;
 	my $self = {
-		_data_ref 	=> shift,
 		_input 		=> shift,
 	};
 
@@ -35,7 +34,7 @@ sub validateSearchResults
 {
 	my @results = @_;
 
-	if (!ref($results[0])) {
+	if ( $#results == -1 || (!ref($results[0]))) {
 		print "<br>No Sets Found<br>";
 		return 0;
 	}
@@ -61,7 +60,11 @@ sub printBrowseTab
 	my $self = shift;
 	# Search filter/checkbox categories to display
 	# Hash reference: keys are refs to arrays of strings
-	my $checkboxdata = $self->{'_data_ref'};
+
+	## build search meta terms
+	# At some point we should get this out of the database
+	my $checkboxdata = { 'Kind' => [ 'GO_Terms' ] };
+
 	my $input = $self->{'_input'};
 
 	my $searchtext = "";
@@ -115,16 +118,36 @@ EOF
 	unless ($searchtext eq "") {
 		print "<br>";
 		chomp($searchtext);
-	
+
+		my @searches = split (/,/, $searchtext);	
 		my $beastDB = BeastDB->new;
 		$beastDB->connectDB();
 		my $treeBuilder = Search->new($beastDB);
 
-		my @top_level_nodes = $treeBuilder->findParentsForSetByExtID($searchtext);
-		if (validateSearchResults(@top_level_nodes) > 0) {	
-			MySets::displaySets(@top_level_nodes);
-			$self->{'_search_results'} = @top_level_nodes;
+		my @results;
+		foreach (@searches) {
+			my $search = $_;
+			my @top_level_nodes = $treeBuilder->findParentsForSetByExtID($search);
+			if (ref($top_level_nodes[0]) eq 'Set') {
+				push @results, $top_level_nodes[0];
+			}
 		}
+
+		my @merged_results;
+		if ($#results > -1) {
+			# results are a bunch of sets
+			push @merged_results, $results[0];
+			foreach my $i (1 .. $#results) {
+				unless ($results[0]->mergeTree($results[1]) > 0) {
+				  push @merged_results, $results[$i];
+				}
+			}	
+		}
+			
+		if (validateSearchResults(@merged_results) > 0) {	
+			MySets::displaySets(@merged_results);
+		}
+		$self->{'_search_results'} = @merged_results;
 
 		$beastDB->disconnectDB();
 	}
