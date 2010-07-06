@@ -289,6 +289,28 @@ sub getParentsForSet($$)
 	return @data;
 }
 
+sub searchSetsByTerm($)
+{
+	my $self = shift;
+	my $search_text = shift;
+
+	my $template = "SELECT id FROM sets WHERE name LIKE '%var1%';";
+
+	$search_text = escapeSQLString($search_text);
+	$template =~ s/var1/$search_text/;
+
+	my $results = $self->runSQL($template);
+
+	my @data;
+	my $tbl_array_ref = $results->fetchall_arrayref([0]);
+	foreach (@$tbl_array_ref) {
+		my $array_ref = $_;
+		push @data, $array_ref->[0];
+	}
+
+	return @data;
+}
+
 sub getParentsForMeta($$)
 {
 	my $self = shift;

@@ -42,6 +42,27 @@ sub new
 }
 
 
+sub findParentsByTerm($)
+{
+	my $self = shift;
+	my $term = shift;
+
+	my $beastDB = $self->{'_beast_db'};
+	my @set_ids = $beastDB->searchSetsByTerm($term);
+	unless ($#set_ids > -1 ) { return $FALSE; }
+
+	my @nodes;
+	foreach (@set_ids) {
+		my @node = $self->findParentsForSet($_);	
+		if (ref($node[0]) eq 'Set') {
+			push @nodes, $node[0];
+		}
+	}
+
+	# set objects
+	return @nodes;
+}
+
 sub findParentsForSetByExtID($)
 {
 	my $self = shift;

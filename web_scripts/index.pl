@@ -137,14 +137,14 @@ sub doMySets()
 	my $beastDB = BeastDB->new;
 	$beastDB->connectDB();
 	my $treeBuilder = Search->new($beastDB);
-	my @tree1 = $treeBuilder->findParentsForSet(114005);
-	my @tree2 = $treeBuilder->findParentsForSet(114104);
+	my @tree1 = $treeBuilder->findParentsForSet(114104);
+	#my @tree2 = $treeBuilder->findParentsForSet(114104);
 	$beastDB->disconnectDB();
 
 	push @sets, $tree1[0];
-	unless ($tree1[0]->mergeTree($tree2[0]) > 0) {
-		push @sets, $tree2[0];	
-	}
+	#unless ($tree1[0]->mergeTree($tree2[0]) > 0) {
+	#	push @sets, $tree2[0];	
+	#}
 	
 	print "<form id=\"mysetsform\">";
 	if ($cgi->param('checkedelements[]')) {

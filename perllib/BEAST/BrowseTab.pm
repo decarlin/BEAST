@@ -127,9 +127,14 @@ EOF
 		my @results;
 		foreach (@searches) {
 			my $search = $_;
-			my @top_level_nodes = $treeBuilder->findParentsForSetByExtID($search);
-			if (ref($top_level_nodes[0]) eq 'Set') {
-				push @results, $top_level_nodes[0];
+
+			my @top_level_nodes = $treeBuilder->findParentsByTerm($search);
+			#my @top_level_nodes = $treeBuilder->findParentsForSetByExtID($search);
+			foreach (@top_level_nodes) {
+				my $node = $_;
+				if (ref($node) eq 'Set') {
+					push @results, $node;
+				}
 			}
 		}
 
