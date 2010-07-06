@@ -138,7 +138,7 @@ EOF
 			# results are a bunch of sets
 			push @merged_results, $results[0];
 			foreach my $i (1 .. $#results) {
-				unless ($results[0]->mergeTree($results[1]) > 0) {
+				unless ($results[0]->mergeTree($results[$i]) > 0) {
 				  push @merged_results, $results[$i];
 				}
 			}	
