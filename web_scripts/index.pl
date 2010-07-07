@@ -58,8 +58,7 @@ my $importObj;
 	if ($cgi->param('browse')) {
 		# replace the browse tab to include the search results
 
-		$browseObj->printBrowseTab();
-		$browseObj->saveSearchToSession($session);
+		$browseObj->printBrowseTab($session);
 	} elsif ($cgi->param('import')) {
 		$importObj->printImportTab();
 	} elsif ($cgi->param('mysets')) {
@@ -145,7 +144,12 @@ sub doMySets()
 	#unless ($tree1[0]->mergeTree($tree2[0]) > 0) {
 	#	push @sets, $tree2[0];	
 	#}
-	
+
+	if ($cgi->param('browsesets[]')) {
+		#my @browseSets = BeastSession::loadBrowseSets($session, $cgi->param('browsesets[]'));
+		#print Data::Dumper->Dump([$cgi]);
+	}
+
 	print "<form id=\"mysetsform\">";
 	if ($cgi->param('checkedelements[]')) {
 		my $checked = {};

@@ -26,7 +26,7 @@ sub saveMySets
 	$session->param('mysets', $mysetsstr);
 }
 
-sub saveSearchResultSets
+sub saveSearchResults
 {
 	my $session = shift;
 	my @sets = @_;
@@ -46,18 +46,17 @@ sub saveSearchResultSets
 sub loadSearchResults
 {
 	my $session = shift;
-	my $setsref = shift;
+	my $checkboxes_ref = shift;
 
 	my $setsstr = $session->param('browseresults');	
 	unless ($setsstr =~ /\n/) { return 0; }
 	my @lines = split (/\n/, $setsstr);
 	my @sets = Set::parseSetLines(@lines);
 
-	foreach (@sets) {
-		push @{$setsref}, $_;
-	}
-
-	return 1;
+	my @selected_sets;
+	#  merge with checkbox data
+	
+	return @selected_sets;
 }
 #
 # Return: [ retval(0|1), @sets ]

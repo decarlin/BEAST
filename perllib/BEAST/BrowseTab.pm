@@ -42,22 +42,11 @@ sub validateSearchResults
 	return 1;
 }
 
-sub saveSearchToSession
-{
-	my $self = shift;
-	my $session = shift;
-
-	my @s_results = $self->{'_search_results'};
-	unless ($#s_results > -1 && ref($s_results[0]) eq 'Set') { return $FALSE; }
-	BeastSession::saveSearchResultSets($session, $self->{'_search_results'});
-
-	return $TRUE;
-}
-
 sub printBrowseTab
 {
 	# hash ref to the input form data
 	my $self = shift;
+	my $session = shift;
 	# Search filter/checkbox categories to display
 	# Hash reference: keys are refs to arrays of strings
 
@@ -152,13 +141,14 @@ EOF
 		if (validateSearchResults(@merged_results) > 0) {	
 			MySets::displaySets(@merged_results);
 		}
-		$self->{'_search_results'} = @merged_results;
+		BeastSession::saveSearchResults($session, @merged_results);
 
 		$beastDB->disconnectDB();
 	}
 
 
 	print <<EOF;
+	<input type='button' value='Add To My Sets' onClick="return onAddBrowseSets(this.form);"><br>
 	</form>
 EOF
 

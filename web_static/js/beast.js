@@ -69,6 +69,18 @@ function chooseTextImport(form) {
 	} catch(e){ log(e); }
 }
 
+function onAddBrowseSets(form) {
+	var importtext;
+	var importtype;
+
+	// serialize the metadata selects
+	var selects = getChecked(form);
+	$('#mysets').load('/cgi-bin/BEAST/index.pl', 
+		{'addbrowse':'yes',
+		 'browsesets[]': selects }
+	);
+}
+
 function onImportSets(form) {
 	var importtext;
 	var importtype;
