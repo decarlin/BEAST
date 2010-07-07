@@ -127,21 +127,41 @@ EOF
 			}
 		}
 
-		my @merged_results;
+		my $merged_results = {};
 		if ($#results > -1) {
 			# results are a bunch of sets
-			push @merged_results, $results[0];
-			foreach my $i (1 .. $#results) {
-				unless ($results[0]->mergeTree($results[$i]) > 0) {
-				  push @merged_results, $results[$i];
+
+			foreach my $i (0 .. $#results) {
+
+				# foreach result - merge every other result to it
+				# then add it to the hash 
+				# this will add the result with all the nodes of the same name
+				my $name = $results[$i]->get_name;
+				next if (exists $merged_results->{$name});
+
+				# this top-level node isn't yet saved -- find all other
+				# mergeable trees, then add it to the results
+				foreach my $j (0 .. $#results) {
+					next if ($i eq $j);
+					$results[$i]->mergeTree($results[$j]);
 				}
+				$merged_results->{$name} = $results[$i];
 			}	
 		}
-			
-		if (validateSearchResults(@merged_results) > 0) {	
-			MySets::displaySets("browse", @merged_results);
+
+		my @merged = ();
+		foreach (keys %$merged_results) {
+			push @merged, $merged_results->{$_};
 		}
-		BeastSession::saveSearchResults($session, @merged_results);
+
+		if (validateSearchResults(@merged) > 0) {	
+			MySets::displaySets("browse", @merged);
+		}
+		
+		#my $Rsize = scalar (@results);
+		#my $Msize = scalar (@merged);
+		#print "merged into $Rsize into $Msize";
+		BeastSession::saveSearchResults($session, @merged);
 
 		$beastDB->disconnectDB();
 	}
