@@ -9,16 +9,15 @@ use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use htmlHelper;
 
-sub buildCheckBoxTree($$);
-
 our $delim = "<>";
 ###
 ### Build drop down list below this item
 ###
-sub buildCheckBoxTree($$)
+sub buildCheckBoxTree($$$)
 {
 	my $dataRef = shift;
 	my $key = shift;
+	my $divID = shift;
 
 	die "$dataRef not a hash ref!" unless (ref $dataRef eq 'HASH');
 	my @keys;
@@ -62,7 +61,7 @@ sub buildCheckBoxTree($$)
 		$desc = "(".$ref->{'_desc'}.")";
 	}
 	unless ($key eq "") {
-	  htmlHelper::beginTreeSection($key, 'FALSE', $isActiveElement, $desc);
+	  htmlHelper::beginTreeSection($key, 'FALSE', $isActiveElement, $desc, $divID);
 	}
 
 	foreach (@list) { 
@@ -74,7 +73,7 @@ sub buildCheckBoxTree($$)
 			## print another drop-down arrow, which includes a checkbox for 
 			## this element as well
 			my $index = ($key eq "") ? $name : $key.$delim.$name;
-			buildCheckBoxTree($dataRef, $index); 
+			buildCheckBoxTree($dataRef, $index, $divID); 
 		} elsif ($name =~ /_desc|_type|_id/) {
 			next;
 		} else {

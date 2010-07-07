@@ -56,12 +56,13 @@ sub printFooter()
     print "</html>\n";
 }
 
-sub beginTreeSection($$$$)
+sub beginTreeSection($$$$$)
 {
 	my $section = shift;
 	my $display = shift;
 	my $checkedBool = shift;
 	my $desc = shift || "()";
+	my $div_id = shift;
 	my $fullName = $section;
 
 	my $checkedText = "";
@@ -81,17 +82,19 @@ sub beginTreeSection($$$$)
 		$section = $nameComponents[-1];
 		$marginleft = "margin-left:".(($#nameComponents)*10)."px;";
 	}
-	
+
+	# must be unique
+	my $divID = $div_id."<>".$section;	
 	
 	my $arrow = $display ? "images/ominus.png" : "images/plus.png";
 	$display = $display ? "block":"none";
-	print "<div id='$section' style='$marginleft'>";
+	print "<div id='$divID' style='$marginleft'>";
 	print "<input style='$marginleft' type=checkbox name=\"$fullName\" $checkedText>";
-	print "<span onclick=\"swapDivPlusMinus2('$section\_content', '$section\_arrow');\" class='expandable_header' >";
-	print "<img id='$section\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$section $desc";
+	print "<span onclick=\"swapDivPlusMinus2('$divID\_content', '$divID\_arrow');\" class='expandable_header' >";
+	print "<img id='$divID\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$section $desc";
 	print "<span>";
 	print "</div>\n";
-	print "<div id='$section\_content' style='display:$display'>\n";
+	print "<div id='$divID\_content' style='display:$display'>\n";
 
 }
 sub beginSection($$)

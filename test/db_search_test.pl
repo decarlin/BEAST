@@ -38,7 +38,7 @@ foreach (@sets) {
 	my $set = $_;
 	open STDOUT, ">$set.tree" || die "can't open";
 	my @top_level_nodes = $treeBuilder->findParentsForSet($set);
-	MySets::displaySets(@top_level_nodes);
+	MySets::displaySets("test",@top_level_nodes);
 	close STDOUT || die "can't open file";
 
 	open TREE, "$_.tree";

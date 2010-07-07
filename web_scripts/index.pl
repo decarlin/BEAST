@@ -159,7 +159,7 @@ sub doMySets()
 		}
 		MySets::updateActiveElements($checked, \@sets);	
 	}
-	MySets::displaySets(@sets);
+	MySets::displaySets("mysets", @sets);
 
 
 	BeastSession::saveMySets($session, @sets);

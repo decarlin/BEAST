@@ -67,6 +67,7 @@ sub updateActive
 
 sub displaySets
 {
+	my $divID = shift;
 	my @sets = @_;
 
 	my $displayData = {};
@@ -80,7 +81,7 @@ sub displaySets
 	}
 
 	#print Data::Dumper->Dump([$displayData]);
-	CheckBoxTree::buildCheckBoxTree($displayData, "");
+	CheckBoxTree::buildCheckBoxTree($displayData, "", $divID);
 }
 
 sub getDisplayHash

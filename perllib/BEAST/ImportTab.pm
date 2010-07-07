@@ -97,7 +97,7 @@ EOF
 	<p>Sets:</p>
 	<p>
 EOF
-	MySets::displaySets(@sets);
+	MySets::displaySets("import", @sets);
 	print "</p>";
 	
 

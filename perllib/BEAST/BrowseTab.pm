@@ -139,7 +139,7 @@ EOF
 		}
 			
 		if (validateSearchResults(@merged_results) > 0) {	
-			MySets::displaySets(@merged_results);
+			MySets::displaySets("browse", @merged_results);
 		}
 		BeastSession::saveSearchResults($session, @merged_results);
 
