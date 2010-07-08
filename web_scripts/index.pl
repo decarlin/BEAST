@@ -55,7 +55,9 @@ my $importObj;
 	$browseObj = BrowseTab->new($cgi);
 	$importObj = ImportTab->new($cgi);
 
-	if ($cgi->param('browse')) {
+	if ($cgi->param('addbrowse')) {
+		doMySets();
+	} elsif ($cgi->param('browse')) {
 		# replace the browse tab to include the search results
 
 		$browseObj->printBrowseTab($session);
@@ -65,6 +67,7 @@ my $importObj;
 		doMySets();
 	} else {
 		# default; on page creation	
+		$session->clear();
 		doTabbedMenu();	
 	}
 
@@ -132,22 +135,16 @@ print "</div>";
 
 sub doMySets()
 {
+	BeastSession::loadMySets($session, \@sets);
 
-	my $beastDB = BeastDB->new;
-	$beastDB->connectDB();
-	my $treeBuilder = Search->new($beastDB);
-	my @tree1 = $treeBuilder->findParentsForSet(114104);
-	#my @tree2 = $treeBuilder->findParentsForSet(114104);
-	$beastDB->disconnectDB();
-
-	push @sets, $tree1[0];
-	#unless ($tree1[0]->mergeTree($tree2[0]) > 0) {
-	#	push @sets, $tree2[0];	
-	#}
-
+	# add/merge these sets with the current working sets
 	if ($cgi->param('browsesets[]')) {
-		#my @browseSets = BeastSession::loadBrowseSets($session, $cgi->param('browsesets[]'));
-		#print Data::Dumper->Dump([$cgi]);
+		my @browseSets = BeastSession::loadSearchResults($session, $cgi);
+		if ($#sets == -1) {
+			@sets = @browseSets;
+		} else {
+			Set::mergeDisjointCollections(\@sets, \@browseSets);
+		}
 	}
 
 	print "<form id=\"mysetsform\">";

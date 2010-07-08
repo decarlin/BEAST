@@ -32,12 +32,32 @@ sub saveSearchResults
 	my @sets = @_;
 
 	my $mysetsstr;
+	my $i = 0;
 	foreach (@sets) {
 		my $set = $_;
-		$mysetsstr = $mysetsstr.$set->serialize()."\n";
+		if ($i == 0) {
+			$mysetsstr = $set->serialize();
+		} else {
+			my $setstr = $set->serialize();
+			$mysetsstr = $mysetsstr.":SEP:".$setstr;
+		}
+		$i++;
 	}
 
 	$session->param('browseresults', $mysetsstr);
+}
+
+sub buildCheckedHash
+{
+	my @checked_sets = @_;
+
+	my $hash = {};
+	foreach (@checked_sets) {
+		my @parts = split(/<>/, $_);
+		$hash->{$parts[-1]} = 1;	
+	}
+	
+	return $hash;
 }
 
 #
@@ -46,15 +66,26 @@ sub saveSearchResults
 sub loadSearchResults
 {
 	my $session = shift;
-	my $checkboxes_ref = shift;
+	my $cgi = shift;
 
 	my $setsstr = $session->param('browseresults');	
-	unless ($setsstr =~ /\n/) { return 0; }
-	my @lines = split (/\n/, $setsstr);
+	my @lines = split (/:SEP:/, $setsstr);
+
+	## fixme: not working yet
 	my @sets = Set::parseSetLines(@lines);
+
+	my @checked_sets = $cgi->param('browsesets[]');
+	my $checked_hash = buildCheckedHash(@checked_sets);
 
 	my @selected_sets;
 	#  merge with checkbox data
+	foreach (@sets) {
+		my $set = $_;
+		my $name = $set->get_name;
+		if (exists $checked_hash->{$name}) {
+			push @selected_sets, $set;
+		}
+	}
 	
 	return @selected_sets;
 }
@@ -67,7 +98,7 @@ sub loadMySets
 	my $setsref = shift;
 
 	my $setsstr = $session->param('mysets');	
-	unless ($setsstr =~ /\n/) { return 0; }
+	unless ($setsstr =~ /\S+/) { return 0; }
 	my @lines = split (/\n/, $setsstr);
 	my @sets = Set::parseSetLines(@lines);
 
