@@ -72,7 +72,10 @@ sub loadSearchResults
 	my @lines = split (/:SEP:/, $setsstr);
 
 	## fixme: not working yet
-	my @sets = Set::parseSetLines(@lines);
+	my @sets = ();
+	foreach (@lines) {
+		push @sets, Set->new($_);
+	}
 
 	my @checked_sets = $cgi->param('browsesets[]');
 	my $checked_hash = buildCheckedHash(@checked_sets);

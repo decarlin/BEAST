@@ -28,6 +28,7 @@ my $sid = $cgi->cookie("CGISESSID") || undef;
 ### restore their session, or create a new one if it doesn't exist yet
 our $session = new CGI::Session(undef, $sid, {Directory=>'/tmp'});
 $session->expire('+1h');
+print `hostname`;
 #
 ### save sid in the users cookie
 our $cookie = $cgi->cookie(CGISESSID => $session->id);

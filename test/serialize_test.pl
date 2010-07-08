@@ -1,7 +1,6 @@
 #!/usr/local/bin/perl
 
 use strict;
-use warnings;
 
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 
@@ -20,10 +19,9 @@ my $treeBuilder = Search->new($beastDB);
 my @tree1 = $treeBuilder->findParentsForSet(114009);
 my @tree2 = $treeBuilder->findParentsForSet(142510);
 
-my $tree1str = $tree1[0]->serialize();
-my $tree2str = $tree2[0]->serialize();
-my @lines = ($tree1str, $tree2str);
+my $json_text = $tree1[0]->serialize();
+print "encoded:\n";
+print "$json_text";
+my $newset = Set->new($json_text);
+print Data::Dumper->Dump([$newset]);
 
-my @parsedSets = Set::parseSetLines(@lines);
-
-print $parsedSets[0]->serialize();
