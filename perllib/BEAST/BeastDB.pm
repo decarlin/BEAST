@@ -289,6 +289,54 @@ sub getParentsForSet($$)
 	return @data;
 }
 
+# sets -> keyspace.organism='blah'
+# 	  keyspace.source='bleh'
+# 	  keyspace.description='bleh'
+# 	  keyspace.created='bleh'
+# This is a big join: might be slow before it's cached
+#sub searchSetsByTermRestrictKeyspace(text, keyspace field, keyspace value)
+sub searchSetsByTermRestrictKeyspace($$$)
+{
+	my $self = shift;
+	my $search_text = shift;
+	# hash ref
+	my $keyspace_opts = shift;
+
+	# current fields
+	foreach (keys %$keyspace_opts) {
+		unless ($_ = /organism|source|version|description/) {
+			return 0;
+		}
+	}
+
+	$search_text = escapeSQLString($search_text);
+
+	my $template = " \
+SELECT sets.id FROM sets JOIN set_entity	\
+	ON sets.id = set_entity.sets_id 	\
+	JOIN entity	\
+	ON set_entity.entity_id = entity.id	\
+	JOIN keyspace 	\
+	ON entity.keyspace_id = keyspace.id	";
+
+	foreach (keys %$keyspace_opts) {
+		my $key = $_;
+		$template = $template." WHERE keyspace.".$key." = '".$keyspace_opts->{$key}."' ";
+	}
+	$template = $template."AND sets.name LIKE '%".$search_text."%';";
+
+	my $results = $self->runSQL($template);
+
+	my @data;
+	my $tbl_array_ref = $results->fetchall_arrayref([0]);
+	foreach (@$tbl_array_ref) {
+		my $array_ref = $_;
+		push @data, $array_ref->[0];
+	}
+
+	return @data;
+}
+
 sub searchSetsByTerm($)
 {
 	my $self = shift;

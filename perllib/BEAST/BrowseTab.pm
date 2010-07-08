@@ -42,6 +42,12 @@ sub validateSearchResults
 	return 1;
 }
 
+sub buildSearchOpts
+{
+	my $searchopts = shift;
+	my $checkboxdata = shift;
+}
+
 sub printBrowseTab
 {
 	# hash ref to the input form data
@@ -52,7 +58,19 @@ sub printBrowseTab
 
 	## build search meta terms
 	# At some point we should get this out of the database
-	my $checkboxdata = { 'Kind' => [ 'GO_Terms' ] };
+
+	# build these from checkbox options
+	my $searchopts = {
+		'keyspace' => { 
+			'organism' => [ 'mouse', 'human' ],	
+			'source'   => [ 'entrez' ],
+		},
+	}
+
+	my $checkboxdata = { 
+		'Organism' => [ 'Mouse', 'Human' ], 
+		'Kind' => [ 'GO_Terms' ] 
+	};
 
 	my $input = $self->{'_input'};
 
@@ -117,7 +135,7 @@ EOF
 		foreach (@searches) {
 			my $search = $_;
 
-			my @top_level_nodes = $treeBuilder->findParentsByTerm($search);
+			my @top_level_nodes = $treeBuilder->findParentsByTerm($search, $searchopts);
 			#my @top_level_nodes = $treeBuilder->findParentsForSetByExtID($search);
 			foreach (@top_level_nodes) {
 				my $node = $_;

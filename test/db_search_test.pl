@@ -17,8 +17,11 @@ $beastDB->connectDB();
 my $treeBuilder = Search->new($beastDB);
 
 
-# 
-my @tree1 = $treeBuilder->findParentsForSet(114009);
+#
+my $searchopts = {
+	'keyspace' => { 'organism' => 'mouse' }
+} 
+my @tree1 = $treeBuilder->findParentsForSet(114009, $searchopts);
 my @tree2 = $treeBuilder->findParentsForSet(142510);
 
 if ($tree1[0]->mergeTree($tree2[0]) > 0) {

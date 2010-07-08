@@ -42,13 +42,20 @@ sub new
 }
 
 
-sub findParentsByTerm($)
+sub findParentsByTerm
 {
 	my $self = shift;
 	my $term = shift;
+	my $search_opts = shift || undef;
 
 	my $beastDB = $self->{'_beast_db'};
-	my @set_ids = $beastDB->searchSetsByTerm($term);
+	my @set_ids;
+	if ($search_opts && $search_opts->{'keyspace'}) {
+		@set_ids = $beastDB->searchSetsByTermRestrictKeyspace($term, $search_opts->{'keyspace'});
+	} else {
+		@set_ids = $beastDB->searchSetsByTerm($term);
+	}
+
 	unless ($#set_ids > -1 ) { return $FALSE; }
 
 	my @nodes;
