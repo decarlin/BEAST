@@ -149,6 +149,7 @@ sub doMySets()
 	}
 
 	print "<form id=\"mysetsform\">";
+	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\"><br>";
 	if ($cgi->param('checkedelements[]')) {
 		my $checked = {};
 		my @checked = $cgi->param('checkedelements[]');	
@@ -163,7 +164,6 @@ sub doMySets()
 	BeastSession::saveMySets($session, @sets);
 	# save sets data in the session
 
-	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\"><br>";
 	print "</form>";
 
 }
