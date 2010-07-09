@@ -322,11 +322,17 @@ SELECT sets.id FROM sets JOIN set_entity	\
 	JOIN keyspace 	\
 	ON entity.keyspace_id = keyspace.id	";
 
+	my $j = 0;
+	$template = $template." WHERE ";
 	foreach (keys %$keyspace_opts) {
+		if ($j != 0) {
+			$template = $template." AND ";
+		}
+		$j++;
 		my $key = $_;
 		my @values = @{$keyspace_opts->{$key}};
 		
-		$template = $template." WHERE ( keyspace.".$key." = '".$values[0]."' ";
+		$template = $template." ( keyspace.".$key." = '".$values[0]."' ";
 		for my $i (1 .. $#values) {
 			$template = $template." OR keyspace.".$key." = '".$values[$i]."' ";
 		}
