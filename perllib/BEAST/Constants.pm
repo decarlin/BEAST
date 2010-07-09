@@ -6,7 +6,7 @@
 
 #at some point this should be turned into a perl object rather than just a module.
 
-package constants;
+package Constants;
 
 use strict;
 use warnings;
@@ -16,7 +16,8 @@ our @ISA        = qw(Exporter);
 our @EXPORT     = qw(	TEMP_DIR
 						WEB_STATIC_DIR
 						WEB_SCRIPT_DIR
-						DEBUG);
+						DEBUG
+						SET_NAME_DELIM);
 our @EXPORT_OK  = qw();
 our $VERSION    = 1.0;
 
@@ -25,7 +26,7 @@ use constant TEMP_DIR => "/projects/sysbio/map/Papers/MetaTrans/perl/Data";
 use constant WEB_STATIC_DIR => "/projects/sysbio/map/Projects/BEAST/web_static";
 use constant WEB_SCRIPT_DIR => "/projects/sysbio/map/Projects/BEAST/web_scripts";
 use constant DEBUG => 1;
-
+use constant SET_NAME_DELIM => "<>";
     
 return 1;
 
