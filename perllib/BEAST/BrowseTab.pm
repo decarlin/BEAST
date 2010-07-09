@@ -65,11 +65,6 @@ sub printBrowseTab
 			'organism' => [ 'mouse', 'human' ],	
 			'source'   => [ 'entrez' ],
 		},
-	}
-
-	my $checkboxdata = { 
-		'Organism' => [ 'Mouse', 'Human' ], 
-		'Kind' => [ 'GO_Terms' ] 
 	};
 
 	my $input = $self->{'_input'};
@@ -108,18 +103,30 @@ EOF
 		@checked = $input->param('checkedfilters[]');
 	}
 
-	foreach (keys %$checkboxdata) {
+	my $at_least_one_checked = $FALSE;
+	my $at_least_one_unchecked = $FALSE;
+
+	foreach (keys %{$searchopts->{'keyspace'}}) {
 	  my $key = $_;
 	  htmlHelper::beginSection($key, 'FALSE');
-	  foreach (@{$checkboxdata->{$key}}) { 
+	  foreach (@{$searchopts->{'keyspace'}->{$key}}) { 
 		my $name = $_;
 		my $checkedon = "";
 		if (grep(/$key\:$name/, @checked)) {
+			$at_least_one_checked = $TRUE;
 			$checkedon = "checked='yes'";
+		} else {
+			$at_least_one_unchecked = $TRUE;
 		}
+
 		print "<input type=checkbox name=\"$key:$name\" $checkedon>$name<br>\n";
 	  }
 	  htmlHelper::endSection($key);
+	}
+
+	my $FULL_SEARCH = $FALSE;
+	if (($at_least_one_checked == $FALSE) || ($at_least_one_unchecked == $FALSE)) {
+		$FULL_SEARCH = $TRUE;
 	}
 
 	unless ($searchtext eq "") {
@@ -135,7 +142,13 @@ EOF
 		foreach (@searches) {
 			my $search = $_;
 
-			my @top_level_nodes = $treeBuilder->findParentsByTerm($search, $searchopts);
+			my @top_level_nodes;
+			# either all unchecked, or all checked: do a full, categorical search
+			if ($FULL_SEARCH == $TRUE) {
+			  @top_level_nodes = $treeBuilder->findParentsByTerm($search);
+			} else {
+			  @top_level_nodes = $treeBuilder->findParentsByTerm($search, $searchopts);
+			}
 			#my @top_level_nodes = $treeBuilder->findParentsForSetByExtID($search);
 			foreach (@top_level_nodes) {
 				my $node = $_;
