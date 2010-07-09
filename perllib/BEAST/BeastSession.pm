@@ -60,8 +60,9 @@ sub buildCheckedHash
 	my @checked_sets = @_;
 
 	my $hash = {};
+	my $delim = Constants::SET_NAME_DELIM;
 	foreach (@checked_sets) {
-		my @parts = split(/Constants::SET_NAME_DELIM/, $_);
+		my @parts = split(/$delim/, $_);
 		$hash->{$parts[-1]} = 1;	
 	}
 	
@@ -79,7 +80,7 @@ sub loadSearchResults
 	my $setsstr = $session->param('browseresults');	
 	my @lines = split (/:SEP:/, $setsstr);
 
-	my @sets = ();
+	my @sets;
 	foreach (@lines) {
 		push @sets, Set->new($_);
 	}
@@ -89,14 +90,16 @@ sub loadSearchResults
 
 	my @selected_sets;
 	#  merge with checkbox data
+	# fixme: we somehow have to only move the checked subset
 	foreach (@sets) {
 		my $set = $_;
 		my $name = $set->get_name;
 		if (exists $checked_hash->{$name}) {
+			$set->mergeCheckbox_Remove($checked_hash);
 			push @selected_sets, $set;
 		}
 	}
-	
+
 	return @selected_sets;
 }
 #

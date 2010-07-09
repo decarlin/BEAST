@@ -98,6 +98,16 @@ sub set_element
 	$self->{'_elements'}->{$element_name} = $element;
 }
 
+sub delete_element
+{
+	my $self = shift;
+	my $element_name = shift;
+
+	if (exists($self->{'_elements'}->{$element_name})) { 
+		delete($self->{'_elements'}->{$element_name});
+	}
+}
+
 sub get_element_names
 {
 	my $self = shift;
@@ -112,6 +122,7 @@ sub get_metadata_value
 
 	return $self->{'_metadata'}->{$key};
 }
+
 
 #
 # Find a place where they differ, then add the second tree's subsets to the first 
@@ -235,6 +246,24 @@ sub removeTreeFromCollection
 	return @pared_collection;
 }
 
+sub mergeCheckbox_Remove
+{
+	my $self = shift;
+	my $checkboxHash = shift;
+
+	foreach ($self->get_element_names) {
+		my $name = $_;
+		if (exists $checkboxHash->{$name}) {
+		  my $element = $self->get_element($name);
+		  if (ref($element) eq 'Set') {
+			$element->mergeCheckbox_Remove($checkboxHash);
+		  }
+		} else {
+		  #delete it
+		  $self->delete_element($name);
+		}
+	}
+}
 
 
 1;
