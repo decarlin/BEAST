@@ -102,16 +102,18 @@ sub loadSearchResults
 #
 # Return: [ retval(0|1), @sets ]
 #
-sub loadMySets
+sub loadMySets($)
 {
 	my $session = shift;
 
 	my $setsstr = $session->param('mysets');	
 	unless ($setsstr =~ /\S+/) { return 0; }
 	my @lines = split (/:SEP:/, $setsstr);
-	my @sets = ();
+	my @sets;
 	foreach (@lines) {
-		push @sets, Set->new($_);
+		my $line = $_;
+		next unless ($line =~ /_name/);
+		push @sets, Set->new($line);
 	}
 
 	return @sets;

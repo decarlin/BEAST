@@ -200,9 +200,11 @@ sub mergeDisjointCollections
 
 	my @collection2 = @{$collection2REF};
 
+	my @merged_trees;
 	foreach (@{$collection1REF}) {
 
-		my $retval = $_->mergeDisjointTrees(@collection2);
+		my $tree = $_;
+		my $retval = $tree->mergeTrees(@collection2);
 	
 		# no match
 		next if ($retval eq $FALSE);
@@ -211,6 +213,11 @@ sub mergeDisjointCollections
 		# disjoint, it won't match any other trees in collection 2
 		@collection2 = removeTreeFromCollection($retval, @collection2);
 	}
+
+	# whatever hasn't been removed from collection 2 has had no match, so 
+	# we can remove it now
+	@merged_trees = (@{$collection1REF}, @collection2);
+	return @merged_trees;
 }
 
 sub removeTreeFromCollection

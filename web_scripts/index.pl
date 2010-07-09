@@ -135,7 +135,11 @@ print "</div>";
 
 sub doMySets()
 {
-	BeastSession::loadMySets($session, \@sets);
+	@sets = BeastSession::loadMySets($session);
+	unless (ref($sets[0]) eq 'Set') {
+		pop @sets;
+	}
+	#print Data::Dumper->Dump([@sets]);
 
 	# add/merge these sets with the current working sets
 	if ($cgi->param('browsesets[]')) {
@@ -143,7 +147,7 @@ sub doMySets()
 		if ($#sets == -1) {
 			@sets = @browseSets;
 		} else {
-			Set::mergeDisjointCollections(\@sets, \@browseSets);
+			@sets = Set::mergeDisjointCollections(\@sets, \@browseSets);
 		}
 	}
 
