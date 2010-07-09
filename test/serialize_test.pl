@@ -21,7 +21,9 @@ my @tree2 = $treeBuilder->findParentsForSet(142510);
 
 my $json_text = $tree1[0]->serialize();
 print "encoded:\n";
-print "$json_text";
+print "$json_text:\n";
 my $newset = Set->new($json_text);
-print Data::Dumper->Dump([$newset]);
-
+my $new_text =  $newset->serialize();
+print "\n";
+print $new_text;
+#MySets::displaySets("test", ($tree1[0], $newset));

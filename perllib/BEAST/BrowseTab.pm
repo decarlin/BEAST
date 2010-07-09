@@ -194,6 +194,7 @@ EOF
 		}
 
 		if (validateSearchResults(@merged) > 0) {	
+			print Data::Dumper->Dumper([$merged[0]]);
 			MySets::displaySets("browse", @merged);
 		}
 		

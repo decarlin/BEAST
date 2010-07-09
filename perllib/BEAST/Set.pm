@@ -47,6 +47,13 @@ sub new
 
 		my $json = JSON->new->utf8;
 		$self = $json->decode($json_text);
+
+		# self, and all it's elements are just hash refs now
+		# -- we need to recursively bless each into being a 'Set' object
+		foreach (keys %{$self->{'_elements'}}) {
+			$self->{'_elements'}->{$_} = Set->new($json->encode($self->{'_elements'}->{$_}));
+		}
+
 	} elsif (!@_) {
 		die "Set::new method called without arguments!";
 	}

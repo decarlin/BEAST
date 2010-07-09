@@ -157,9 +157,11 @@ sub doMySets()
 		}
 		MySets::updateActiveElements($checked, \@sets);	
 	}
+	print Data::Dumper->Dump([$sets[0]]);
 	MySets::displaySets("mysets", @sets);
 
 
+	
 	BeastSession::saveMySets($session, @sets);
 	# save sets data in the session
 
