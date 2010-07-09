@@ -78,6 +78,9 @@ sub displaySets
 
 		$displayData->{$name} = getDisplayHash($set);
 		$displayData->{$name}->{'_active'} = $set->{'_active'};
+		$displayData->{$name}->{'_desc'} = $set->get_metadata_value('name');
+		$displayData->{$name}->{'_type'} = $set->get_metadata_value('type');
+		$displayData->{$name}->{'_id'} = $set->get_metadata_value('id');
 	}
 
 	#print Data::Dumper->Dump([$displayData]);
