@@ -294,7 +294,10 @@ sub getParentsForSet($$)
 # 	  keyspace.description='bleh'
 # 	  keyspace.created='bleh'
 # This is a big join: might be slow before it's cached
-#sub searchSetsByTermRestrictKeyspace(text, keyspace field, keyspace value)
+# sub searchSetsByTermRestrictKeyspace(text, keyspace field, keyspace value)
+#
+# Note: the current implementation restricts to sets that actually have entities 
+#
 sub searchSetsByTermRestrictKeyspace($$$)
 {
 	my $self = shift;
@@ -321,9 +324,18 @@ SELECT sets.id FROM sets JOIN set_entity	\
 
 	foreach (keys %$keyspace_opts) {
 		my $key = $_;
-		$template = $template." WHERE keyspace.".$key." = '".$keyspace_opts->{$key}."' ";
+		my @values = @{$keyspace_opts->{$key}};
+		
+		$template = $template." WHERE ( keyspace.".$key." = '".$values[0]."' ";
+		for my $i (1 .. $#values) {
+			$template = $template." OR keyspace.".$key." = '".$values[$i]."' ";
+		}
+		$template = $template.") ";
 	}
 	$template = $template."AND sets.name LIKE '%".$search_text."%';";
+
+	# debug
+	#print $template;
 
 	my $results = $self->runSQL($template);
 

@@ -106,6 +106,7 @@ EOF
 	my $at_least_one_checked = $FALSE;
 	my $at_least_one_unchecked = $FALSE;
 
+	my $checkedopts = {'keyspace' => {}};
 	foreach (keys %{$searchopts->{'keyspace'}}) {
 	  my $key = $_;
 	  htmlHelper::beginSection($key, 'FALSE');
@@ -115,6 +116,13 @@ EOF
 		if (grep(/$key\:$name/, @checked)) {
 			$at_least_one_checked = $TRUE;
 			$checkedon = "checked='yes'";
+			my @chk;
+			if (exists $checkedopts->{'keyspace'}->{$key}) {
+				@chk = @{$checkedopts->{'keyspace'}->{$key}};
+				$checkedopts->{'keyspace'}->{$key} = [ @chk, $name ];
+			} else {
+				$checkedopts->{'keyspace'}->{$key} = [ $name ];
+			}
 		} else {
 			$at_least_one_unchecked = $TRUE;
 		}
@@ -147,7 +155,7 @@ EOF
 			if ($FULL_SEARCH == $TRUE) {
 			  @top_level_nodes = $treeBuilder->findParentsByTerm($search);
 			} else {
-			  @top_level_nodes = $treeBuilder->findParentsByTerm($search, $searchopts);
+			  @top_level_nodes = $treeBuilder->findParentsByTerm($search, $checkedopts);
 			}
 			#my @top_level_nodes = $treeBuilder->findParentsForSetByExtID($search);
 			foreach (@top_level_nodes) {
