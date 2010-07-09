@@ -157,7 +157,6 @@ sub doMySets()
 		}
 		MySets::updateActiveElements($checked, \@sets);	
 	}
-	print Data::Dumper->Dump([$sets[0]]);
 	MySets::displaySets("mysets", @sets);
 
 
