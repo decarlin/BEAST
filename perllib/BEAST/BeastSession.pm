@@ -18,9 +18,16 @@ sub saveMySets
 	my @sets = @_;
 
 	my $mysetsstr;
+	my $i = 0;
 	foreach (@sets) {
 		my $set = $_;
-		$mysetsstr = $mysetsstr.$set->serialize()."\n";
+		if ($i == 0) {
+			$mysetsstr = $set->serialize();
+		} else {
+			my $setstr = $set->serialize();
+			$mysetsstr = $mysetsstr.":SEP:".$setstr;
+		}
+		$i++;
 	}
 
 	$session->param('mysets', $mysetsstr);
@@ -71,7 +78,6 @@ sub loadSearchResults
 	my $setsstr = $session->param('browseresults');	
 	my @lines = split (/:SEP:/, $setsstr);
 
-	## fixme: not working yet
 	my @sets = ();
 	foreach (@lines) {
 		push @sets, Set->new($_);
@@ -98,18 +104,16 @@ sub loadSearchResults
 sub loadMySets
 {
 	my $session = shift;
-	my $setsref = shift;
 
 	my $setsstr = $session->param('mysets');	
 	unless ($setsstr =~ /\S+/) { return 0; }
-	my @lines = split (/\n/, $setsstr);
-	my @sets = Set::parseSetLines(@lines);
-
-	foreach (@sets) {
-		push @{$setsref}, $_;
+	my @lines = split (/:SEP:/, $setsstr);
+	my @sets = ();
+	foreach (@lines) {
+		push @sets, Set->new($_);
 	}
 
-	return 1;
+	return @sets;
 }
 
 1;
