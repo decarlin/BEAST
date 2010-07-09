@@ -46,7 +46,7 @@ sub new
 		my $json_text = shift;
 
 		my $json = JSON->new->utf8;
-		$self = \$json->decode($json_text);
+		$self = $json->decode($json_text);
 	} elsif (!@_) {
 		die "Set::new method called without arguments!";
 	}
