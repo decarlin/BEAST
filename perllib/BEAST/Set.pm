@@ -98,6 +98,14 @@ sub set_element
 	$self->{'_elements'}->{$element_name} = $element;
 }
 
+sub set_element_inactive
+{
+	my $self = shift;
+	my $element_name = shift;
+
+	$self->{'_elements'}->{$element_name}->{'_active'} = 0;
+}
+
 sub delete_element
 {
 	my $self = shift;
@@ -262,6 +270,28 @@ sub mergeCheckbox_Remove
 		  #delete it
 		  $self->delete_element($name);
 		}
+	}
+}
+
+sub mergeCheckbox_Inactivate
+{
+	my $self = shift;
+	my $checkboxHash = shift;
+
+	foreach ($self->get_element_names) {
+		my $name = $_;
+	 	my $element = $self->get_element($name);
+	     
+		unless (exists $checkboxHash->{$name}) {
+	  	  if (ref($element) eq 'Set') {
+			$self->set_element_inactive($name);
+		  } else {
+			#how to inactivate a gene???
+		  } 
+		}
+	  	if (ref($element) eq 'Set') {
+			$element->mergeCheckbox_Inactivate($checkboxHash);
+	  	}
 	}
 }
 

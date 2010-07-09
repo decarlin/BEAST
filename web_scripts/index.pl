@@ -154,13 +154,10 @@ sub doMySets()
 	print "<form id=\"mysetsform\">";
 	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\"><br>";
 	if ($cgi->param('checkedelements[]')) {
-		my $checked = {};
 		my @checked = $cgi->param('checkedelements[]');	
-		foreach (@checked) {
-			$checked->{$_} = 1;
-		}
-		#print Data::Dumper->Dump([$checked]);
-		MySets::updateActiveElements($checked, \@sets);	
+		my $checked_hash = BeastSession::buildCheckedHash(@checked);
+		#print Data::Dumper->Dump([$checked_hash]);
+		@sets = MySets::updateActiveElements($checked_hash, @sets);	
 	}
 	MySets::displaySets("mysets", @sets);
 
