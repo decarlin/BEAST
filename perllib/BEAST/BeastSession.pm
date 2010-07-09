@@ -9,6 +9,7 @@ use DBI;
 
 use Data::Dumper;
 use BEAST::Set;
+use BEAST::Constants;
 
 package BeastSession;
 
@@ -60,7 +61,7 @@ sub buildCheckedHash
 
 	my $hash = {};
 	foreach (@checked_sets) {
-		my @parts = split(/<>/, $_);
+		my @parts = split(/Constants::SET_NAME_DELIM/, $_);
 		$hash->{$parts[-1]} = 1;	
 	}
 	

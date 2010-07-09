@@ -7,9 +7,12 @@ package CheckBoxTree;
 use strict;
 use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
+
+use BEAST::Constants;
 use htmlHelper;
 
-our $delim = "<>";
+
+our $delim = Constants::SET_NAME_DELIM;
 ###
 ### Build drop down list below this item
 ###
@@ -72,7 +75,7 @@ sub buildCheckBoxTree($$$)
 		if ( (ref($ref) eq 'HASH') && ref($ref->{$name}) ) {
 			## print another drop-down arrow, which includes a checkbox for 
 			## this element as well
-			my $index = ($key eq "") ? $name : $key.$delim.$name;
+			my $index = ($key eq "") ? $name : $key.Constants::SET_NAME_DELIM.$name;
 			buildCheckBoxTree($dataRef, $index, $divID); 
 		} elsif ($name =~ /_desc|_type|_id/) {
 			next;
@@ -89,7 +92,7 @@ sub buildCheckBoxTree($$$)
 
 			## print the tag and move on
 			print "<input style='$marginleft' type=checkbox name=\"";
-			($key eq "") ? print $name : print $key.$delim.$name;
+			($key eq "") ? print $name : print $key.Constants::SET_NAME_DELIM.$name;
 			print "\"$checkedText>$name<br/>\n";
 		}
 

@@ -12,6 +12,7 @@ use Pod::Usage;
 use CGI qw(:standard);
 use CGI;
 use CGI::Carp qw(fatalsToBrowser);
+use BEAST::Constants;
 
 our @ISA		= qw(Exporter);
 #our @EXPORT	= qw(printHeader printFooter $WEB_ROOT $WEB_CGI $WEB_STATIC $WEB_TEMP $PATH_CGI $PATH_STATIC $PATH_TEMP $TEMP_CHMOD );
@@ -76,15 +77,16 @@ sub beginTreeSection($$$$$)
 		$display = 1;
 	}
 
+	my $delim = Constants::SET_NAME_DELIM;
 	my @nameComponents;
 	my $marginleft = "margin-left:0px;";
-	if (@nameComponents = split(/<>/, $section)) {
+	if (@nameComponents = split(/$delim/, $section)) {
 		$section = $nameComponents[-1];
 		$marginleft = "margin-left:".(($#nameComponents)*10)."px;";
 	}
 
 	# must be unique
-	my $divID = $div_id."<>".$section;	
+	my $divID = $div_id.Constants::SET_NAME_DELIM.$section;	
 	
 	my $arrow = $display ? "images/ominus.png" : "images/plus.png";
 	$display = $display ? "block":"none";

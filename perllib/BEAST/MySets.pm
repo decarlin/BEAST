@@ -8,6 +8,7 @@ use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use Data::Dumper;
 use BEAST::Set;
 use BEAST::CheckBoxTree;
+use BEAST::Constants;
 
 package MySets;
 
@@ -48,7 +49,7 @@ sub updateActive
 		my $element = $set->get_element($name);
 
 		my $checked;
-		if (exists $checkedHash->{$key."^".$name}) {
+		if (exists $checkedHash->{$key.Constants::SET_NAME_DELIM.$name}) {
 			$checked = 1;
 		} else {
 			$checked = 0;
@@ -56,7 +57,7 @@ sub updateActive
 
 		if (ref($element) eq 'Set') {
 			$element->{'_active'} = $checked;
-			updateActive($checkedHash, $element, $key."^".$element->get_name);
+			updateActive($checkedHash, $element, $key.Constants::SET_NAME_DELIM.$element->get_name);
 		} else {
 			#print "setting $name to $checked! with key: $key:$name<br>\n";
 			$set->set_element($name, $checked);

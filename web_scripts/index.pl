@@ -155,6 +155,7 @@ sub doMySets()
 		foreach (@checked) {
 			$checked->{$_} = 1;
 		}
+		#print Data::Dumper->Dump([$checked]);
 		MySets::updateActiveElements($checked, \@sets);	
 	}
 	MySets::displaySets("mysets", @sets);
