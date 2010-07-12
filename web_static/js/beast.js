@@ -1,4 +1,15 @@
 var checked = false;
+
+function onOpsTabSelected(event, ui) {
+	if (ui.tab.hash == "#browse") {
+		onLoadBrowse(event, ui);
+	}
+}
+
+function onLoadBrowse() {
+	//alert('loaded browse');
+}
+
 function checkAll(formId) {
     if (checked == false)
     {
@@ -23,7 +34,6 @@ function selectStyle(selected, deselected)
     if(el != null)
         el.style.fontWeight = "normal";
 }
-
 
 function chooseFileImport(form) {
 	try {
@@ -167,3 +177,10 @@ function onSearchSets() {
 		 'checkedfilters[]': checkedFilters} 
 	);
 }
+
+function handleKeypress(e) {
+	if (e.which == 13) {
+		alert('enter pressed!');
+	}
+}
+

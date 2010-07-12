@@ -90,13 +90,13 @@ sub printBrowseTab
 	}
 
 	## Create Form element and the rest...
-	print <<EOF;
+	print <<MULTILINE_STR;
 	<form id="searchcategories">
 	<input type='button' value="Select/Deselect All" onclick="checkAll('searchcategories');">
 	<b> Search: </b><input type='text' name="searchtext" value="$searchtext" size="25">
 	<!-- Send selected filter categories to display pannel via ajax -->
 	<input type='button' name='activetab' value='browse' onClick="return onSearchSets();">
-EOF
+MULTILINE_STR
 
 	my @checked;
 	if ($input->param('checkedfilters[]')) {
@@ -206,10 +206,10 @@ EOF
 	}
 
 
-	print <<EOF;
+	print <<MULTILINE_STR;
 	<input type='button' value='Add To My Sets' onClick="return onAddBrowseSets(this.form);"><br>
 	</form>
-EOF
+MULTILINE_STR
 
 
 }

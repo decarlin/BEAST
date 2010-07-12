@@ -86,13 +86,18 @@ sub doTabbedMenu()
 {
 		
 # Create Jquery tabbed box with 2 tabs
-	print <<EOF;
+	print <<MULTILINE_STR;
 <script type="text/javascript">
 
 	\$(
 		function()
 		{
-			\$("#tabs").tabs();
+			\$("#tabs").tabs({
+
+	  		select: function(event, ui) {
+				onOpsTabSelected(event, ui);
+    			}
+			});
 			\$("#mysets_tab").tabs();
 		}
 	);
@@ -103,21 +108,21 @@ sub doTabbedMenu()
 		<li><a href="#mysets">MySets</a></li>
 	</ul>
 	<div id="mysets">
-EOF
+MULTILINE_STR
 	doMySets();
 # mysets
 print "</div>";
 # surrounding div
 print "</div>";
 
-print <<EOF;
+print <<MULTILINE_STR;
 <div class="myopstabs_div" id="tabs">
 	<ul>
 		<li><a href="#import">Import</a></li>
 		<li><a href="#browse">Browse</a></li>
 		<li><a href="http://sysbio.soe.ucsc.edu/BEAST/admin_pages/admin.html">Admin</a></li>
 	</ul>
-EOF
+MULTILINE_STR
 
 	print "<div id=\"import\">";
 	$importObj->printImportTab();
