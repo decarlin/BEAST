@@ -8,12 +8,25 @@ function onOpsTabSelected(event, ui) {
 	}
 }
 
+function onViewTabSelected(event, ui) {
+	if (ui.tab.hash == "#mysets_tree") {
+		onLoadMySetsTree(event, ui);
+	} else if (ui.tab.hash == '#mysets_flat') {
+	}
+}
+
 function onLoadBrowse(event, ui) {
 	//alert('loaded browse');
 }
 
 function onLoadView(event, ui) {
 	//alert('loaded browse');
+}
+
+function onLoadMySetsTree(event, ui) {
+	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
+		{display_mysets_tree:"yes"}
+	);
 }
 
 function checkAll(formId) {
@@ -91,7 +104,7 @@ function onAddBrowseSets(form) {
 
 	// serialize the metadata selects
 	var selects = getChecked(form);
-	$('#mysets').load('/cgi-bin/BEAST/index.pl', 
+	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
 		{'addbrowse':'yes',
 		 'browsesets[]': selects }
 	);
@@ -155,7 +168,7 @@ function onUpdateMySets(form) {
 	<!-- build search opts data structure -->
 	var checkedElements = getChecked(form);
 
-	$('#mysets').load('/cgi-bin/BEAST/index.pl', 
+	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
 		{mysets:"yes",
 		 'checkedelements[]': checkedElements}
 	);

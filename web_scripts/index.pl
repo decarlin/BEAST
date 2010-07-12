@@ -37,7 +37,6 @@ our @sets;
 
 sub doTabbedMenu();
 sub doImportTab();
-sub doMySets();
 
 my $browseObj;
 my $importObj;
@@ -56,15 +55,18 @@ my $importObj;
 	$importObj = ImportTab->new($cgi);
 
 	if ($cgi->param('addbrowse')) {
-		doMySets();
+		addSearchSets();
+		displayMySets();
 	} elsif ($cgi->param('browse')) {
 		# replace the browse tab to include the search results
 
 		$browseObj->printBrowseTab($session);
 	} elsif ($cgi->param('import')) {
 		$importObj->printImportTab();
+	} elsif ($cgi->param('display_mysets_tree')) {
+		displayMySets();
 	} elsif ($cgi->param('mysets')) {
-		doMySets();
+		displayMySets();
 	} else {
 		# default; on page creation	
 		$session->clear();
@@ -98,19 +100,30 @@ sub doTabbedMenu()
 				onOpsTabSelected(event, ui);
     			}
 			});
-			\$("#mysets_tab").tabs();
+			\$("#mysets_tab").tabs({
+
+	  		select: function(event, ui) {
+				onViewTabSelected(event, ui);
+    			}
+			});
 		}
 	);
 </script>
 
 <div class="mysets_div" id="mysets_tab">
 	<ul>
-		<li><a href="#mysets">MySets</a></li>
+		<li><a href="#mysets_tree">MySets (Tree)</a></li>
+		<li><a href="#mysets_flat">MySets (Flat)</a></li>
 	</ul>
-	<div id="mysets">
+	<div id="mysets_tree">
 MULTILINE_STR
-	doMySets();
+	displayMySets();
 # mysets
+	print <<MULTILINE_STR;
+	</div>
+	<div id="mysets_flat">
+MULTILINE_STR
+
 print "</div>";
 # surrounding div
 print "</div>";
@@ -142,7 +155,29 @@ MULTILINE_STR
 print "</div>";
 }
 
-sub doMySets()
+sub displayMySets()
+{
+	@sets = BeastSession::loadMySets($session);
+	unless (ref($sets[0]) eq 'Set') {
+		pop @sets;
+	}
+
+	print "<form id=\"mysetsform\">";
+	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\"><br>";
+	if ($cgi->param('checkedelements[]')) {
+		my @checked = $cgi->param('checkedelements[]');	
+		my $checked_hash = BeastSession::buildCheckedHash(@checked);
+		#print Data::Dumper->Dump([$checked_hash]);
+		@sets = MySets::updateActiveElements($checked_hash, @sets);	
+		BeastSession::saveMySets($session, @sets);
+	}
+	MySets::displaySets("mysets", @sets);
+	print "</form>";
+}
+
+
+# save and merge search results to mysets
+sub addSearchSets()
 {
 	@sets = BeastSession::loadMySets($session);
 	unless (ref($sets[0]) eq 'Set') {
@@ -159,23 +194,7 @@ sub doMySets()
 			@sets = Set::mergeDisjointCollections(\@sets, \@browseSets);
 		}
 	}
-
-	print "<form id=\"mysetsform\">";
-	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\"><br>";
-	if ($cgi->param('checkedelements[]')) {
-		my @checked = $cgi->param('checkedelements[]');	
-		my $checked_hash = BeastSession::buildCheckedHash(@checked);
-		#print Data::Dumper->Dump([$checked_hash]);
-		@sets = MySets::updateActiveElements($checked_hash, @sets);	
-	}
-	MySets::displaySets("mysets", @sets);
-
-
-	
 	BeastSession::saveMySets($session, @sets);
-	# save sets data in the session
-
-	print "</form>";
-
 }
+
 
