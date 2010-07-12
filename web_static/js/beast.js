@@ -3,10 +3,16 @@ var checked = false;
 function onOpsTabSelected(event, ui) {
 	if (ui.tab.hash == "#browse") {
 		onLoadBrowse(event, ui);
+	} else if (ui.tab.hash == '#view') {
+		onLoadView(event, ui);
 	}
 }
 
-function onLoadBrowse() {
+function onLoadBrowse(event, ui) {
+	//alert('loaded browse');
+}
+
+function onLoadView(event, ui) {
 	//alert('loaded browse');
 }
 

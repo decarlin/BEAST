@@ -120,6 +120,7 @@ print <<MULTILINE_STR;
 	<ul>
 		<li><a href="#import">Import</a></li>
 		<li><a href="#browse">Browse</a></li>
+		<li><a href="#view">View</a></li>
 		<li><a href="http://sysbio.soe.ucsc.edu/BEAST/admin_pages/admin.html">Admin</a></li>
 	</ul>
 MULTILINE_STR
@@ -131,6 +132,9 @@ MULTILINE_STR
 
 	print "<div id=\"browse\">";
 	$browseObj->printBrowseTab();
+	print "</div>";
+
+	print "<div id=\"view\">";
 	print "</div>";
 
 	print "<div id=\"admin\">";
