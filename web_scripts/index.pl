@@ -56,7 +56,9 @@ my $importObj;
 
 	if ($cgi->param('addbrowse')) {
 		addSearchSets();
-		displayMySets();
+		if ($cgi->param('type') eq "tree") {
+			displayMySets();
+		}
 	} elsif ($cgi->param('browse')) {
 		# replace the browse tab to include the search results
 

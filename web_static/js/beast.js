@@ -104,10 +104,23 @@ function onAddBrowseSets(form) {
 
 	// serialize the metadata selects
 	var selects = getChecked(form);
-	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
-		{'addbrowse':'yes',
-		 'browsesets[]': selects }
-	);
+
+	var $mysets_tab = $('#mysets_tab').tabs();
+	var selected = $mysets_tab.tabs('option', 'selected');
+
+	if (selected == 0) {
+		$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
+		  {'addbrowse':'yes',
+		   'type':'tree',
+		   'browsesets[]': selects }
+		);
+ 	} else if (selected == 1) {
+		$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
+		  {'addbrowse':'yes',
+		   'type':'flat',
+		   'browsesets[]': selects }
+		);
+	}
 }
 
 function onImportSets(form) {
