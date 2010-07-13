@@ -295,5 +295,39 @@ sub mergeCheckbox_Inactivate
 	}
 }
 
+sub getLeafNodes()
+{
+	my $self = shift;	
+
+	my @leafnodes;	
+
+	my @names = $self->get_element_names;
+	if ($#names == -1) { push @leafnodes, $self; }
+
+	foreach (@names) {
+		my $name = $_;
+	 	my $element = $self->get_element($name);
+	     
+	  	next unless (ref($element) eq 'Set');
+
+		my $isleaf = $TRUE;
+		foreach ($element->get_element_names) {
+			my $subelement = $element->get_element($_);
+			if (ref($subelement) eq 'Set') {
+				my @subleaves = $subelement->getLeafNodes;
+				push @leafnodes, @subleaves;
+				$isleaf = $FALSE;
+			}
+		}
+
+		if ($isleaf == $TRUE) { 
+			push @leafnodes, $element; 
+		}
+	}
+
+	return @leafnodes;
+}
+
+
 
 1;
