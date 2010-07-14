@@ -20,7 +20,12 @@ function onLoadBrowse(event, ui) {
 }
 
 function onLoadView(event, ui) {
-	//alert('loaded browse');
+	
+	$.getJSON('/cgi-bin/BEAST/index.pl',  { mysets:"yes", format:"json" }, 
+		function(data){
+			alert('JSON Data view'+data._name);
+		}
+	);
 }
 
 function onLoadMySetsTree(event, ui) {

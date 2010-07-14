@@ -68,7 +68,11 @@ my $importObj;
 	} elsif ($cgi->param('display_mysets_tree')) {
 		displayMySets();
 	} elsif ($cgi->param('mysets')) {
-		displayMySets();
+		if ($cgi->param('format') && ($cgi->param('format') eq 'json')) {
+			getMySetsJSON();		
+		} else {
+			displayMySets();
+		}
 	} else {
 		# default; on page creation	
 		$session->clear();
@@ -173,12 +177,33 @@ sub displayMySets()
 		@sets = MySets::updateActiveElements($checked_hash, @sets);	
 		BeastSession::saveMySets($session, @sets);
 	}
-	MySets::displaySets("mysets", @sets);
+	MySets::displaySetsTree("mysets", @sets);
 	print "</form>";
 }
 
 
 # save and merge search results to mysets
+sub getMySetsJSON()
+{
+	@sets = BeastSession::loadMySets($session);
+	unless (ref($sets[0]) eq 'Set') {
+		pop @sets;
+	}
+	my @leaves;
+	foreach (@sets) {
+		push @leaves, $_->getLeafNodes();
+	}
+
+	my $elements = {};
+	foreach (@leaves) {
+		$elements->{$_->get_name} = $_;
+	}
+
+	my $collection = Set->new('collection', 1, {}, $elements);
+
+	print $collection->serialize();
+}
+
 sub addSearchSets()
 {
 	@sets = BeastSession::loadMySets($session);

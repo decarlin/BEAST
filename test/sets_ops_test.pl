@@ -60,30 +60,6 @@ my $tree2 = Set->new(
 );
 
 
-## Object Serialization Test
-print "Testing Object Serialization...\n";
-open OUT, ">".$set2->get_name.".save" || exit 1;
-my $set2Str = $set2->serialize();
-print OUT $set2Str."\n";
-close OUT;
-
-open OUT, $set2->get_name.".save" || exit 1;
-my @lines = <OUT>;
-close OUT;
-
-my @loadedsets = Set::parseSetLines(@lines);
-
-my $loadedSetStr = $loadedsets[0]->serialize();
-if ($loadedSetStr eq $set2Str) {
-	print "Succeeded!\n";
-} else {
-	print "Failed!\n";
-}
-
-my $name = $set2->get_name.".save";
-print `cat $name && rm -f $name`;
-
-
 ## Tree Merge Test
 print "Testing Tree-Merge Function...\n";
 

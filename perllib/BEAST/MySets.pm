@@ -33,7 +33,7 @@ sub updateActiveElements
 }
 
 
-sub displaySets
+sub displaySetsTree
 {
 	my $divID = shift;
 	my @sets = @_;
@@ -53,6 +53,25 @@ sub displaySets
 
 	#print Data::Dumper->Dump([$displayData]);
 	CheckBoxTree::buildCheckBoxTree($displayData, "", $divID);
+}
+
+sub displaySetsFlat
+{
+	my $divID = shift;
+	my @sets = @_;
+
+
+	foreach (@sets) {
+		my $set = $_;
+ 		my $name = $set->get_name;
+		my $type = $set->get_metadata_value('type');
+
+		if ($type eq 'meta') {
+
+		}
+	}
+
+	#CheckBoxTree::buildCheckBoxTree($displayData, "", $divID);
 }
 
 sub getDisplayHash

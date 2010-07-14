@@ -105,7 +105,7 @@ MULTI_LINE_STR
 	<p>Sets:</p>
 	<p>
 MULTI_LINE_STR
-	MySets::displaySets("import", @sets);
+	MySets::displaySetsTree("import", @sets);
 	print "</p>";
 	
 

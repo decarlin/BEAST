@@ -20,7 +20,7 @@ my $treeBuilder = Search->new($beastDB);
 #
 my $searchopts = {
 	'keyspace' => { 'organism' => 'mouse' }
-} 
+};
 my @tree1 = $treeBuilder->findParentsForSet(114009, $searchopts);
 my @tree2 = $treeBuilder->findParentsForSet(142510);
 
@@ -33,34 +33,44 @@ if ($tree1[0]->mergeTree($tree2[0]) > 0) {
 	print $tree2[0]->serialize();
 }
 
-$beastDB->disconnectDB();
-exit;
+#open OUTPUT, ">sets.output";
+#foreach (@sets) {
+#	my $set = $_;
+#	open STDOUT, ">$set.tree" || die "can't open";
+#	my @top_level_nodes = $treeBuilder->findParentsForSet($set);
+#	MySets::displaySetsTree("test",@top_level_nodes);
+##	close STDOUT || die "can't open file";
+#
+#	open TREE, "$_.tree";
+#	my @lines = <TREE>;
+#	foreach (@lines) {
+#		if ($_ =~ /end (GO:\d+.*) --/) {
+#			my @pieces = split(/<>/, $1);	
+#			my $count = 1;
+#			foreach (@pieces) {
+#			  foreach (1 .. $count) { print OUTPUT "\t"; }
+#			  $count++;
+#			  print OUTPUT $_."\n";
+#			}
+#			last;
+#		}
+#	}
+#	`rm $set.tree`;
+#}
+#close OUTPUT;
 
-open OUTPUT, ">sets.output";
-foreach (@sets) {
-	my $set = $_;
-	open STDOUT, ">$set.tree" || die "can't open";
-	my @top_level_nodes = $treeBuilder->findParentsForSet($set);
-	MySets::displaySets("test",@top_level_nodes);
-	close STDOUT || die "can't open file";
+#ops tests
+print "Testing leaf node find test:\n\n\n";
 
-	open TREE, "$_.tree";
-	my @lines = <TREE>;
-	foreach (@lines) {
-		if ($_ =~ /end (GO:\d+.*) --/) {
-			my @pieces = split(/<>/, $1);	
-			my $count = 1;
-			foreach (@pieces) {
-			  foreach (1 .. $count) { print OUTPUT "\t"; }
-			  $count++;
-			  print OUTPUT $_."\n";
-			}
-			last;
-		}
-	}
-	`rm $set.tree`;
+my @top_level_nodes = $treeBuilder->findParentsByTerm('mitochondrial fusion');
+
+$top_level_nodes[1]->mergeTree($top_level_nodes[2]);
+$top_level_nodes[1]->mergeTree($top_level_nodes[3]);
+my @leaves = $top_level_nodes[1]->getLeafNodes();
+
+foreach (@leaves) {
+	print $_->serialize();
+	print "\n";
 }
-close OUTPUT;
-
 $beastDB->disconnectDB();
 

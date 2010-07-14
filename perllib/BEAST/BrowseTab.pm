@@ -194,7 +194,7 @@ MULTILINE_STR
 		}
 
 		if (validateSearchResults(@merged) > 0) {	
-			MySets::displaySets("browse", @merged);
+			MySets::displaySetsTree("browse", @merged);
 		}
 		
 		#my $Rsize = scalar (@results);
