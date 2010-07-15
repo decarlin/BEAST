@@ -1,6 +1,6 @@
 #!/usr/local/bin/perl
 
-use lib "/projects/sysbio/map/Projects/BEAST/perllib";
+#use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 
 sub usage 
 {
@@ -19,8 +19,10 @@ use Getopt::Long;
 
 my $metas_file = '';
 my $meta_mappings = '';
+my $debug = '';
 GetOptions("meta=s" => \$metas_file,
-	   "meta_sets=s" => \$meta_mappings);
+	   "meta_sets=s" => \$meta_mappings,
+	   "debug"	=> \$debug );
 
 
 die &usage() unless (-f $metas_file);
@@ -41,11 +43,25 @@ while (<METAS>) {
 	chomp($ex_id);
 	chomp($name);
 
-	my $id = $importer->insertMeta($ex_id, $name);
+	my $id;
+	if (($id = $importer->existsMeta($ex_id)) == 0) {
+		print "doesn't exist: $ex_id!...adding...\n";
+		$id = $importer->insertMeta($ex_id, $name);
+	} else {
+		print "Meta already exists! id:$id\n";
+		$metas->{$ex_id} = $id;
+		next;
+	}
 	$metas->{$ex_id} = $id;
-	print "Added meta id:$id for meta $ex_id\n";
+	if ($id =~ /\d+/) {
+		print "Added meta id:$id for meta $ex_id\n";
+	} else {
+		print "Failed to add meta id: $ex_id!\n";
+	}
+	
 }
 close (METAS);
+exit;
 
 # create the meta mappings 
 open (META_MAPPINGS, $meta_mappings) || die "can't open $meta_mappings!";
@@ -70,7 +86,15 @@ while (<META_MAPPINGS>) {
 		next;
 	}
 
-	$importer->insertMetaMetaRel($id_parent, "NULL", $id_child);
+	if ($debug) {
+		if ($importer->existsMetaMetaRel($id_parent, "NULL", $id_child) > 0) {
+			print "relation already exists!\n";
+		} else {
+			print "no relation between meta's\n";
+		}
+	} else {
+		$importer->insertMetaMetaRel($id_parent, "NULL", $id_child);
+	}
 	print "done\n";
 }
 close (FAILED);
