@@ -13,6 +13,10 @@ use BEAST::Set;
 
 package BeastDB;
 
+
+our $TRUE=1;
+our $FALSE=0;
+
 # 
 # Instance Methods:
 #
@@ -24,14 +28,25 @@ package BeastDB;
 sub new
 {
 	my $class = shift;
+	my $dev = shift || undef;
 
-	my $self = {
+	my $self;
+	if ($dev eq 'dev')
+	{
+		$self = {
+		'_db_name' 	=> 'BEAST_dev',
+		'_hostname'	=> 'localhost',
+		'_port'		=> '3306',
+		'_username'	=> 'stuartLabMember',
+		'_pass'		=> 'sysbio',
+		};
+	} else {
 		'_db_name' 	=> 'BEAST_dev',
 		'_hostname'	=> 'disco.cse.ucsc.edu',
 		'_port'		=> '3306',
 		'_username'	=> 'beast_user',
 		'_pass'		=> 'beast_guest',
-	};
+	}
 
 	bless $self, $class;
 	return $self;
@@ -271,6 +286,34 @@ sub insertMetaMetaRel($$$)
 	$self->runSQL($template);	
 }
 
+sub existsMetaMetaRel($$$)
+{
+	my $self = shift;
+	my ($parent, $set_child, $meta_child) = @_;
+
+	my $query = "SELECT id FROM meta_sets WHERE sets_meta_id='var1' AND sets_id='var2' AND meta_meta_id='var3'";
+
+	my $template =~ s/var1/'$parent'/;
+	if ($set_child eq "NULL") {
+		$template =~ s/var2/$set_child/;
+	} else {
+		$template =~ s/var2/'$set_child'/;
+	}
+	if ($meta_child eq "NULL") {
+		$template =~ s/var3/$meta_child/;
+	} else {
+		$template =~ s/var3/'$meta_child'/;
+	}
+
+	my $results = $self->runSQL($template);	
+	my (@data) = $results->fetchrow_array();
+	if ($#data == -1) {
+		return $FALSE;
+	} else {
+		return $data[0];
+	}
+}
+
 ##
 ## Parent search functions
 ##
@@ -281,6 +324,20 @@ sub getParentsForSet($$)
 	my $set_id = shift;
 
 	my $template = "SELECT sets_meta_id FROM meta_sets WHERE sets_id='var1';";
+
+	$template =~ s/var1/$set_id/;
+
+	my $results = $self->runSQL($template);
+	my (@data) = $results->fetchrow_array();
+	return @data;
+}
+
+sub getEntitiesForSet($$)
+{
+	my $self = shift;
+	my $set_id = shift;
+
+	my $template = "SELECT entity_id FROM set_entity WHERE sets_id='var1';";
 
 	$template =~ s/var1/$set_id/;
 
@@ -389,6 +446,24 @@ sub getParentsForMeta($$)
 	my $results = $self->runSQL($template);
 	my (@data) = $results->fetchrow_array();
 	return @data;
+}
+
+sub existsMeta($$)
+{
+	my $self = shift;
+	my $ex_id = shift;
+
+	my $template = "SELECT id FROM meta WHERE external_id='var1';";
+
+	$template =~ s/var1/$ex_id/;
+
+	my $results = $self->runSQL($template);
+	my (@data) = $results->fetchrow_array();
+	if ($#data == -1) {
+		return $FALSE;
+	} else {
+		return $data[0];
+	}
 }
 
 
