@@ -1,0 +1,72 @@
+<html>
+	<head>
+		<title>BEAST</title>
+		<script type='text/javascript' src='http://sysbio.soe.ucsc.edu/common/js/jquery.js'></script> 
+		<script type='text/javascript' src='http://users.soe.ucsc.edu/~samb/temp/jquery_plugins/ajaxupload.js'></script>
+<script type= "text/javascript">
+$(document).ready(function(){
+
+//	var button = $('#test_upload_button') , interval;
+	var button = $('#test_upload_button');
+	new AjaxUpload(button,{
+		action: 'temp.pl',
+		name: 'my_BEAST_upload_file',
+		onSubmit : function(file, ext)
+		{
+			// change button text, when user selects file			
+			button.text('Uploading');
+			
+			// If you want to allow uploading only 1 file at time,
+			// you can disable upload button
+			this.disable();
+			
+			// Uploding -> Uploading. -> Uploading...
+			interval = window.setInterval(function(){
+				var text = button.text();
+				if (text.length < 13)
+				{
+					button.text(text + '.');
+				}
+				else
+				{
+					button.text('Uploading');
+				}
+			}, 200);
+		},
+		onComplete: function(file, response)
+		{
+			button.text('Upload Complete');
+			
+			$("#results").html(response);
+			
+			window.clearInterval(interval);
+			
+			// enable upload button
+			this.enable();
+			
+			// add file to the list
+			$('<li></li>').appendTo('#example1 .files').text(file);
+			
+		}
+	});
+});
+</script>
+		
+		
+	</head>
+	<body>
+		<div id="test_upload_button" class="button">Upload This</div>
+		<div>
+		<ul>
+			<li id="example1" class="example">
+			<p>Uploaded files:</p>
+			<ol class="files"></ol>
+			</li>
+		<ul>
+		</div>
+		<div id="results">
+
+		</div> <!-- results -->
+	</body>
+</html>
+
