@@ -62,7 +62,8 @@ if ($tree1[0]->mergeTree($tree2[0]) > 0) {
 #ops tests
 print "Testing leaf node find test:\n\n\n";
 
-my @top_level_nodes = $treeBuilder->findParentsByTerm('mitochondrial fusion');
+#my @top_level_nodes = $treeBuilder->findParentsByTerm('mitochondrial fusion');
+my @top_level_nodes = $treeBuilder->findParentsByTerm('axon part');
 
 $top_level_nodes[1]->mergeTree($top_level_nodes[2]);
 $top_level_nodes[1]->mergeTree($top_level_nodes[3]);

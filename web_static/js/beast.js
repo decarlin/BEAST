@@ -23,7 +23,23 @@ function onLoadView(event, ui) {
 	
 	$.getJSON('/cgi-bin/BEAST/index.pl',  { mysets:"yes", format:"json" }, 
 		function(data){
-			alert('JSON Data view'+data._name);
+			//alert('JSON Data view'+data._name);
+			var viewDiv = document.getElementById('view');
+	
+			// create set objects
+			var sets = new Array();
+			for (var index in data._elements) {
+				sets.push(new Set(data._elements[index]));
+			}
+			
+			var html = "<b>";
+			for (var i=0; i < sets.length; i++) {
+				var set = sets[i];
+				html =  html+"<li>"+set.getName()+"</li>";
+			}
+			html = html+"</b>";
+
+			viewDiv.innerHTML = html;
 		}
 	);
 }
@@ -220,4 +236,20 @@ function handleKeypress(e) {
 		alert('enter pressed!');
 	}
 }
+
+function Set(json) {
+
+	this.name = json._name;
+	this.elements = json._elements;
+	this.metadata = json._metadata;
+
+	this.getName = function() {
+		return this.name;
+	}
+
+	this.display = function() {
+		
+	}
+}
+
 

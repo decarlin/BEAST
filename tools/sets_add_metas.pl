@@ -9,6 +9,7 @@ $importer->connectDB();
 
 # GO:0090077	NULL	human:GO:0090077
 
+# add the first parent to each of human:GO:xxxx and mouse:GO:xxxx
 sub prependZeros
 {
 	my $num = shift;

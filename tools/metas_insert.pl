@@ -1,6 +1,6 @@
 #!/usr/local/bin/perl
 
-#use lib "/projects/sysbio/map/Projects/BEAST/perllib";
+use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 
 sub usage 
 {
@@ -28,7 +28,7 @@ GetOptions("meta=s" => \$metas_file,
 die &usage() unless (-f $metas_file);
 die &usage() unless (-f $meta_mappings);
 
-our $importer = BeastDB->new;
+our $importer = BeastDB->new('dev');
 $importer->connectDB();
 
 ## mapping between internal keys and external
@@ -36,6 +36,8 @@ my $metas = {
 	#'external_id' => id,
 };
 
+sub insert_metas
+{
 # run the meta inserts
 open (METAS,$metas_file) || die "can't open $metas_file!";
 while (<METAS>) {
@@ -61,7 +63,8 @@ while (<METAS>) {
 	
 }
 close (METAS);
-exit;
+
+}
 
 # create the meta mappings 
 open (META_MAPPINGS, $meta_mappings) || die "can't open $meta_mappings!";
@@ -74,8 +77,8 @@ while (<META_MAPPINGS>) {
 
 	print "Adding parent child meta-meta relation: $parent:$child\n";
 
-	my $id_parent = $metas->{$parent};
-	my $id_child = $metas->{$child};
+	my $id_parent = $importer->getMetaIdFromExternalId($parent);
+	my $id_child = $importer->getMetaIdFromExternalId($child);
 	if ($id_parent eq "") {
 		print "no entry for meta: $parent, skipping relation...\n";
 		print FAILED "$parent:$child\n";
@@ -86,13 +89,10 @@ while (<META_MAPPINGS>) {
 		next;
 	}
 
-	if ($debug) {
-		if ($importer->existsMetaMetaRel($id_parent, "NULL", $id_child) > 0) {
-			print "relation already exists!\n";
-		} else {
-			print "no relation between meta's\n";
-		}
+	if ($importer->existsMetaMetaRel($id_parent, "NULL", $id_child) > 0) {
+		print "relation already exists!\n";
 	} else {
+		print "no relation between meta's...adding\n";
 		$importer->insertMetaMetaRel($id_parent, "NULL", $id_child);
 	}
 	print "done\n";
