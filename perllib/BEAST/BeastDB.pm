@@ -291,26 +291,20 @@ sub existsMetaMetaRel($$$)
 	my $self = shift;
 	my ($parent, $set_child, $meta_child) = @_;
 
-	my $query = "SELECT id FROM meta_sets WHERE sets_meta_id='var1' AND sets_id='var2' AND meta_meta_id='var3'";
+	my $query = "SELECT * FROM meta_sets WHERE sets_meta_id=var1 AND meta_meta_id=var3";
 
-	my $template =~ s/var1/'$parent'/;
-	if ($set_child eq "NULL") {
-		$template =~ s/var2/$set_child/;
-	} else {
-		$template =~ s/var2/'$set_child'/;
-	}
-	if ($meta_child eq "NULL") {
-		$template =~ s/var3/$meta_child/;
-	} else {
-		$template =~ s/var3/'$meta_child'/;
-	}
+	$query =~ s/var1/'$parent'/;
 
-	my $results = $self->runSQL($template);	
+	unless ($set_child eq "NULL") { return $FALSE; }
+
+	$query =~ s/var3/'$meta_child'/;
+
+	my $results = $self->runSQL($query);	
 	my (@data) = $results->fetchrow_array();
 	if ($#data == -1) {
 		return $FALSE;
 	} else {
-		return $data[0];
+		return $TRUE;
 	}
 }
 
