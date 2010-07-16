@@ -63,15 +63,16 @@ if ($tree1[0]->mergeTree($tree2[0]) > 0) {
 print "Testing leaf node find test:\n\n\n";
 
 #my @top_level_nodes = $treeBuilder->findParentsByTerm('mitochondrial fusion');
-my @top_level_nodes = $treeBuilder->findParentsByTerm('axon part');
+my @top_level_nodes = $treeBuilder->findParentsByTerm('recombinase activity');
 
-$top_level_nodes[1]->mergeTree($top_level_nodes[2]);
-$top_level_nodes[1]->mergeTree($top_level_nodes[3]);
-my @leaves = $top_level_nodes[1]->getLeafNodes();
+print $top_level_nodes[0]->serialize();
+#$top_level_nodes[1]->mergeTree($top_level_nodes[2]);
+#$top_level_nodes[1]->mergeTree($top_level_nodes[3]);
+#my @leaves = $top_level_nodes[1]->getLeafNodes();
 
-foreach (@leaves) {
-	print $_->serialize();
-	print "\n";
-}
+#foreach (@leaves) {
+#	print $_->serialize();
+#	print "\n";
+#}
 $beastDB->disconnectDB();
 

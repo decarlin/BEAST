@@ -1,0 +1,8 @@
+The order to run the database load commands:
+
+- add entities 
+- add sets 
+- add metas 
+- add entity-set relations
+- add parents to sets 
+- add meta-meta relations

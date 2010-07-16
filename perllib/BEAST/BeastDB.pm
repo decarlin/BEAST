@@ -256,6 +256,8 @@ sub insertSetEntityRel($$$)
 	my $self = shift;
 	my ($set_id, $entity_id, $membership_value) = @_;
 
+	die if (scalar(@_) > 3);
+
 	my $template = "INSERT INTO set_entity (sets_id, entity_id, member_value) VALUES (var1, var2, var3);";
 	
 	$template =~ s/var1/'$set_id'/;
@@ -328,6 +330,27 @@ sub existsSetMetaRel($$)
 
 	$query =~ s/var1/'$parent'/;
 	$query =~ s/var2/'$set_child'/;
+
+	my $results = $self->runSQL($query);	
+	my (@data) = $results->fetchrow_array();
+	if ($#data == -1) {
+		return $FALSE;
+	} else {
+		return $TRUE;
+	}
+}
+
+sub existsSetEntityRel($$)
+{
+	my $self = shift;
+	my ($set_id, $entity_id) = @_;
+
+	die if (scalar(@_) > 2);
+
+	my $template = "SELECT id FROM set_entity WHERE sets_id=var1 AND entity_id=var2";
+	
+	$template =~ s/var1/'$set_id'/;
+	$template =~ s/var2/'$entity_id'/;
 
 	my $results = $self->runSQL($query);	
 	my (@data) = $results->fetchrow_array();
