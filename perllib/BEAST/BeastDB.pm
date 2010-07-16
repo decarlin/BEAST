@@ -270,36 +270,55 @@ sub insertSetEntityRel($$$)
 sub insertMetaMetaRel($$$)
 {
 	my $self = shift;
-	my ($parent, $set_child, $meta_child) = @_;
+	my ($parent, $meta_child) = @_;
 
-	my $template = "INSERT INTO meta_sets (sets_meta_id, sets_id, meta_meta_id) VALUES (var1, var2, var3);";
+	my $template = "INSERT INTO meta_sets (sets_meta_id, sets_id, meta_meta_id) VALUES (var1, NULL, var2);";
 	
 	$template =~ s/var1/'$parent'/;
-	if ($set_child eq "NULL") {
-		$template =~ s/var2/$set_child/;
-	} else {
-		$template =~ s/var2/'$set_child'/;
-	}
-	if ($meta_child eq "NULL") {
-		$template =~ s/var3/$meta_child/;
-	} else {
-		$template =~ s/var3/'$meta_child'/;
-	}
+	$template =~ s/var2/'$meta_child'/;
 	$self->runSQL($template);	
 }
 
-sub existsMetaMetaRel($$$)
+sub insertSetMetaRel($$$)
 {
 	my $self = shift;
-	my ($parent, $set_child, $meta_child) = @_;
+	my ($parent, $set_child) = @_;
+
+	my $template = "INSERT INTO meta_sets (sets_meta_id, sets_id, meta_meta_id) VALUES (var1, var2, NULL);";
+	
+	$template =~ s/var1/'$parent'/;
+	$template =~ s/var2/'$set_child'/;
+	$self->runSQL($template);	
+}
+
+sub existsMetaMetaRel($$)
+{
+	my $self = shift;
+	my ($parent, $meta_child) = @_;
 
 	my $query = "SELECT * FROM meta_sets WHERE sets_meta_id=var1 AND meta_meta_id=var3";
 
 	$query =~ s/var1/'$parent'/;
-
-	unless ($set_child eq "NULL") { return $FALSE; }
-
 	$query =~ s/var3/'$meta_child'/;
+
+	my $results = $self->runSQL($query);	
+	my (@data) = $results->fetchrow_array();
+	if ($#data == -1) {
+		return $FALSE;
+	} else {
+		return $TRUE;
+	}
+}
+
+sub existsSetMetaRel($$)
+{
+	my $self = shift;
+	my ($parent, $set_child) = @_;
+
+	my $query = "SELECT * FROM meta_sets WHERE sets_meta_id=var1 AND sets_id=var2";
+
+	$query =~ s/var1/'$parent'/;
+	$query =~ s/var2/'$set_child'/;
 
 	my $results = $self->runSQL($query);	
 	my (@data) = $results->fetchrow_array();
@@ -450,6 +469,24 @@ sub existsMeta($$)
 	my $ex_id = shift;
 
 	my $template = "SELECT id FROM meta WHERE external_id='var1';";
+
+	$template =~ s/var1/$ex_id/;
+
+	my $results = $self->runSQL($template);
+	my (@data) = $results->fetchrow_array();
+	if ($#data == -1) {
+		return $FALSE;
+	} else {
+		return $data[0];
+	}
+}
+
+sub existsSet($$)
+{
+	my $self = shift;
+	my $ex_id = shift;
+
+	my $template = "SELECT id FROM sets WHERE external_id='var1';";
 
 	$template =~ s/var1/$ex_id/;
 

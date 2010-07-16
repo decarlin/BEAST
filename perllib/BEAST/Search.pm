@@ -106,10 +106,13 @@ sub findParentsForSet($)
 	my $set_metadata = { 'type' => 'set', 'name' => "$set_name", 'id' => $set_id };
 	# find set elements
 	my $set_elements = {};
-	my @elements_for_this_set = $beastDB->getEntitiesForSet($set_id);
-	foreach (@elements_for_this_set) {
-		$set_elements->{$_} = 1;
-	}
+
+	# not working yet
+	#my @elements_for_this_set = $beastDB->getEntitiesForSet($set_id);
+	#foreach (@elements_for_this_set) {
+	#	$set_elements->{$_} = 1;
+	#}
+
 	my $set = Set->new($set_ext_id, 1, $set_metadata, $set_elements);
 	my $metadata_element = { "$set_ext_id" => $set };
 

@@ -21,7 +21,7 @@ my $sets_file = '';
 GetOptions("sets=s" => \$sets_file);
 
 
-die &usage() unless (-f $sets_file);
+#die &usage() unless (-f $sets_file);
 
 our $importer = BeastDB->new('dev');
 $importer->connectDB();
@@ -48,7 +48,7 @@ while (<SETS>) {
 		print "relation already exists!\n";
 	} else {
 		print "no relation between meta's...adding $external_id\n";
-		my $id = $importer->insertSetMetaRel($id_parent, $id_child);
+		my $id = $importer->insertSetMetaRel($parent_id, $set_id);
 		unless ($id =~ /\d+/) { print "failed for $external_id!\n"; }
 	}
 }
