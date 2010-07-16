@@ -200,6 +200,8 @@ sub insertSet($$)
 	my $name = shift;
 	my $external_id = shift;
 
+	die if (scalar(@_) > 2);
+
 	my $template = "INSERT INTO sets (name, external_id) VALUES (var1, var2);";
 
 	$name = escapeSQLString($name);
@@ -267,10 +269,12 @@ sub insertSetEntityRel($$$)
 	$self->runSQL($template);	
 }
 
-sub insertMetaMetaRel($$$)
+sub insertMetaMetaRel($$)
 {
 	my $self = shift;
 	my ($parent, $meta_child) = @_;
+
+	die if (scalar(@_) > 2);
 
 	my $template = "INSERT INTO meta_sets (sets_meta_id, sets_id, meta_meta_id) VALUES (var1, NULL, var2);";
 	
@@ -279,10 +283,12 @@ sub insertMetaMetaRel($$$)
 	$self->runSQL($template);	
 }
 
-sub insertSetMetaRel($$$)
+sub insertSetMetaRel($$)
 {
 	my $self = shift;
 	my ($parent, $set_child) = @_;
+
+	die if (scalar(@_) > 2);
 
 	my $template = "INSERT INTO meta_sets (sets_meta_id, sets_id, meta_meta_id) VALUES (var1, var2, NULL);";
 	
@@ -295,6 +301,8 @@ sub existsMetaMetaRel($$)
 {
 	my $self = shift;
 	my ($parent, $meta_child) = @_;
+
+	die if (scalar(@_) > 2);
 
 	my $query = "SELECT * FROM meta_sets WHERE sets_meta_id=var1 AND meta_meta_id=var3";
 
@@ -314,6 +322,7 @@ sub existsSetMetaRel($$)
 {
 	my $self = shift;
 	my ($parent, $set_child) = @_;
+	die if (scalar(@_) > 2);
 
 	my $query = "SELECT * FROM meta_sets WHERE sets_meta_id=var1 AND sets_id=var2";
 
@@ -489,6 +498,27 @@ sub existsSet($$)
 	my $template = "SELECT id FROM sets WHERE external_id='var1';";
 
 	$template =~ s/var1/$ex_id/;
+
+	my $results = $self->runSQL($template);
+	my (@data) = $results->fetchrow_array();
+	if ($#data == -1) {
+		return $FALSE;
+	} else {
+		return $data[0];
+	}
+}
+
+
+sub existsEntity($$)
+{
+	my $self = shift;
+	my $ex_id = shift;
+	my $keyspace = shift;
+
+	my $template = "SELECT id FROM entity WHERE entity_key='var1' AND keyspace_id='var2'";
+
+	$template =~ s/var1/$ex_id/;
+	$template =~ s/var2/$keyspace/;
 
 	my $results = $self->runSQL($template);
 	my (@data) = $results->fetchrow_array();
