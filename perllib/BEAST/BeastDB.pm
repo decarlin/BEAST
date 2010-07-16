@@ -347,12 +347,12 @@ sub existsSetEntityRel($$)
 
 	die if (scalar(@_) > 2);
 
-	my $template = "SELECT id FROM set_entity WHERE sets_id=var1 AND entity_id=var2";
+	my $template = "SELECT * FROM set_entity WHERE sets_id=var1 AND entity_id=var2";
 	
 	$template =~ s/var1/'$set_id'/;
 	$template =~ s/var2/'$entity_id'/;
 
-	my $results = $self->runSQL($query);	
+	my $results = $self->runSQL($template);	
 	my (@data) = $results->fetchrow_array();
 	if ($#data == -1) {
 		return $FALSE;
