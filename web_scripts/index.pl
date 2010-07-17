@@ -41,6 +41,7 @@ sub doImportTab();
 my $browseObj;
 my $importObj;
 
+print Data::Dumper->Dump([$cgi]);
 #main
 {
 	#print $cgi->header();
@@ -54,7 +55,10 @@ my $importObj;
 	$browseObj = BrowseTab->new($cgi);
 	$importObj = ImportTab->new($cgi);
 
-	if ($cgi->param('addbrowse')) {
+	if ($cgi->param('my_upload_file')) {
+		my $fh = $cgi->upload('my_upload_file');
+		$importObj->printImportTab($fh);
+	} elsif ($cgi->param('addbrowse')) {
 		addSearchSets();
 		if ($cgi->param('type') eq "tree") {
 			displayMySets();

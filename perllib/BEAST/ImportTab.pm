@@ -32,6 +32,8 @@ sub printImportTab
 {
 	# hash ref to the input form data
 	my $self = shift;
+	my $fh = shift || undef;
+
 	# Search filter/checkbox categories to display
 	# Hash reference: keys are refs to arrays of strings
 	my $input = $self->{'_input'};
@@ -58,6 +60,7 @@ sub printImportTab
 		#my $uploaded_filehandle = $input->upload('importtext');
 	}
 
+	&print_button_js;
 	print <<MULTI_LINE_STR;
 	<form id="importform">
 		<p class='radiO_selectors' id='textStyle'> 
@@ -99,7 +102,7 @@ MULTI_LINE_STR
 				Or import from a local file:
 			</p>
 			<input type='hidden' name='MAX_FILE_SIZE" value='200'/>
-			<input type='file' name="importtext" accept="text" id="setsImportFromFile" value="file" onclick="selectImportFile(this.form)"/>
+			<input type='button'  id="file_upload_button" class="button" value='Upload File'/>
 			<input type='button' value='Upload' onClick="return onImportSets(this.form);"/><br/>
 	</form>
 	<p>Sets:</p>
@@ -107,10 +110,64 @@ MULTI_LINE_STR
 MULTI_LINE_STR
 	MySets::displaySetsTree("import", @sets);
 	print "</p>";
-	
+
 
 	## send back the sets here
 	return @sets;
 }
+
+sub print_button_js
+{
+print <<MULTI_LINE_STR;
+<script type= "text/javascript">
+\$(document).ready(function(){
+
+	var button = \$('#file_upload_button');
+	new AjaxUpload(button,{
+		action: '/cgi-bin/BEAST/index.pl',
+		name: 'my_upload_file',
+		onSubmit : function(file, ext)
+		{
+			// change button text, when user selects file			
+			button.text('Uploading');
+			
+			// If you want to allow uploading only 1 file at time,
+			// you can disable upload button
+			this.disable();
+			
+			// Uploding -> Uploading. -> Uploading...
+			interval = window.setInterval(function(){
+				var text = button.text();
+				if (text.length < 13)
+				{
+					button.text(text + '.');
+				}
+				else
+				{
+					button.text('Uploading');
+				}
+			}, 200);
+		},
+		onComplete: function(file, response)
+		{
+			button.text('Upload Complete');
+			
+			\$("#import").html(response);
+
+			window.clearInterval(interval);
+			
+			// enable upload button
+			this.enable();
+			
+			// add file to the list
+			\$('<li></li>').appendTo('#example1 .files').text(file);
+			
+		}
+	});
+});
+</script>
+MULTI_LINE_STR
+}
+
 
 1;
