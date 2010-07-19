@@ -91,9 +91,10 @@ sub buildCheckBoxTree($$$)
 			}
 
 			## print the tag and move on
-			print "<input style='$marginleft' type=checkbox name=\"";
-			($key eq "") ? print $name : print $key.Constants::SET_NAME_DELIM.$name;
-			print "\"$checkedText>$name<br/>\n";
+			#print "<input style='$marginleft' type=checkbox name=\"";
+			#($key eq "") ? print $name : print $key.Constants::SET_NAME_DELIM.$name;
+			#print "\"$checkedText>$name<br/>\n";
+			print "<span style='$marginleft'>$name<\span><br>";
 		}
 
 	}
