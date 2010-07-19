@@ -328,6 +328,83 @@ sub getLeafNodes()
 	return @leafnodes;
 }
 
+#
+# Parse Lines, return set objects
+#
+sub parseSetLines
+{
+	my @lines = @_;
+
+	my @sets;
+
+	foreach (@lines) 
+	{
+		my $line = $_;
+		chomp($line);
+		next unless ($line =~ /\S+\s+/);
+		$line =~ /(\S+)\^\t(.*)/;
+		my @components = split (/\^/,$1);
+		my $subsets = $2;
+
+		## create a set object
+		my $name = $components[0];
+		my $metadata = {};
+		my $elements = {};
+		my $i = 0;
+
+		for (@components) 
+		{
+			# the first element is the name
+			if ($i == 0) { $i++; next; }
+
+			my $component = $_;
+			# metadata goes in with key/value pairs
+			if ($component =~ /(.*)=(.*)/) {
+				$metadata->{$1} = $2;
+			} 
+		}
+
+
+		# tab delineated elements
+		my $parse_state = 0;
+		my $parse_string = "";
+		foreach (split(/\t/, $subsets)) {
+			my $part = $_;
+			if ($part =~ /\[/) {
+				if ($parse_state == 0) {
+					$parse_string = $part;
+				} else {	
+					$parse_string = $parse_string."\t".$part;
+				}
+				$parse_state++;
+				next;
+			} elsif ($part =~ /\]/) {
+				$parse_state--;
+			        $parse_string = $parse_string."\t".$part;
+				if ($parse_state == 0) {
+				  $parse_string =~ /^\[ (.*) \]$/;
+			  	  my @ln = ($1);
+			  	  my @setS = parseSetLines(@ln); 
+				  my $setname = $setS[0]->get_name;
+			  	  $elements->{$setname} = $setS[0];	
+				  $parse_string = "";
+				}
+				next;
+			} elsif ($parse_state > 0) {
+			        $parse_string = $parse_string."\t".$part;
+				next;
+			}
+
+			# else 
+		   	$elements->{$part} = 1;	
+		}
+
+		my $set = Set->new($name, 1, $metadata, $elements);
+		push @sets, $set;
+	}
+
+	return @sets;
+}
 
 
 1;
