@@ -34,6 +34,8 @@ sub printImportTab
 	my $self = shift;
 	my $fh = shift || undef;
 
+	my @sets;
+
 	# Search filter/checkbox categories to display
 	# Hash reference: keys are refs to arrays of strings
 	my $input = $self->{'_input'};
@@ -45,7 +47,6 @@ sub printImportTab
 	};
 
 	my $importtext = "";
-	my @sets;
 	if ($input->param('importtype') eq 'text') 
 	{
 		if ($input->param('importtext')) 
@@ -54,10 +55,14 @@ sub printImportTab
 			my @lines = split(/\n/, $importtext);
 			@sets = Set::parseSetLines($metadata, @lines);	
 		}
-	}
-	else 
-	{
-		#my $uploaded_filehandle = $input->upload('importtext');
+	} 
+
+	if (defined $fh) {
+		my @lines;
+		while (my $line = <$fh>) {
+		  push @lines, $line;	
+		}
+		@sets = Set::parseSetLines(@lines);
 	}
 
 	&print_button_js;
@@ -108,7 +113,9 @@ MULTI_LINE_STR
 	<p>Sets:</p>
 	<p>
 MULTI_LINE_STR
-	MySets::displaySetsTree("import", @sets);
+	if (scalar(@sets) > 0 && ref($sets[0]) eq 'Set') {
+		MySets::displaySetsTree("import", @sets);
+	}
 	print "</p>";
 
 

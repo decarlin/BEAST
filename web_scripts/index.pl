@@ -41,7 +41,7 @@ sub doImportTab();
 my $browseObj;
 my $importObj;
 
-print Data::Dumper->Dump([$cgi]);
+#print Data::Dumper->Dump([$cgi]);
 #main
 {
 	#print $cgi->header();
