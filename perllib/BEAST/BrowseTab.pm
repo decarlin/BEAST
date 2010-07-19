@@ -52,7 +52,11 @@ sub printBrowseTab
 {
 	# hash ref to the input form data
 	my $self = shift;
-	my $session = shift;
+	my $session = shift || undef;
+
+	if (defined $session) {
+		die unless (ref($session) eq 'CGI::Session');
+	}
 	# Search filter/checkbox categories to display
 	# Hash reference: keys are refs to arrays of strings
 
@@ -200,7 +204,7 @@ MULTILINE_STR
 		#my $Rsize = scalar (@results);
 		#my $Msize = scalar (@merged);
 		#print "merged into $Rsize into $Msize";
-		BeastSession::saveSearchResults($session, @merged);
+		BeastSession::saveSetsToSession($session, 'browsesets', @merged);
 
 		$beastDB->disconnectDB();
 	}

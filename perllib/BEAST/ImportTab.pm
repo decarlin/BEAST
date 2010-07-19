@@ -32,9 +32,12 @@ sub printImportTab
 {
 	# hash ref to the input form data
 	my $self = shift;
+	my $session = shift;
 	my $fh = shift || undef;
 
 	my @sets;
+
+	die unless (ref($session) eq 'CGI::Session');
 
 	# Search filter/checkbox categories to display
 	# Hash reference: keys are refs to arrays of strings
@@ -53,7 +56,7 @@ sub printImportTab
 		{
 			$importtext = $input->param('importtext');
 			my @lines = split(/\n/, $importtext);
-			@sets = Set::parseSetLines($metadata, @lines);	
+			@sets = Set::parseSetLines(@lines);	
 		}
 	} 
 
@@ -64,6 +67,8 @@ sub printImportTab
 		}
 		@sets = Set::parseSetLines(@lines);
 	}
+
+	#print Data::Dumper->Dump([@sets]);
 
 	&print_button_js;
 	print <<MULTI_LINE_STR;
@@ -109,14 +114,18 @@ MULTI_LINE_STR
 			<input type='hidden' name='MAX_FILE_SIZE" value='200'/>
 			<input type='button'  id="file_upload_button" class="button" value='Upload File'/>
 			<input type='button' value='Upload' onClick="return onImportSets(this.form);"/><br/>
-	</form>
 	<p>Sets:</p>
 	<p>
 MULTI_LINE_STR
 	if (scalar(@sets) > 0 && ref($sets[0]) eq 'Set') {
 		MySets::displaySetsTree("import", @sets);
+		print <<MULTILINE_STR;
+			<input type='button' value='Add To My Sets' onClick="return onAddImportSets(this.form);"><br>
+MULTILINE_STR
+		# to do : merge with mysets
+		BeastSession::saveSetsToSession($session, 'importsets', @sets);
 	}
-	print "</p>";
+	print "</form>";
 
 
 	## send back the sets here

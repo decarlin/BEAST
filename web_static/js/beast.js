@@ -144,6 +144,31 @@ function onAddBrowseSets(form) {
 	}
 }
 
+function onAddImportSets(form) {
+	var importtext;
+	var importtype;
+
+	// serialize the metadata selects
+	var selects = getChecked(form);
+
+	var $mysets_tab = $('#mysets_tab').tabs();
+	var selected = $mysets_tab.tabs('option', 'selected');
+
+	if (selected == 0) {
+		$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
+		  {'addimportfile':'yes',
+		   'type':'tree',
+		   'importsets[]': selects }
+		);
+ 	} else if (selected == 1) {
+		$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
+		  {'addimportfile':'Yes',
+		   'type':'flat',
+		   'importsets[]': selects }
+		);
+	}
+}
+
 function onImportSets(form) {
 	var importtext;
 	var importtype;

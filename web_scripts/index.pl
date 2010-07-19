@@ -57,18 +57,23 @@ my $importObj;
 
 	if ($cgi->param('my_upload_file')) {
 		my $fh = $cgi->upload('my_upload_file');
-		$importObj->printImportTab($fh);
+		$importObj->printImportTab($session, $fh);
 	} elsif ($cgi->param('addbrowse')) {
 		addSearchSets();
 		if ($cgi->param('type') eq "tree") {
 			displayMySets();
 		}
+	} elsif ($cgi->param('addimportfile')) {
+		addImportSets();
+		if ($cgi->param('type') eq "tree") {
+			displayMySets();
+		} 
 	} elsif ($cgi->param('browse')) {
 		# replace the browse tab to include the search results
 
 		$browseObj->printBrowseTab($session);
 	} elsif ($cgi->param('import')) {
-		$importObj->printImportTab();
+		$importObj->printImportTab($session);
 	} elsif ($cgi->param('display_mysets_tree')) {
 		displayMySets();
 	} elsif ($cgi->param('mysets')) {
@@ -149,7 +154,7 @@ print <<MULTILINE_STR;
 MULTILINE_STR
 
 	print "<div id=\"import\">";
-	$importObj->printImportTab();
+	$importObj->printImportTab($session);
 	print "</div>";
 
 	print "<div id=\"browse\">";
@@ -166,7 +171,7 @@ print "</div>";
 
 sub displayMySets()
 {
-	@sets = BeastSession::loadMySets($session);
+	@sets = BeastSession::loadSetsFromSession($session, 'mysets');
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
 	}
@@ -178,7 +183,7 @@ sub displayMySets()
 		my $checked_hash = BeastSession::buildCheckedHash(@checked);
 		#print Data::Dumper->Dump([$checked_hash]);
 		@sets = MySets::updateActiveElements($checked_hash, @sets);	
-		BeastSession::saveMySets($session, @sets);
+		BeastSession::saveSetsToSession($session, 'mysets', @sets);
 	}
 	MySets::displaySetsTree("mysets", @sets);
 	print "</form>";
@@ -188,7 +193,7 @@ sub displayMySets()
 # save and merge search results to mysets
 sub getMySetsJSON()
 {
-	@sets = BeastSession::loadMySets($session);
+	@sets = BeastSession::loadSetsFromSession($session, 'mysets');
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
 	}
@@ -209,7 +214,7 @@ sub getMySetsJSON()
 
 sub addSearchSets()
 {
-	@sets = BeastSession::loadMySets($session);
+	@sets = BeastSession::loadSetsFromSession($session, 'mysets');
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
 	}
@@ -217,14 +222,36 @@ sub addSearchSets()
 
 	# add/merge these sets with the current working sets
 	if ($cgi->param('browsesets[]')) {
-		my @browseSets = BeastSession::loadSearchResults($session, $cgi);
+		my @checkboxdata = $cgi->param('browsesets[]');
+		my @browseSets = BeastSession::loadMergeSetsFromSession($session, 'browsesets', \@checkboxdata);
 		if ($#sets == -1) {
 			@sets = @browseSets;
 		} else {
 			@sets = Set::mergeDisjointCollections(\@sets, \@browseSets);
 		}
 	}
-	BeastSession::saveMySets($session, @sets);
+	BeastSession::saveSetsToSession($session, 'mysets', @sets);
+}
+
+sub addImportSets()
+{
+	@sets = BeastSession::loadSetsFromSession($session, 'mysets');
+	unless (ref($sets[0]) eq 'Set') {
+		pop @sets;
+	}
+	#print Data::Dumper->Dump([@sets]);
+
+	# add/merge these sets with the current working sets
+	if ($cgi->param('importsets[]')) {
+		my @checkboxdata = $cgi->param('importsets[]');
+		my @importSets = BeastSession::loadMergeSetsFromSession($session, 'importsets', \@checkboxdata);
+		if ($#sets == -1) {
+			@sets = @importSets;
+		} else {
+			@sets = Set::mergeDisjointCollections(\@sets, \@importSets);
+		}
+	}
+	BeastSession::saveSetsToSession($session, 'mysets', @sets);
 }
 
 

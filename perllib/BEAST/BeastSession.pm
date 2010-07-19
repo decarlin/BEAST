@@ -13,10 +13,14 @@ use BEAST::Constants;
 
 package BeastSession;
 
-sub saveMySets
+sub saveSetsToSession
 {
 	my $session = shift;
+	my $key = shift;
 	my @sets = @_;
+
+	die unless (ref($session) eq 'CGI::Session');
+	die unless (ref($sets[0]) eq 'Set');
 
 	my $mysetsstr;
 	my $i = 0;
@@ -31,28 +35,7 @@ sub saveMySets
 		$i++;
 	}
 
-	$session->param('mysets', $mysetsstr);
-}
-
-sub saveSearchResults
-{
-	my $session = shift;
-	my @sets = @_;
-
-	my $mysetsstr;
-	my $i = 0;
-	foreach (@sets) {
-		my $set = $_;
-		if ($i == 0) {
-			$mysetsstr = $set->serialize();
-		} else {
-			my $setstr = $set->serialize();
-			$mysetsstr = $mysetsstr.":SEP:".$setstr;
-		}
-		$i++;
-	}
-
-	$session->param('browseresults', $mysetsstr);
+	$session->param($key, $mysetsstr);
 }
 
 sub buildCheckedHash
@@ -72,12 +55,17 @@ sub buildCheckedHash
 #
 # Return: [ retval(0|1), @sets ]
 #
-sub loadSearchResults
+sub loadMergeSetsFromSession($$$)
 {
 	my $session = shift;
-	my $cgi = shift;
+	my $key = shift;
+	my $checkbox_arr_ref = shift;
 
-	my $setsstr = $session->param('browseresults');	
+	die unless (ref($checkbox_arr_ref) eq 'ARRAY');
+	die unless (ref($session) eq 'CGI::Session');
+	die unless ($key =~ /^\w+$/);
+
+	my $setsstr = $session->param($key);	
 	my @lines = split (/:SEP:/, $setsstr);
 
 	my @sets;
@@ -85,12 +73,24 @@ sub loadSearchResults
 		push @sets, Set->new($_);
 	}
 
-	my @checked_sets = $cgi->param('browsesets[]');
-	my $checked_hash = buildCheckedHash(@checked_sets);
+	my $checked_hash = buildCheckedHash(@$checkbox_arr_ref);
+	my @selected_sets = mergeWithCheckbox(\@sets, $checked_hash);
+
+	return @selected_sets;
+}
+
+sub mergeWithCheckbox
+{
+	my $sets_ref = shift;
+	my $checked_hash = shift;
+
+	die unless (ref($sets_ref) eq 'ARRAY');
+	die unless (ref($checked_hash) eq 'HASH');
 
 	my @selected_sets;
 	#  merge with checkbox data
 	# fixme: we somehow have to only move the checked subset
+	my @sets = @$sets_ref;
 	foreach (@sets) {
 		my $set = $_;
 		my $name = $set->get_name;
@@ -102,14 +102,20 @@ sub loadSearchResults
 
 	return @selected_sets;
 }
+
 #
 # Return: [ retval(0|1), @sets ]
 #
-sub loadMySets($)
+
+sub loadSetsFromSession($$)
 {
 	my $session = shift;
+	my $key = shift;
 
-	my $setsstr = $session->param('mysets');	
+	die unless (ref($session) eq 'CGI::Session');
+	die unless ($key =~ /^\w+$/);
+
+	my $setsstr = $session->param($key);	
 	unless ($setsstr =~ /\S+/) { return 0; }
 	my @lines = split (/:SEP:/, $setsstr);
 	my @sets;
