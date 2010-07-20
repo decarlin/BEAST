@@ -130,10 +130,25 @@ sub getSetNameExtIdFromID($)
 	my $self = shift;
 	my $set_id = shift;
 	
+	die unless ($set_id =~ /\d+/);	
+
 	my $results = $self->runSQL("SELECT name,external_id FROM sets WHERE id='".$set_id."'");	
 
 	my (@data) = $results->fetchrow_array();
 	return ($data[0], $data[1]);
+}
+
+sub getEntityNameFromID($)
+{
+	my $self = shift;
+	my $id = shift;
+
+	die unless ($id =~ /\d+/);	
+
+	my $results = $self->runSQL("SELECT name FROM entity WHERE id='".$id."'");	
+
+	my (@data) = $results->fetchrow_array();
+	return $data[0];
 }
 
 #
@@ -390,13 +405,18 @@ sub getEntitiesForSet($$)
 
 	my $results = $self->runSQL($template);
 	my $rows_ref = $results->fetchall_arrayref();
-	my @data;
+	my @ids;
 	if (ref($rows_ref) eq 'ARRAY') {
 		foreach (@$rows_ref) {
-			push @data, $_->[0];
+			push @ids, $_->[0];
 		}
 	}
-	return @data;
+	my @names;
+	foreach (@ids) {
+		my $name = $self->getEntityNameFromID($_);
+		push @names, $name;
+	}
+	return @names;
 }
 
 # sets -> keyspace.organism='blah'

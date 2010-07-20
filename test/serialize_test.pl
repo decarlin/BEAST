@@ -18,8 +18,9 @@ my $treeBuilder = Search->new($beastDB);
 # 
 my @tree1 = $treeBuilder->findParentsForSet(114009);
 my @tree2 = $treeBuilder->findParentsForSet(142510);
+my @tree3 = $treeBuilder->findParentsForSet(123012);
 
-my $json_text = $tree1[0]->serialize();
+my $json_text = $tree3[0]->serialize();
 print "encoded:\n";
 print "$json_text:\n";
 my $newset = Set->new($json_text);
