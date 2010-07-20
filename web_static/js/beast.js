@@ -78,7 +78,7 @@ function selectStyle(selected, deselected)
 function chooseFileImport(form) {
 	try {
 		form.importType[1].checked = true;
-		var file = document.getElementById("setsImportFromFile");
+		var file = document.getElementById("file_upload_button");
 		var text = document.getElementById("setsImportFromText");
 		
 		file.disabled = false;
@@ -94,13 +94,15 @@ function chooseFileImport(form) {
 		file.focus();
 		// grey-out the unselected item
 		selectStyle("fileStyle", "textStyle");
-	} catch(e){ log(e); }
+	} catch(e){ 
+		alert(e.value);
+	}
 }
 
 function chooseTextImport(form) {
 	try {
 		form.importType[0].checked = true;
-		var file = document.getElementById("setsImportFromFile");
+		var file = document.getElementById("file_upload_button");
 		var text = document.getElementById("setsImportFromText");
 
 		file.disabled = true;
@@ -170,15 +172,10 @@ function onAddImportSets(form) {
 }
 
 function onImportSets(form) {
-	var importtext;
-	var importtype;
-	if (form.importType[0].checked == true) {
-		importtext  = document.getElementById('setsImportFromText');
-		importtype = 'text';
-	} else {
-		importtext  = document.getElementById('setsImportFromFile');
-		importtype = 'file';
-	}
+
+	var importtext = document.getElementById('setsImportFromText');
+	var importtype = 'text';
+
 
 	// serialize the metadata selects
 	var selects = new Array();
@@ -247,7 +244,8 @@ function onSearchSets() {
 				j++;
 			}
 		}
-	}	
+	}
+
 
 	$('#browse').load('/cgi-bin/BEAST/index.pl', 
 		{browse:"yes",

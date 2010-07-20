@@ -120,12 +120,12 @@ MULTI_LINE_STR
 	if (scalar(@sets) > 0 && ref($sets[0]) eq 'Set') {
 		MySets::displaySetsTree("import", @sets);
 		print <<MULTILINE_STR;
-			<input type='button' value='Add To My Sets' onClick="return onAddImportSets(this.form);"><br>
+			<input type='button' value='Add To My Sets' onClick="return onAddImportSets(this.form);"/><br>
 MULTILINE_STR
 		# to do : merge with mysets
 		BeastSession::saveSetsToSession($session, 'importsets', @sets);
 	}
-	print "</form>";
+	print "</p></form>";
 
 
 	## send back the sets here
