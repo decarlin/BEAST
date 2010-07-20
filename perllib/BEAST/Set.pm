@@ -266,14 +266,18 @@ sub mergeCheckbox_Remove
 
 	foreach ($self->get_element_names) {
 		my $name = $_;
+		my $element = $self->get_element($name);
+
 		if (exists $checkboxHash->{$name}) {
-		  my $element = $self->get_element($name);
 		  if (ref($element) eq 'Set') {
 			$element->mergeCheckbox_Remove($checkboxHash);
 		  }
 		} else {
 		  #delete it
-		  $self->delete_element($name);
+		  if (ref($element) eq 'Set') {
+		  	$self->delete_element($name);
+		  } 
+			# don't delete scalar elements
 		}
 	}
 }
