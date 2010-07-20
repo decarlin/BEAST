@@ -60,18 +60,28 @@ sub displaySetsFlat
 	my $divID = shift;
 	my @sets = @_;
 
-
+	my @leaves;
 	foreach (@sets) {
-		my $set = $_;
- 		my $name = $set->get_name;
-		my $type = $set->get_metadata_value('type');
-
-		if ($type eq 'meta') {
-
-		}
+		push @leaves, $_->getLeafNodes();
 	}
 
-	#CheckBoxTree::buildCheckBoxTree($displayData, "", $divID);
+	my $elements = {};
+	foreach (@leaves) {
+		$elements->{$_->get_name} = $_;
+	}
+
+	my $collection = Set->new('collection', 1, {}, $elements);
+
+	my $displayData = {};
+ 	my $name = $collection->get_name;
+
+	$displayData->{$name} = getDisplayHash($collection);
+	$displayData->{$name}->{'_active'} = $collection->{'_active'};
+	$displayData->{$name}->{'_desc'} = $collection->get_metadata_value('name');
+	$displayData->{$name}->{'_type'} = $collection->get_metadata_value('type');
+	$displayData->{$name}->{'_id'} = $collection->get_metadata_value('id');
+
+	CheckBoxTree::buildCheckBoxTree($displayData, "", $divID);
 }
 
 sub getDisplayHash

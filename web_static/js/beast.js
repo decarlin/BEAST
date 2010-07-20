@@ -6,12 +6,14 @@ function onOpsTabSelected(event, ui) {
 	} else if (ui.tab.hash == '#view') {
 		onLoadView(event, ui);
 	}
+	// import tab is loaded initially
 }
 
 function onViewTabSelected(event, ui) {
 	if (ui.tab.hash == "#mysets_tree") {
 		onLoadMySetsTree(event, ui);
 	} else if (ui.tab.hash == '#mysets_flat') {
+		onLoadMySetsFlat(event, ui);
 	}
 }
 
@@ -47,6 +49,12 @@ function onLoadView(event, ui) {
 function onLoadMySetsTree(event, ui) {
 	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
 		{display_mysets_tree:"yes"}
+	);
+}
+
+function onLoadMySetsFlat(event, ui) {
+	$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
+		{display_mysets_flat:"yes"}
 	);
 }
 

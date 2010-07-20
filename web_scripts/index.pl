@@ -61,12 +61,12 @@ my $importObj;
 	} elsif ($cgi->param('addbrowse')) {
 		addSearchSets();
 		if ($cgi->param('type') eq "tree") {
-			displayMySets();
+			displayMySetsTree();
 		}
 	} elsif ($cgi->param('addimportfile')) {
 		addImportSets();
 		if ($cgi->param('type') eq "tree") {
-			displayMySets();
+			displayMySetsTree();
 		} 
 	} elsif ($cgi->param('browse')) {
 		# replace the browse tab to include the search results
@@ -75,12 +75,14 @@ my $importObj;
 	} elsif ($cgi->param('import')) {
 		$importObj->printImportTab($session);
 	} elsif ($cgi->param('display_mysets_tree')) {
-		displayMySets();
+		displayMySetsTree();
+	} elsif ($cgi->param('display_mysets_flat')) {
+		displayMySetsFlat();
 	} elsif ($cgi->param('mysets')) {
 		if ($cgi->param('format') && ($cgi->param('format') eq 'json')) {
 			getMySetsJSON();		
 		} else {
-			displayMySets();
+			displayMySetsTree();
 		}
 	} else {
 		# default; on page creation	
@@ -132,12 +134,13 @@ sub doTabbedMenu()
 	</ul>
 	<div id="mysets_tree">
 MULTILINE_STR
-	displayMySets();
+	displayMySetsTree();
 # mysets
 	print <<MULTILINE_STR;
 	</div>
 	<div id="mysets_flat">
 MULTILINE_STR
+	displayMySetsFlat();
 
 print "</div>";
 # surrounding div
@@ -169,7 +172,19 @@ MULTILINE_STR
 print "</div>";
 }
 
-sub displayMySets()
+sub displayMySetsFlat()
+{
+	@sets = BeastSession::loadSetsFromSession($session, 'mysets');
+	unless (ref($sets[0]) eq 'Set') {
+		pop @sets;
+	}
+
+	print "<form id=\"mysetsform_flat\">";
+	MySets::displaySetsFlat("mysets", @sets);
+	print "</form>";
+}
+
+sub displayMySetsTree()
 {
 	@sets = BeastSession::loadSetsFromSession($session, 'mysets');
 	unless (ref($sets[0]) eq 'Set') {
