@@ -389,7 +389,13 @@ sub getEntitiesForSet($$)
 	$template =~ s/var1/$set_id/;
 
 	my $results = $self->runSQL($template);
-	my (@data) = $results->fetchrow_array();
+	my $rows_ref = $results->fetchall_arrayref();
+	my @data;
+	if (ref($rows_ref) eq 'ARRAY') {
+		foreach (@$rows_ref) {
+			push @data, $_->[0];
+		}
+	}
 	return @data;
 }
 

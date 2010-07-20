@@ -21,6 +21,11 @@ my $treeBuilder = Search->new($beastDB);
 my $searchopts = {
 	'keyspace' => { 'organism' => 'mouse' }
 };
+
+
+my @tree3 = $treeBuilder->findParentsForSet(123012, $searchopts);
+print $tree3[0]->serialize();
+
 my @tree1 = $treeBuilder->findParentsForSet(114009, $searchopts);
 my @tree2 = $treeBuilder->findParentsForSet(142510);
 
