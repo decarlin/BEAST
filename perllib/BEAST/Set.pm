@@ -51,11 +51,13 @@ sub new
 		# self, and all it's elements are just hash refs now
 		# -- we need to recursively bless each into being a 'Set' object
 		foreach (keys %{$self->{'_elements'}}) {
-			my $element = $_;
+			my $element_name = $_;
+			#next unless ($element_name =~ /:/);
 			# element is just a gene name
-			next if ($element =~ /^\w+$/);
+			next unless (ref($self->{'_elements'}->{$element_name}) eq 'HASH');
+
 			# element is another set -- create it
-			$self->{'_elements'}->{$element} = Set->new($json->encode($self->{'_elements'}->{$element}));
+			$self->{'_elements'}->{$element_name} = Set->new($json->encode($self->{'_elements'}->{$element_name}));
 		}
 
 	} elsif (!@_) {
