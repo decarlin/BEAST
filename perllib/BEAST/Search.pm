@@ -192,4 +192,70 @@ sub findParentsForMetas
 	}
 }
 
+# generate the hierchical tree containing the leaf nodes (sets) that matched
+# the search term given. We return a set of set objects, which are merged and non
+# redundant
+sub searchOnSetDescriptions
+{
+	my $self = shift;
+	my $searchtext = shift || die;
+	my $checkedopts = shift || undef;
+
+	unless ($searchtext =~ /\w+/) {
+		return 0;
+	}	
+
+	chomp($searchtext);
+
+	my @searches = split (/,/, $searchtext);	
+
+	my @results;
+	foreach (@searches) {
+		my $search = $_;
+
+		my @top_level_nodes;
+		# either all unchecked, or all checked: do a full, categorical search
+		unless (defined $checkedopts) {
+		  @top_level_nodes = $self->findParentsByTerm($search);
+		} else {
+		  @top_level_nodes = $self->findParentsByTerm($search, $checkedopts);
+		}
+		#my @top_level_nodes = $self->findParentsForSetByExtID($search);
+		foreach (@top_level_nodes) {
+			my $node = $_;
+			if (ref($node) eq 'Set') {
+				push @results, $node;
+			}
+		}
+	}
+
+	my $merged_results = {};
+	if ($#results > -1) {
+		# results are a bunch of sets
+
+		foreach my $i (0 .. $#results) {
+
+		# foreach result - merge every other result to it
+				# then add it to the hash 
+			# this will add the result with all the nodes of the same name
+			my $name = $results[$i]->get_name;
+			next if (exists $merged_results->{$name});
+
+				# this top-level node isn't yet saved -- find all other
+			# mergeable trees, then add it to the results
+			foreach my $j (0 .. $#results) {
+				next if ($i eq $j);
+				$results[$i]->mergeTree($results[$j]);
+			}
+			$merged_results->{$name} = $results[$i];
+		}	
+	}
+
+	my @merged = ();
+	foreach (keys %$merged_results) {
+		push @merged, $merged_results->{$_};
+	}
+	return @merged;
+}
+
 1;

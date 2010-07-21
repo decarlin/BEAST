@@ -145,56 +145,15 @@ MULTILINE_STR
 		print "<br>";
 		chomp($searchtext);
 
-		my @searches = split (/,/, $searchtext);	
 		my $beastDB = BeastDB->new;
 		$beastDB->connectDB();
 		my $treeBuilder = Search->new($beastDB);
 
-		my @results;
-		foreach (@searches) {
-			my $search = $_;
-
-			my @top_level_nodes;
-			# either all unchecked, or all checked: do a full, categorical search
-			if ($FULL_SEARCH == $TRUE) {
-			  @top_level_nodes = $treeBuilder->findParentsByTerm($search);
-			} else {
-			  @top_level_nodes = $treeBuilder->findParentsByTerm($search, $checkedopts);
-			}
-			#my @top_level_nodes = $treeBuilder->findParentsForSetByExtID($search);
-			foreach (@top_level_nodes) {
-				my $node = $_;
-				if (ref($node) eq 'Set') {
-					push @results, $node;
-				}
-			}
-		}
-
-		my $merged_results = {};
-		if ($#results > -1) {
-			# results are a bunch of sets
-
-			foreach my $i (0 .. $#results) {
-
-				# foreach result - merge every other result to it
-				# then add it to the hash 
-				# this will add the result with all the nodes of the same name
-				my $name = $results[$i]->get_name;
-				next if (exists $merged_results->{$name});
-
-				# this top-level node isn't yet saved -- find all other
-				# mergeable trees, then add it to the results
-				foreach my $j (0 .. $#results) {
-					next if ($i eq $j);
-					$results[$i]->mergeTree($results[$j]);
-				}
-				$merged_results->{$name} = $results[$i];
-			}	
-		}
-
-		my @merged = ();
-		foreach (keys %$merged_results) {
-			push @merged, $merged_results->{$_};
+		my @merged;
+		if ($FULL_SEARCH == $TRUE) {
+			@merged = $treeBuilder->searchOnSetDescriptions($searchtext);
+		} else {
+			@merged = $treeBuilder->searchOnSetDescriptions($searchtext, $checkedopts);
 		}
 
 		if (validateSearchResults(@merged) > 0) {	

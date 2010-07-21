@@ -31,7 +31,7 @@ sub new
 	my $dev = shift || undef;
 
 	my $self;
-	if ($dev eq 'dev')
+	if ((defined $dev) && ($dev eq 'dev'))
 	{
 		$self = {
 		'_db_name' 	=> 'BEAST_dev',
