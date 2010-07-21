@@ -269,6 +269,7 @@ sub addImportSets()
 			@sets = Set::mergeDisjointCollections(\@sets, \@importSets);
 		}
 	}
+	return unless (scalar(@sets) > 0);
 	BeastSession::saveSetsToSession($session, 'mysets', @sets);
 }
 

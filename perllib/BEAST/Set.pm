@@ -178,6 +178,11 @@ sub mergeTree($)
 		} else {
 		# otherwise they both have the same node -- merge the subnodes
 			my $subtree = $self->get_element($child);
+
+			# these must both be sets for the merge to be meaningful
+			next unless (ref($subtree) eq 'Set');
+			next unless (ref($element) eq 'Set');
+
 			$subtree->mergeTree($element);	
 		}
 	}
