@@ -22,22 +22,29 @@ function onLoadBrowse(event, ui) {
 }
 
 function onLoadView(event, ui) {
-	
+
 	$.getJSON('/cgi-bin/BEAST/index.pl',  { mysets:"yes", format:"json" }, 
 		function(data){
 			//alert('JSON Data view'+data._name);
 			var viewDiv = document.getElementById('view');
+			viewDiv.innerHTML = "";
 	
 			// create set objects
 			var sets = new Array();
 			for (var index in data._elements) {
 				sets.push(new Set(data._elements[index]));
 			}
-			
+		
+			// test stuff	
 			var html = "<b>";
 			for (var i=0; i < sets.length; i++) {
 				var set = sets[i];
-				html =  html+"<li>"+set.getName()+"</li>";
+				var elements = set.getElements();
+				html =  html+"<li>"+set.display();
+				//for (i=0; i < elements.length; i++) {
+				//	html = html+elements[i];
+				//}
+				html = html+"</li>";
 			}
 			html = html+"</b>";
 
@@ -268,6 +275,7 @@ function handleKeypress(e) {
 	}
 }
 
+// set class
 function Set(json) {
 
 	this.name = json._name;
@@ -278,9 +286,29 @@ function Set(json) {
 		return this.name;
 	}
 
+	this.getElements = function() {
+		var elements = new Array();
+		for (var index in this.elements) {
+			elements.push(index);
+		}
+		return elements;
+	}
+
 	this.display = function() {
-		
+		var div = "<div>"+this.name+"</div>";
+		return div;
+	}
+
+	// binary membership right now
+	this.getMembershipValue = function(element) {
+		for (var index in this.elements) {
+			if (index == element) {
+				return true;	
+			}
+		}
+		return false;
 	}
 }
+
 
 
