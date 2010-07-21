@@ -36,9 +36,12 @@ open (META_MAPPINGS, $meta_mappings) || die "can't open $meta_mappings!";
 open (FAILED, ">failed-mappings.txt") || die "can't open failed-mappings.txt";
 while (<META_MAPPINGS>) {
 	my $line = $_;
-	my ($parent, $null, $child) = split(/\t/, $line ); 
+	my ($parent, $child) = split(/\t/, $line ); 
 	chomp($parent);
 	chomp($child);
+
+	die unless ($parent =~ /GO:\d+/);
+	die unless ($child =~ /GO:\d+/);
 
 	print "Adding parent child meta-meta relation: $parent:$child\n";
 
