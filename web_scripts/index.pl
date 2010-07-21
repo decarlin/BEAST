@@ -191,6 +191,8 @@ sub displayMySetsTree()
 		pop @sets;
 	}
 
+	return unless (scalar(@sets) > 0); 
+
 	print "<form id=\"mysetsform\">";
 	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\"><br>";
 	if ($cgi->param('checkedelements[]')) {
@@ -245,6 +247,7 @@ sub addSearchSets()
 			@sets = Set::mergeDisjointCollections(\@sets, \@browseSets);
 		}
 	}
+	return unless (scalar(@sets) > 0);
 	BeastSession::saveSetsToSession($session, 'mysets', @sets);
 }
 
@@ -260,7 +263,7 @@ sub addImportSets()
 	if ($cgi->param('importsets[]')) {
 		my @checkboxdata = $cgi->param('importsets[]');
 		my @importSets = BeastSession::loadMergeSetsFromSession($session, 'importsets', \@checkboxdata);
-		if ($#sets == -1) {
+		if (scalar(@sets) == 0) {
 			@sets = @importSets;
 		} else {
 			@sets = Set::mergeDisjointCollections(\@sets, \@importSets);

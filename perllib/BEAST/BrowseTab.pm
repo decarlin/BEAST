@@ -158,13 +158,12 @@ MULTILINE_STR
 
 		if (validateSearchResults(@merged) > 0) {	
 			MySets::displaySetsTree("browse", @merged);
+			#my $Rsize = scalar (@results);
+			#my $Msize = scalar (@merged);
+			#print "merged into $Rsize into $Msize";
+			BeastSession::saveSetsToSession($session, 'browsesets', @merged);
 		}
 		
-		#my $Rsize = scalar (@results);
-		#my $Msize = scalar (@merged);
-		#print "merged into $Rsize into $Msize";
-		BeastSession::saveSetsToSession($session, 'browsesets', @merged);
-
 		$beastDB->disconnectDB();
 	}
 
