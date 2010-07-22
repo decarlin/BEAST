@@ -48,7 +48,7 @@ sub buildSearchOpts
 	my $checkboxdata = shift;
 }
 
-sub printSearchTab
+sub printTab
 {
 	# hash ref to the input form data
 	my $self = shift;

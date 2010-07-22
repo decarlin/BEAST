@@ -28,7 +28,7 @@ sub new
 	return $self;
 }
 
-sub printImportTab
+sub printTab
 {
 	# hash ref to the input form data
 	my $self = shift;

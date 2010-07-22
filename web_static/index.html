@@ -9,10 +9,26 @@
 		<script type='text/javascript' src='js/beast.js'></script>
 		<script type='text/javascript' src='js/ajaxupload.js'></script>
 		<script>
-			function doOnLoad()
-			{
-				updateDiv('results', '/cgi-bin/BEAST/index.pl');
-			}
+function doOnLoad()
+{
+	$(
+		function()
+		{
+			$("#tabs").tabs({
+
+	  		select: function(event, ui) {
+				onOpsTabSelected(event, ui);
+    			}
+			});
+			$("#mysets_tab").tabs({
+
+	  		select: function(event, ui) {
+				onViewTabSelected(event, ui);
+    			}
+			});
+		}
+	);
+}
 		</script>
 		<link rel='stylesheet' type='text/css' href='/common/css/stuart_lab_style.css'/>
 		<link rel='stylesheet' type='text/css' href='/common/css/smoothness/jquery-ui-1.8.2.custom.css'/>
@@ -29,10 +45,48 @@
 		</div> <!-- options -->
 		
 		<div id="results">
+			<div class="mysets_div" id="mysets_tab">
+				<ul>
+					<li><a href="#mysets_tree">MySets (Tree)</a></li>
+					<li><a href="#mysets_flat">MySets (Flat)</a></li>
+				</ul>
+				
+				<div id="mysets_tree">
+				</div> <!-- mysets_tree -->
+				
+				<div id="mysets_flat">
+				</div> <!-- mysets_flat -->
+				
+			</div> <!-- mysets_tab -->
+			<div class="myopstabs_div" id="tabs">
+				<ul>
+					<li><a href="#import">Import</a></li>
+					<li><a href="#search">Search</a></li>
+					<li><a href="#browse">Browse</a></li>
+					<li><a href="#view">View</a></li>
+					<li><a href="http://sysbio.soe.ucsc.edu/BEAST/admin_pages/admin.html">Admin</a></li>
+				</ul>
 
+			
+				<div id="import">
+				</div> <!-- import -->
+
+				<div id="search">
+				</div> <!-- search -->
+
+				<div id="browse">
+				</div> <!-- browse -->
+
+				<div id="view">
+				</div> <!-- view -->
+
+				<div id="admin">
+				</div> <!-- admin -->
+			</div> <!-- tabs -->
+			
 		</div> <!-- results -->
-		<div id="supplement">
-		</div> <!-- supplement -->
+		<div id="debug_info">
+		</div> <!-- debug_info -->
 	</body>
 </html>
 

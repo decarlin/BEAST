@@ -28,13 +28,13 @@ function onLoadImport(event, ui) {
 
 function onLoadBrowse(event, ui) {
 	$('#browse').load('/cgi-bin/BEAST/index.pl', 
-		{browse:"yes"}
+		{action:"browse"}
 	);
 }
 
 function onLoadSearch(event, ui) {
 	$('#search').load('/cgi-bin/BEAST/index.pl', 
-		{search:"yes"}
+		{action:"search"}
 	);
 }
 
@@ -280,7 +280,7 @@ function onSearchSets() {
 
 
 	$('#search').load('/cgi-bin/BEAST/index.pl', 
-		{search:"yes",
+		{action:"search",
 		 searchtext: form.searchtext.value, 
 		 'checkedfilters[]': checkedFilters} 
 	);

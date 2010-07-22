@@ -16,6 +16,7 @@ use htmlHelper;
 use CGI::Session;
 use BEAST::CheckBoxTree;
 use BEAST::SearchTab;
+use BEAST::BrowseTab;
 use BEAST::ImportTab;
 use BEAST::MySets;
 use BEAST::Set;
@@ -36,11 +37,13 @@ print $cgi->header( -cookie=>$cookie );
 our @sets;
 
 sub doTabbedMenu();
-sub doImportTab();
+# SDB 2010.07.22 Commented this out as it doesn't seem to refer to anything.
+# sub doImportTab();
 
-my $searchObj;
-my $importObj;
-
+my $searchObj = SearchTab->new($cgi);
+my $importObj = ImportTab->new($cgi);
+my $browseObj = BrowseTab->new($cgi);
+	
 #print Data::Dumper->Dump([$cgi]);
 #main
 {
@@ -52,44 +55,75 @@ my $importObj;
 	#@my $sql = 
 	#$results = runSQL($sql, $dbh);
 
-	$searchObj = SearchTab->new($cgi);
-	$importObj = ImportTab->new($cgi);
+	my $action = $cgi->param('action');
 
-	if ($cgi->param('my_upload_file')) {
+	if ($cgi->param('my_upload_file'))
+	{
 		my $fh = $cgi->upload('my_upload_file');
-		$importObj->printImportTab($session, $fh);
-	} elsif ($cgi->param('addsearch')) {
+		$importObj->printTab($session, $fh);
+	}
+	elsif ($cgi->param('addsearch'))
+	{
 		addSearchSets();
 		if ($cgi->param('type') eq "tree") {
 			displayMySetsTree();
 		}
-	} elsif ($cgi->param('addimportfile')) {
+	}
+	elsif ($cgi->param('addimportfile'))
+	{
 		addImportSets();
 		if ($cgi->param('type') eq "tree") {
 			displayMySetsTree();
 		} 
-	} elsif ($cgi->param('search')) {
+	}
+	elsif ($action eq "search")
+	{
 		# replace the search tab to include the search results
 
-		$searchObj->printSearchTab($session);
-	} elsif ($cgi->param('import')) {
-		$importObj->printImportTab($session);
-	} elsif ($cgi->param('display_mysets_tree')) {
+		$searchObj->printTab($session);
+	}
+	elsif ($cgi->param('import'))
+	{
+		$importObj->printTab($session);
+	}
+	elsif ($action eq "browse")
+	{
+		$browseObj->printTab($session);
+	}
+	elsif ($cgi->param('display_mysets_tree'))
+	{
 		displayMySetsTree();
-	} elsif ($cgi->param('display_mysets_flat')) {
+	}
+	elsif ($cgi->param('display_mysets_flat'))
+	{
 		displayMySetsFlat();
-	} elsif ($cgi->param('mysets')) {
-		if ($cgi->param('format') && ($cgi->param('format') eq 'json')) {
+	}
+	elsif ($cgi->param('mysets'))
+	{
+		if ($cgi->param('format') && ($cgi->param('format') eq 'json'))
+		{
 			getMySetsJSON();		
-		} else {
+		}
+		else
+		{
 			displayMySetsTree();
 		}
-	} else {
+	}
+	else
+	{
 		# default; on page creation	
 		$session->clear();
-		doTabbedMenu();	
+#		doTabbedMenu();	
 	}
 
+
+	print "<table><tr><th colspan=2>CGI Parameters</th></tr><tr><th>name</th><th>value</th></tr>";
+	my @names = $cgi->param;
+	foreach my $name (@names)
+	{
+		print "<tr><td>$name</td><td>".$cgi->param($name)."</td></tr>\n";
+	}
+	print "</table>";
 	#my $activetab = $cgi->param('tab');	
 	#my $selected = 1;
 	#if ($activetab == 'search') {
@@ -100,7 +134,7 @@ my $importObj;
 
 
 
-
+#SDB 2010.07.22 - Deprecated...  moved this HTML into index.html
 sub doTabbedMenu()
 {
 		
@@ -142,11 +176,14 @@ MULTILINE_STR
 MULTILINE_STR
 	displayMySetsFlat();
 
-print "</div>";
+#print "</div>";
 # surrounding div
-print "</div>";
+#print "</div>";
 
 print <<MULTILINE_STR;
+
+</div>
+</div>
 <div class="myopstabs_div" id="tabs">
 	<ul>
 		<li><a href="#import">Import</a></li>
@@ -158,14 +195,15 @@ print <<MULTILINE_STR;
 MULTILINE_STR
 
 	print "<div id=\"import\">";
-	$importObj->printImportTab($session);
+	$importObj->printTab($session);
 	print "</div>";
 
 	print "<div id=\"search\">";
-	$searchObj->printSearchTab();
+	$searchObj->printTab();
 	print "</div>";
 
 	print "<div id=\"browse\">";
+	$browseObj->printTab();
 	print "</div>";
 
 	print "<div id=\"view\">";
