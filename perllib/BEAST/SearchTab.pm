@@ -2,7 +2,7 @@
 #Author:	Evan Paull (epaull@soe.ucsc.edu)
 #Create Date:	6.16.2010
 
-package BrowseTab;
+package SearchTab;
 
 use strict;
 use warnings;
@@ -16,7 +16,7 @@ our $TRUE = 1;
 our $FALSE = 0;
 
 ###
-### Build the Browse Tab
+### Build the Search Tab
 ###
 
 sub new
@@ -48,7 +48,7 @@ sub buildSearchOpts
 	my $checkboxdata = shift;
 }
 
-sub printBrowseTab
+sub printSearchTab
 {
 	# hash ref to the input form data
 	my $self = shift;
@@ -99,7 +99,7 @@ sub printBrowseTab
 	<input type='button' value="Select/Deselect All" onclick="checkAll('searchcategories');">
 	<b> Search: </b><input type='text' name="searchtext" value="$searchtext" size="25">
 	<!-- Send selected filter categories to display pannel via ajax -->
-	<input type='button' name='activetab' value='browse' onClick="return onSearchSets();">
+	<input type='button' name='activetab' value='search' onClick="return onSearchSets();">
 MULTILINE_STR
 
 	my @checked;
@@ -157,12 +157,12 @@ MULTILINE_STR
 		}
 
 		if (validateSearchResults(@merged) > 0) {	
-			print "<input type='button' value='Add To My Sets' onClick=\"return onAddBrowseSets(this.form);\"><br>";
-			MySets::displaySetsTree("browse", @merged);
+			print "<input type='button' value='Add To My Sets' onClick=\"return onAddSearchSets(this.form);\"><br>";
+			MySets::displaySetsTree("search", @merged);
 			#my $Rsize = scalar (@results);
 			#my $Msize = scalar (@merged);
 			#print "merged into $Rsize into $Msize";
-			BeastSession::saveSetsToSession($session, 'browsesets', @merged);
+			BeastSession::saveSetsToSession($session, 'searchsets', @merged);
 		}
 		
 		$beastDB->disconnectDB();

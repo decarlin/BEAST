@@ -1,8 +1,8 @@
 var checked = false;
 
 function onOpsTabSelected(event, ui) {
-	if (ui.tab.hash == "#browse") {
-		onLoadBrowse(event, ui);
+	if (ui.tab.hash == "#search") {
+		onLoadSearch(event, ui);
 	} else if (ui.tab.hash == '#view') {
 		onLoadView(event, ui);
 	}
@@ -17,8 +17,8 @@ function onViewTabSelected(event, ui) {
 	}
 }
 
-function onLoadBrowse(event, ui) {
-	//alert('loaded browse');
+function onLoadSearch(event, ui) {
+	//alert('loaded search');
 }
 
 function onLoadView(event, ui) {
@@ -136,7 +136,7 @@ function chooseTextImport(form) {
 	} catch(e){ log(e); }
 }
 
-function onAddBrowseSets(form) {
+function onAddSearchSets(form) {
 	var importtext;
 	var importtype;
 
@@ -148,15 +148,15 @@ function onAddBrowseSets(form) {
 
 	if (selected == 0) {
 		$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
-		  {'addbrowse':'yes',
+		  {'addsearch':'yes',
 		   'type':'tree',
-		   'browsesets[]': selects }
+		   'searchsets[]': selects }
 		);
  	} else if (selected == 1) {
 		$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
-		  {'addbrowse':'yes',
+		  {'addsearch':'yes',
 		   'type':'flat',
-		   'browsesets[]': selects }
+		   'searchsets[]': selects }
 		);
 	}
 }
@@ -262,8 +262,8 @@ function onSearchSets() {
 	}
 
 
-	$('#browse').load('/cgi-bin/BEAST/index.pl', 
-		{browse:"yes",
+	$('#search').load('/cgi-bin/BEAST/index.pl', 
+		{search:"yes",
 		 searchtext: form.searchtext.value, 
 		 'checkedfilters[]': checkedFilters} 
 	);

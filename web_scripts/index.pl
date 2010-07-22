@@ -15,7 +15,7 @@ use htmlHelper;
 # don't have permission to install, so this has to be packaged
 use CGI::Session;
 use BEAST::CheckBoxTree;
-use BEAST::BrowseTab;
+use BEAST::SearchTab;
 use BEAST::ImportTab;
 use BEAST::MySets;
 use BEAST::Set;
@@ -38,7 +38,7 @@ our @sets;
 sub doTabbedMenu();
 sub doImportTab();
 
-my $browseObj;
+my $searchObj;
 my $importObj;
 
 #print Data::Dumper->Dump([$cgi]);
@@ -52,13 +52,13 @@ my $importObj;
 	#@my $sql = 
 	#$results = runSQL($sql, $dbh);
 
-	$browseObj = BrowseTab->new($cgi);
+	$searchObj = SearchTab->new($cgi);
 	$importObj = ImportTab->new($cgi);
 
 	if ($cgi->param('my_upload_file')) {
 		my $fh = $cgi->upload('my_upload_file');
 		$importObj->printImportTab($session, $fh);
-	} elsif ($cgi->param('addbrowse')) {
+	} elsif ($cgi->param('addsearch')) {
 		addSearchSets();
 		if ($cgi->param('type') eq "tree") {
 			displayMySetsTree();
@@ -68,10 +68,10 @@ my $importObj;
 		if ($cgi->param('type') eq "tree") {
 			displayMySetsTree();
 		} 
-	} elsif ($cgi->param('browse')) {
-		# replace the browse tab to include the search results
+	} elsif ($cgi->param('search')) {
+		# replace the search tab to include the search results
 
-		$browseObj->printBrowseTab($session);
+		$searchObj->printSearchTab($session);
 	} elsif ($cgi->param('import')) {
 		$importObj->printImportTab($session);
 	} elsif ($cgi->param('display_mysets_tree')) {
@@ -92,7 +92,7 @@ my $importObj;
 
 	#my $activetab = $cgi->param('tab');	
 	#my $selected = 1;
-	#if ($activetab == 'browse') {
+	#if ($activetab == 'search') {
 	#	$selected = 2;
 	#}
 
@@ -150,6 +150,7 @@ print <<MULTILINE_STR;
 <div class="myopstabs_div" id="tabs">
 	<ul>
 		<li><a href="#import">Import</a></li>
+		<li><a href="#search">Search</a></li>
 		<li><a href="#browse">Browse</a></li>
 		<li><a href="#view">View</a></li>
 		<li><a href="http://sysbio.soe.ucsc.edu/BEAST/admin_pages/admin.html">Admin</a></li>
@@ -160,8 +161,11 @@ MULTILINE_STR
 	$importObj->printImportTab($session);
 	print "</div>";
 
+	print "<div id=\"search\">";
+	$searchObj->printSearchTab();
+	print "</div>";
+
 	print "<div id=\"browse\">";
-	$browseObj->printBrowseTab();
 	print "</div>";
 
 	print "<div id=\"view\">";
@@ -238,13 +242,13 @@ sub addSearchSets()
 	#print Data::Dumper->Dump([@sets]);
 
 	# add/merge these sets with the current working sets
-	if ($cgi->param('browsesets[]')) {
-		my @checkboxdata = $cgi->param('browsesets[]');
-		my @browseSets = BeastSession::loadMergeSetsFromSession($session, 'browsesets', \@checkboxdata);
+	if ($cgi->param('searchsets[]')) {
+		my @checkboxdata = $cgi->param('searchsets[]');
+		my @searchSets = BeastSession::loadMergeSetsFromSession($session, 'searchsets', \@checkboxdata);
 		if ($#sets == -1) {
-			@sets = @browseSets;
+			@sets = @searchSets;
 		} else {
-			@sets = Set::mergeDisjointCollections(\@sets, \@browseSets);
+			@sets = Set::mergeDisjointCollections(\@sets, \@searchSets);
 		}
 	}
 	return unless (scalar(@sets) > 0);
