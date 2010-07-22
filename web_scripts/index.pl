@@ -82,7 +82,7 @@ my $browseObj = BrowseTab->new($cgi);
 
 		$searchObj->printTab($session);
 	}
-	elsif ($cgi->param('import'))
+	elsif ($action eq "import")
 	{
 		$importObj->printTab($session);
 	}
