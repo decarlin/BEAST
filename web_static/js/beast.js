@@ -7,6 +7,8 @@ function onOpsTabSelected(event, ui) {
 		onLoadView(event, ui);
 	} else if (ui.tab.hash == '#import') {
 		onLoadImport(event, ui);
+	} else if (ui.tab.hash == '#browse') {
+		onLoadBrowse(event, ui);
 	}
 	// import tab is loaded initially
 }
@@ -22,6 +24,12 @@ function onViewTabSelected(event, ui) {
 function onLoadImport(event, ui) {
 
 
+}
+
+function onLoadBrowse(event, ui) {
+	$('#browse').load('/cgi-bin/BEAST/index.pl', 
+		{browse:"yes"}
+	);
 }
 
 function onLoadSearch(event, ui) {
