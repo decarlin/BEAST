@@ -31,11 +31,11 @@ while (<SETS>) {
 	my ($external_id, $name) = split (/\t/, $_);
 	chomp($name);
 
-	my $id;
-	if (($id = $importer->existsSet($external_id)) > 0) {
+	my $id = $importer->existsSet($external_id);
+	if ($id > 0) {
 		print "set already exists in DB!: $name\n";
 	} else {
-		#$id = $importer->insertSet($name, $external_id);
+		$id = $importer->insertSet($name, $external_id);
 		if ($id =~ /\d+/) {
 			print "Added set id:$id for set $name\n";
 		} else {

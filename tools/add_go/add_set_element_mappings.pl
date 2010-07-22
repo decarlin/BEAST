@@ -43,19 +43,13 @@ while (<MAPPINGS>) {
 	print "Adding set-entity relation: $set_name:$entity_key\n";
 
 	my $set_id = $importer->existsSet($set_name);
-	unless ($set_id > 0) {
-		die "Error: no set found for $set_name;";	
-	}
 	my $entity_id = $importer->existsEntity($entity_key, $keyspace);
-	unless ($set_id > 0) {
-		die "Error: no set found for $set_name;";	
-	}
 
-	if ($set_id eq "") {
+	if ($set_id =~ /\d+/) {
 		print "no entry for set: $set_name, skipping relation...\n";
 		print FAILED "$set_name:$entity_name\n";
 		next;
-	} elsif ($entity_id eq "") {
+	} elsif ($entity_id =~ /\d+/) {
 		print "no entry for entity: $entity_key, skipping relation...\n";
 		print FAILED "$set_name:$entity_key\n";
 		next;
