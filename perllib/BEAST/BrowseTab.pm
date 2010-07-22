@@ -157,6 +157,7 @@ MULTILINE_STR
 		}
 
 		if (validateSearchResults(@merged) > 0) {	
+			print "<input type='button' value='Add To My Sets' onClick=\"return onAddBrowseSets(this.form);\"><br>";
 			MySets::displaySetsTree("browse", @merged);
 			#my $Rsize = scalar (@results);
 			#my $Msize = scalar (@merged);
@@ -168,12 +169,7 @@ MULTILINE_STR
 	}
 
 
-	print <<MULTILINE_STR;
-	<input type='button' value='Add To My Sets' onClick="return onAddBrowseSets(this.form);"><br>
-	</form>
-MULTILINE_STR
-
-
+	print "</form>";
 }
 
 1;
