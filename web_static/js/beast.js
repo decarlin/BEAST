@@ -2,13 +2,13 @@ var checked = false;
 
 function onOpsTabSelected(event, ui) {
 	if (ui.tab.hash == "#search") {
-		onLoadSearch(event, ui);
+		onLoadSearch();
 	} else if (ui.tab.hash == '#view') {
-		onLoadView(event, ui);
+		onLoadView();
 	} else if (ui.tab.hash == '#import') {
-		onLoadImport(event, ui);
+		onLoadImport();
 	} else if (ui.tab.hash == '#browse') {
-		onLoadBrowse(event, ui);
+		onLoadBrowse();
 	}
 	// import tab is loaded initially
 }
@@ -21,25 +21,25 @@ function onViewTabSelected(event, ui) {
 	}
 }
 
-function onLoadImport(event, ui) {
+function onLoadImport() {
 	$('#import').load('/cgi-bin/BEAST/index.pl', 
 		{action:"import"}
 	);
 }
 
-function onLoadBrowse(event, ui) {
+function onLoadBrowse() {
 	$('#browse').load('/cgi-bin/BEAST/index.pl', 
 		{action:"browse"}
 	);
 }
 
-function onLoadSearch(event, ui) {
+function onLoadSearch() {
 	$('#search').load('/cgi-bin/BEAST/index.pl', 
 		{action:"search"}
 	);
 }
 
-function onLoadView(event, ui) {
+function onLoadView() {
 
 	$.getJSON('/cgi-bin/BEAST/index.pl',  { mysets:"yes", format:"json" }, 
 		function(data){
