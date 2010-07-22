@@ -89,6 +89,10 @@ my $browseObj = BrowseTab->new($cgi);
 	{
 		$browseObj->printTab($session);
 	}
+	elsif ($action eq "browse_dig")
+	{
+		$browseObj->dig($session);
+	}
 	elsif ($cgi->param('display_mysets_tree'))
 	{
 		displayMySetsTree();
