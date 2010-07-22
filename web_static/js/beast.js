@@ -22,8 +22,9 @@ function onViewTabSelected(event, ui) {
 }
 
 function onLoadImport(event, ui) {
-
-
+	$('#import').load('/cgi-bin/BEAST/index.pl', 
+		{action:"import"}
+	);
 }
 
 function onLoadBrowse(event, ui) {
