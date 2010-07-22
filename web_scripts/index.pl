@@ -38,9 +38,6 @@ print $cgi->header( -cookie=>$cookie );
 
 our @sets;
 
-sub doTabbedMenu();
-# SDB 2010.07.22 Commented this out as it doesn't seem to refer to anything.
-# sub doImportTab();
 
 my $searchObj = SearchTab->new($cgi);
 my $importObj = ImportTab->new($cgi);
@@ -86,7 +83,6 @@ my $browseObj = BrowseTab->new($cgi);
 	}
 	elsif ($action eq "import")
 	{
-		# print import
 		$importObj->printTab($session);
 	}
 	elsif ($action eq "browse")
@@ -138,86 +134,6 @@ my $browseObj = BrowseTab->new($cgi);
 }# end main
 
 
-
-#SDB 2010.07.22 - Deprecated...  moved this HTML into index.html
-sub doTabbedMenu()
-{
-		
-# Create Jquery tabbed box with 2 tabs
-	print <<MULTILINE_STR;
-<script type="text/javascript">
-
-	\$(
-		function()
-		{
-			\$("#tabs").tabs({
-
-	  		select: function(event, ui) {
-				onOpsTabSelected(event, ui);
-    			}
-			});
-			\$("#mysets_tab").tabs({
-
-	  		select: function(event, ui) {
-				onViewTabSelected(event, ui);
-    			}
-			});
-		}
-	);
-</script>
-
-<div class="mysets_div" id="mysets_tab">
-	<ul>
-		<li><a href="#mysets_tree">MySets (Tree)</a></li>
-		<li><a href="#mysets_flat">MySets (Flat)</a></li>
-	</ul>
-	<div id="mysets_tree">
-MULTILINE_STR
-	displayMySetsTree();
-# mysets
-	print <<MULTILINE_STR;
-	</div>
-	<div id="mysets_flat">
-MULTILINE_STR
-	displayMySetsFlat();
-
-#print "</div>";
-# surrounding div
-#print "</div>";
-
-print <<MULTILINE_STR;
-
-</div>
-</div>
-<div class="myopstabs_div" id="tabs">
-	<ul>
-		<li><a href="#import">Import</a></li>
-		<li><a href="#search">Search</a></li>
-		<li><a href="#browse">Browse</a></li>
-		<li><a href="#view">View</a></li>
-		<li><a href="http://sysbio.soe.ucsc.edu/BEAST/admin_pages/admin.html">Admin</a></li>
-	</ul>
-MULTILINE_STR
-
-	print "<div id=\"import\">";
-	$importObj->printTab($session);
-	print "</div>";
-
-	print "<div id=\"search\">";
-	$searchObj->printTab();
-	print "</div>";
-
-	print "<div id=\"browse\">";
-	$browseObj->printTab();
-	print "</div>";
-
-	print "<div id=\"view\">";
-	print "</div>";
-
-	print "<div id=\"admin\">";
-	print "</div>";
-print "</div>";
-}
 
 sub displayMySetsFlat()
 {
