@@ -61,7 +61,7 @@ sub doTabbedMenu()
 {
 		
 # Create Jquery tabbed box with 2 tabs
-	print <<EOF;
+	print <<MULTILINE_STR;
 <script type="text/javascript">
 
 	\$(
@@ -78,18 +78,18 @@ sub doTabbedMenu()
 		<li><a href="#mysets">MySets</a></li>
 	</ul>
 	<div id="mysets">
-EOF
+MULTILINE_STR
 	doMySets();
 print "</div>";
 
-print <<EOF;
+print <<MULTILINE_STR;
 </div>
 <div class="myopstabs_div" id="tabs">
 	<ul>
 		<li><a href="#import">Import</a></li>
 		<li><a href="#browse">Browse</a></li>
 	</ul>
-EOF
+MULTILINE_STR
 
 	print "<div id=\"import\">";
 	doImportTab();
@@ -112,7 +112,7 @@ sub doImportTab()
 		#my $uploaded_filehandle = $input->upload('importtext');
 	}
 
-	print <<EOF;
+	print <<MULTILINE_STR;
 	<form id="importform">
         <p class='radiO_selectors' id='textStyle'> 
 	<input type='radio' name='importType' checked='checked' value='text' onclick='chooseTextImport(this.form)'>
@@ -129,7 +129,7 @@ sub doImportTab()
 	<input type='button' value='import' onClick="return onImportSets(this.form);"><br>
 	</form>
 		<p>Search Box here....</p>
-EOF
+MULTILINE_STR
 }
 
 sub doBrowseTab() 
@@ -154,13 +154,13 @@ sub doBrowseTab()
 		push @{$activeFilters->{$category}}, $type;
 	}
 
-	print <<EOF;
+	print <<MULTILINE_STR;
 	<form id="searchcategories">
 	<input type='button' value="Select/Deselect All" onclick="checkAll('searchcategories');">
 	<b> Search: </b><input type='text' name="searchtext" value="$searchtext" size="25">
 	<!-- Send selected filter categories to display pannel via ajax -->
 	<input type='button' name='activetab' value='browse' onClick="return onSearchSets();">
-EOF
+MULTILINE_STR
 
 	my $data = {
 		'Species' 	=> ['Human', 'Mouse', 'Platypus'],
@@ -186,9 +186,9 @@ EOF
 	  htmlHelper::endSection($key);
 	}
 
-	print <<EOF;
+	print <<MULTILINE_STR;
 	</form>
-EOF
+MULTILINE_STR
 }
 
 sub doMySets()
@@ -207,9 +207,9 @@ sub doMySets()
 
 sub doSearchResult()
 {
-	print <<EOF;
+	print <<MULTILINE_STR;
 	<br><b>Search Results:</b><br>
-EOF
+MULTILINE_STR
 }
 
 ###
