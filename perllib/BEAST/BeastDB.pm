@@ -485,12 +485,13 @@ SELECT sets.id FROM sets JOIN set_entity	\
 	return @data;
 }
 
+# restrict to non-empty sets that have real entities attached
 sub searchSetsByTerm($)
 {
 	my $self = shift;
 	my $search_text = shift;
 
-	my $template = "SELECT id FROM sets WHERE name LIKE '%var1%';";
+	my $template = "SELECT DISTINCT sets.id FROM sets,set_entity WHERE sets.id=set_entity.sets_id AND name LIKE '%var1%'";
 
 	$search_text = escapeSQLString($search_text);
 	$template =~ s/var1/$search_text/;
