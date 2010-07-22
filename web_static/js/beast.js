@@ -18,7 +18,34 @@ function onViewTabSelected(event, ui) {
 }
 
 function onLoadSearch(event, ui) {
-	//alert('loaded search');
+	var form = document.getElementById('searchcategories');
+
+	// first page load
+	if (form == null) {
+		$('#search').load('/cgi-bin/BEAST/index.pl', 
+			{search:"yes"}
+		);
+		return;
+	}
+
+	<!-- build search opts data structure -->
+	var checkedFilters = new Array();
+	var j = 0;
+    	for (var i=0; i < form.elements.length; i++) {
+		if (form.elements[i].type == "checkbox") {
+			if (form.elements[i].checked == 1) {
+				checkedFilters[j] = form.elements[i].name;
+				j++;
+			}
+		}
+	}
+
+
+	$('#search').load('/cgi-bin/BEAST/index.pl', 
+		{search:"yes",
+		 searchtext: form.searchtext.value, 
+		 'checkedfilters[]': checkedFilters} 
+	);
 }
 
 function onLoadView(event, ui) {
