@@ -64,7 +64,6 @@ sub displaySetsFlat
 	foreach (@sets) {
 		push @leaves, $_->getLeafNodes();
 	}
-	print Data::Dumper->Dump([@leaves]);
 	displaySetsTree($divID, @leaves);
 }
 

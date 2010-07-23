@@ -111,12 +111,6 @@ my $browseObj = BrowseTab->new($cgi);
 			displayMySetsTree();
 		}
 	}
-	else
-	{
-		# default; on page creation	
-		$session->clear();
-#		doTabbedMenu();	
-	}
 
 	if(DEBUG)
 	{

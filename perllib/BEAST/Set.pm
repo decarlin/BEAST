@@ -148,6 +148,9 @@ sub mergeTree($)
 	my $self = shift;
 	my $tree2 = shift;
 
+	unless (ref($self) eq 'Set' && ref($tree2) eq 'Set') {
+		return $FALSE;
+	}
 	#different head nodes always means we can't merge
 	unless ($self->get_name eq $tree2->get_name) {
 		return $FALSE;
@@ -371,6 +374,7 @@ sub parseSetLines
 		unless ($line =~ /\^/) {
 			return 0;
 		}
+
 		my @meta_components;
 		my $name;
 		($name, @meta_components) = split(/\^/, $components[0]);
