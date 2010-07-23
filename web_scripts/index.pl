@@ -146,6 +146,8 @@ sub displayMySetsFlat()
 		pop @sets;
 	}
 
+	return unless (scalar(@sets) > 0); 
+
 	print "<form id=\"mysetsform_flat\">";
 	MySets::displaySetsFlat("mysets", @sets);
 	print "</form>";
