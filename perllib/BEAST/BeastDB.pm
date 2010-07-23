@@ -17,6 +17,39 @@ package BeastDB;
 our $TRUE=1;
 our $FALSE=0;
 
+
+
+sub importSetToDB($);
+sub connectDB();
+sub disconnectDB();
+sub runSQL($$);
+sub getSetIdFromExternalId($);
+sub getSetNameExtIdFromID($);
+sub getEntityNameFromID($);
+sub getMetaIdFromExternalId($);
+sub getMetaNameExtIDFromID($);
+sub insertSQL($$);
+sub escapeSQLString;
+sub insertSet($$);
+sub insertMeta($$);
+sub insertEntity($$$$);
+sub insertSetEntityRel($$$);
+sub insertMetaMetaRel($$);
+sub insertSetMetaRel($$);
+sub existsMetaMetaRel($$);
+sub existsSetMetaRel($$);
+sub existsSetEntityRel($$);
+sub getRoots();
+sub getParentsForSet($$);
+sub getEntitiesForSet($$);
+sub searchSetsByTermRestrictKeyspace($$$);
+sub searchSetsByTerm($);
+sub getParentsForMeta($$);
+sub existsMeta($$);
+sub existsSet($$);
+sub existsEntity($$);
+
+
 # 
 # Instance Methods:
 #
