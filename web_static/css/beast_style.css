@@ -9,16 +9,20 @@
 
 .mysets_div
 {
-	float:left;
+	position:absolute;
+	left:0px;
+	top:0px;
 	width:400px;
-	height:800px;
-	padding: 10px;
+	padding:10px;
+	min-height:600px;
 }
 
 .myopstabs_div
 {
-	float:left;
-	width:800px;
-	height:800px;
+	position:absolute;
+	left:420px;
+	top:0px;
+	min-width:800px;
 	padding: 10px;
+	min-height:600px;
 }
