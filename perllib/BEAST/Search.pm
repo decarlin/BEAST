@@ -210,7 +210,7 @@ sub searchOnSetDescriptions
 	my @searches = split (/,/, $searchtext);	
 
 	my @results;
-	foreach (@searches) {
+	foreach (@searches){
 		my $search = $_;
 
 		my @top_level_nodes;

@@ -64,24 +64,8 @@ sub displaySetsFlat
 	foreach (@sets) {
 		push @leaves, $_->getLeafNodes();
 	}
-
-	my $elements = {};
-	foreach (@leaves) {
-		$elements->{$_->get_name} = $_;
-	}
-
-	my $collection = Set->new('all_sets', 1, {}, $elements);
-
-	my $displayData = {};
- 	my $name = $collection->get_name;
-
-	$displayData->{$name} = getDisplayHash($collection);
-	$displayData->{$name}->{'_active'} = $collection->{'_active'};
-	$displayData->{$name}->{'_desc'} = $collection->get_metadata_value('name');
-	$displayData->{$name}->{'_type'} = $collection->get_metadata_value('type');
-	$displayData->{$name}->{'_id'} = $collection->get_metadata_value('id');
-
-	CheckBoxTree::buildCheckBoxTree($displayData, "", $divID);
+	print Data::Dumper->Dump([@leaves]);
+	displaySetsTree($divID, @leaves);
 }
 
 sub getDisplayHash

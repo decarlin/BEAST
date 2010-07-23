@@ -38,7 +38,6 @@ print $cgi->header( -cookie=>$cookie );
 
 our @sets;
 
-
 my $searchObj = SearchTab->new($cgi);
 my $importObj = ImportTab->new($cgi);
 my $browseObj = BrowseTab->new($cgi);
