@@ -70,7 +70,7 @@ sub displaySetsFlat
 		$elements->{$_->get_name} = $_;
 	}
 
-	my $collection = Set->new('collection', 1, {}, $elements);
+	my $collection = Set->new('all_sets', 1, {}, $elements);
 
 	my $displayData = {};
  	my $name = $collection->get_name;

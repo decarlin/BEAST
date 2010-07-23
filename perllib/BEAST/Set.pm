@@ -320,11 +320,14 @@ sub getLeafNodes()
 	my @names = $self->get_element_names;
 	if ($#names == -1) { push @leafnodes, $self; }
 
+	my $set_isa_leaf = $TRUE;
 	foreach (@names) {
 		my $name = $_;
 	 	my $element = $self->get_element($name);
 	     
 	  	next unless (ref($element) eq 'Set');
+
+		$set_isa_leaf = $FALSE;
 
 		my $isleaf = $TRUE;
 		foreach ($element->get_element_names) {
@@ -339,6 +342,10 @@ sub getLeafNodes()
 		if ($isleaf == $TRUE) { 
 			push @leafnodes, $element; 
 		}
+	}
+
+	if ($set_isa_leaf == $TRUE) {
+		push @leafnodes, $self;
 	}
 
 	return @leafnodes;
