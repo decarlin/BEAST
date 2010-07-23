@@ -57,6 +57,11 @@ sub printTab
 			$importtext = $input->param('importtext');
 			my @lines = split(/\n/, $importtext);
 			@sets = Set::parseSetLines(@lines);	
+			if ($sets[0] == 0) {
+				pop @sets;
+				print "Failed to parse set lines!\n";
+				return;
+			}
 		}
 	} 
 
@@ -66,6 +71,11 @@ sub printTab
 		  push @lines, $line;	
 		}
 		@sets = Set::parseSetLines(@lines);
+		if ($sets[0] == 0) {
+			pop @sets;
+			print "Failed to parse set lines!\n";
+			return;
+		}
 	}
 
 	#print Data::Dumper->Dump([@sets]);

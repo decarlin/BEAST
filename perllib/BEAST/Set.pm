@@ -344,18 +344,6 @@ sub getLeafNodes()
 	return @leafnodes;
 }
 
-sub validateLine
-{
-	my $line = shift;
-		
-	unless ($line =~ /\S+\^\S+\t.*/) {
-		print $line."!";
-		return $FALSE;
-	} else {
-		return $TRUE;
-	}
-}
-
 sub parseSetLines
 {
 	my @lines = @_;
@@ -365,37 +353,38 @@ sub parseSetLines
 	for my $line (@lines) 
 	{
 		chomp($line);
-		next unless ($line =~ /\S+/);	
-		unless (validateLine($line) > 0) {
+
+		#fail 1
+		unless ($line =~ /\S+\t\S+/) {
 			return 0;
 		}
 
-		my @components = split(/\^/, $line);
+		my @components = split(/\t/, $line);
 
-		## create a set object
-		my $name = $components[0];
+		unless ($line =~ /\^/) {
+			return 0;
+		}
+		my @meta_components;
+		my $name;
+		($name, @meta_components) = split(/\^/, $components[0]);
+		
+		if ($name =~ /=/) {
+			return 0;
+		}
+
 		my $metadata = {};
-		my $elements = {};
-		my $i = 0;
-		foreach (@components) 
-		{
-			if ($i == 0) { $i++; next; }
-
-			my $component = $_;
-			# metadata goes in with key/value pairs
-			if ($component =~ /(.*)=(.*)/) {
-				if ($1 eq "name") {
-				  $name = $2;
-				} else {
+		foreach (@meta_components) {
+			if ($_ =~ /(.*)=(.*)/) {
 				  $metadata->{$1} = $2;
-				}
 			} else {
-				# tab delineated elements
-				foreach (split(/\t/, $component)) {
-					next unless ($_ =~ /\S+/);
-					$elements->{$_} = "";	
-				}
-			}
+				return 0;
+			} 
+		}
+		
+		my $elements = {};
+		for my $i (1 .. $#components) 
+		{
+			$elements->{$components[$i]} = "";	
 		}
 
 		my $set = Set->new($name, "1", $metadata, $elements);
