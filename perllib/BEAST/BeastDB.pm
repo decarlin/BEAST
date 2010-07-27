@@ -648,9 +648,9 @@ sub getRoots()
 		my $id = $data[0];
 		my $name = $data[1];
 		my $external_id = $data[2];
-		$roots{$id}{'id'} = $id;
-		$roots{$id}{'name'} = $name;
-		$roots{$id}{'external_id'} = $external_id;
+		$roots{$name.$id}{'id'} = $id;
+		$roots{$name.$id}{'name'} = $name;
+		$roots{$name.$id}{'external_id'} = $external_id;
 	}
 	return \%roots;
 }
@@ -670,9 +670,10 @@ sub getChildren($)
 		my $id = $data[0];
 		my $name = $data[1];
 		my $external_id = $data[2];
-		$children{'meta'}{$id}{'id'} = $id;
-		$children{'meta'}{$id}{'name'} = $name;
-		$children{'meta'}{$id}{'external_id'} = $external_id;
+		#key on $name.$id purely for sorting purposes.  this needs to be unique, so should include id, but could be sorted by id, externa_id, or name
+		$children{'meta'}{$name.$id}{'id'} = $id;
+		$children{'meta'}{$name.$id}{'name'} = $name;
+		$children{'meta'}{$name.$id}{'external_id'} = $external_id;
 	}
 	
 	#get sets
@@ -684,9 +685,10 @@ sub getChildren($)
 		my $id = $data[0];
 		my $name = $data[1];
 		my $external_id = $data[2];
-		$children{'set'}{$id}{'id'} = $id;
-		$children{'set'}{$id}{'name'} = $name;
-		$children{'set'}{$id}{'external_id'} = $external_id;
+		#key on $name.$id purely for sorting purposes.  this needs to be unique, so should include id, but could be sorted by id, externa_id, or name
+		$children{'set'}{$name.$id}{'id'} = $id;
+		$children{'set'}{$name.$id}{'name'} = $name;
+		$children{'set'}{$name.$id}{'external_id'} = $external_id;
 	}
 	return \%children;
 }

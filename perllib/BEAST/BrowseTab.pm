@@ -11,6 +11,7 @@ use htmlHelper;
 use BEAST::BeastDB;
 use BEAST::Search;
 use Data::Dumper;
+use utils;
 
 our $TRUE = 1;
 our $FALSE = 0;
@@ -48,33 +49,36 @@ sub buildSearchOpts
 	my $checkboxdata = shift;
 }
 
-sub dig
-{
-	
-}
 
 sub printTab
 {
 	# hash ref to the input form data
 	my $self = shift;
 	my $session = shift || undef;
-
-	if (defined $session) {
+	my $ts = getTimestamp();	#time stamp for appending to HTML ids so that they remain unique
+	
+	if (defined $session)
+	{
 		die unless (ref($session) eq 'CGI::Session');
 	}
 
 	my $beastDB = BeastDB->new;
 	$beastDB->connectDB();
 
-	my $roots = $beastDB->findRoots();
-#	my $roots = $beastDB->getRoots();
+#	my $roots = $beastDB->findRoots();
+	my $roots = $beastDB->getRoots();
 	
+	#For all the roots returned above, print the html to display them
+	#automatically set the depth passed to the children to 1
 	foreach my $root (keys %{$roots})
 	{
 		my $id = $roots->{$root}{'id'};
 		my $name = $roots->{$root}{'name'};
 		my $external_id = $roots->{$root}{'external_id'};
-		print "<input style='margin-left:0px;' type='checkbox' name='browse' checked='checked' value='$id'/><span onClick='toggleChildren(\"$id\", 1)' class='expandable_header'><img id='$id\_arrow' src='images/plus.png' height='10px' width='10px'>$external_id ($name)<br/></span><div id='$id\_children' style='display:none'></div>";
+		#print checkbox for this div
+#		print "<input style='margin-left:0px;' type='checkbox' name='browse' value='$id'/>";
+		print "<div style='padding-top:3px;'><span onClick='toggleChildren(\"$id\", 1, \"$ts\")' class='expandable_header'><img id='$id\_$ts\_arrow' src='images/plus.png' height='10px' width='10px'>$external_id ($name)</span>";
+		print "<div id='$id\_$ts\_children' style='display:none'></div></div>";
 	}
 	$beastDB->disconnectDB();
 }
@@ -84,38 +88,51 @@ sub dig
 	# hash ref to the input form data
 	my $self = shift;
 	my $session = shift || undef;
-
-	if (defined $session) {
+	my $ts = getTimestamp();	#time stamp for appending to HTML ids so that they remain unique
+	
+	if (defined $session) 
+	{
 		die unless (ref($session) eq 'CGI::Session');
 	}
+	
 	my $input = $self->{'_input'};
 	my $parent_id = $input->param('parent_id');
+	
 	my $depth = $input->param('depth');
 	my $indent_depth = 10*$depth."px";
 	my $child_depth = $depth+1;
+	
 	my $beastDB = BeastDB->new;
 	$beastDB->connectDB();
 
+	#for filtering
+	#we could pass a filterlist that the SQL database knows how to respect.
 	my $children = $beastDB->getChildren($parent_id);
-#	my $roots = $beastDB->getRoots();
-	
-	#print metas
-	foreach my $child (keys %{$children->{'meta'}})
-	{
-		my $id = $children->{'meta'}{$child}{'id'};
-		my $name = $children->{'meta'}{$child}{'name'};
-		my $external_id = $children->{'meta'}{$child}{'external_id'};
-		print "<input style='margin-left:$indent_depth;' type='checkbox' name='browse' checked='checked' value='$id'/><span onClick='toggleChildren(\"$id\", $child_depth)' class='expandable_header'><img id='$id\_arrow' src='images/plus.png' height='10px' width='10px'>$external_id ($name)<br/></span><div id='$id\_children' style='display:none'></div>";
-	}
 	
 	#print sets
-	foreach my $child (keys %{$children->{'set'}})
+	foreach my $child (sort keys %{$children->{'set'}})
 	{
 		my $id = $children->{'set'}{$child}{'id'};
 		my $name = $children->{'set'}{$child}{'name'};
 		my $external_id = $children->{'set'}{$child}{'external_id'};
-		print "<input style='margin-left:$indent_depth;' type='checkbox' name='browse' checked='checked' value='$id'/><span onClick='show_entities(\"$id\", $child_depth)' class='expandable_header'><img id='$id\_arrow' src='images/plus.png' height='10px' width='10px'>$external_id ($name)<br/></span><div id='$id\_children' style='display:none'></div>";
+		print "<div><input style='margin-left:$indent_depth;' type='checkbox' name='browse' value='$id'/>";
+		print "<span onClick='show_entities(\"$id\", $child_depth, \"$ts\")' class='expandable_header'><img id='$id\_$ts\_arrow' src='images/plus.png' height='10px' width='10px'>$external_id ($name)</span>";
+		print "<div id='$id\_$ts\_children' style='display:none'></div></div>";
 	}
+
+	#print metas
+	foreach my $child (sort keys %{$children->{'meta'}})
+	{
+		my $id = $children->{'meta'}{$child}{'id'};
+		my $name = $children->{'meta'}{$child}{'name'};
+		my $external_id = $children->{'meta'}{$child}{'external_id'};
+#		print "<input style='margin-left:$indent_depth;' type='checkbox' name='browse' value='$id'/>";
+		print "<div style='padding-top:3px;'><span style='margin-left:$indent_depth;' onClick='toggleChildren(\"$id\", $child_depth, \"$ts\")' class='expandable_header'><img id='$id\_$ts\_arrow' src='images/plus.png' height='10px' width='10px'>$external_id ($name)</span>";
+		print "<div id='$id\_$ts\_children' style='display:none'></div></div>";
+	}
+	
+
+	$beastDB->disconnectDB();
 }
 
 
