@@ -39,7 +39,6 @@ sub insertSetMetaRel($$);
 sub existsMetaMetaRel($$);
 sub existsSetMetaRel($$);
 sub existsSetEntityRel($$);
-sub getRoots();
 sub getParentsForSet($$);
 sub getEntitiesForSet($$);
 sub searchSetsByTermRestrictKeyspace($$$);
@@ -48,6 +47,9 @@ sub getParentsForMeta($$);
 sub existsMeta($$);
 sub existsSet($$);
 sub existsEntity($$);
+sub findRoots();
+sub getRoots();
+sub getChildren($);
 
 
 # 
@@ -412,7 +414,6 @@ sub existsSetEntityRel($$)
 ##
 ## Parent search functions
 ##
-
 sub getParentsForSet($$)
 {
 	my $self = shift;
@@ -477,18 +478,17 @@ sub searchSetsByTermRestrictKeyspace($$$)
 
 	$search_text = escapeSQLString($search_text);
 
-	my $template = " \
-SELECT sets.id FROM sets JOIN set_entity	\
-	ON sets.id = set_entity.sets_id 	\
-	JOIN entity	\
-	ON set_entity.entity_id = entity.id	\
-	JOIN keyspace 	\
-	ON entity.keyspace_id = keyspace.id	";
+	my $template .= " SELECT sets.id FROM sets ";
+	$template .= "JOIN set_entity ON sets.id = set_entity.sets_id ";
+	$template .= "JOIN entity ON set_entity.entity_id = entity.id ";
+	$template .= "JOIN keyspace ON entity.keyspace_id = keyspace.id";
 
 	my $j = 0;
 	$template = $template." WHERE ";
-	foreach (keys %$keyspace_opts) {
-		if ($j != 0) {
+	foreach (keys %$keyspace_opts) 
+	{
+		if ($j != 0) 
+		{
 			$template = $template." AND ";
 		}
 		$j++;
@@ -496,7 +496,8 @@ SELECT sets.id FROM sets JOIN set_entity	\
 		my @values = @{$keyspace_opts->{$key}};
 		
 		$template = $template." ( keyspace.".$key." = '".$values[0]."' ";
-		for my $i (1 .. $#values) {
+		for my $i (1 .. $#values) 
+		{
 			$template = $template." OR keyspace.".$key." = '".$values[$i]."' ";
 		}
 		$template = $template.") ";
@@ -522,7 +523,8 @@ SELECT sets.id FROM sets JOIN set_entity	\
 sub searchSetsByTerm($)
 {
 	my $self = shift;
-	my $search_text = shift;
+	my ($search_text) = @_;
+
 
 	my $template = "SELECT DISTINCT sets.id FROM sets,set_entity WHERE sets.id=set_entity.sets_id AND name LIKE '%var1%'";
 
@@ -544,7 +546,7 @@ sub searchSetsByTerm($)
 sub getParentsForMeta($$)
 {
 	my $self = shift;
-	my $meta_id = shift;
+	my ($meta_id) = @_;
 
 	my $template = "SELECT sets_meta_id FROM meta_sets WHERE meta_meta_id='var1';";
 
@@ -558,7 +560,7 @@ sub getParentsForMeta($$)
 sub existsMeta($$)
 {
 	my $self = shift;
-	my $ex_id = shift;
+	my ($ex_id) = @_;
 
 	my $template = "SELECT id FROM meta WHERE external_id='var1';";
 
@@ -576,7 +578,7 @@ sub existsMeta($$)
 sub existsSet($$)
 {
 	my $self = shift;
-	my $ex_id = shift;
+	my ($ex_id) = @_;
 
 	my $template = "SELECT id FROM sets WHERE external_id='var1';";
 
@@ -595,8 +597,7 @@ sub existsSet($$)
 sub existsEntity($$)
 {
 	my $self = shift;
-	my $ex_id = shift;
-	my $keyspace = shift;
+	my ($ex_id, $keyspace) = @_;
 
 	my $template = "SELECT id FROM entity WHERE entity_key='var1' AND keyspace_id='var2'";
 
@@ -612,5 +613,82 @@ sub existsEntity($$)
 	}
 }
 
+
+sub findRoots()
+{
+	my $self = shift;
+
+	my $sql = "SELECT m.id, m.name, m.external_id FROM meta m LEFT OUTER JOIN meta_sets ms ON ms.meta_meta_id=m.id WHERE ms.sets_meta_id IS NULL;";
+	my %roots;
+	
+	my $results = $self->runSQL($sql);
+	while (my(@data) = $results->fetchrow_array())
+	{
+		my $id = $data[0];
+		my $name = $data[1];
+		my $external_id = $data[2];
+		$roots{$id}{'id'} = $id;
+		$roots{$id}{'name'} = $name;
+		$roots{$id}{'external_id'} = $external_id;
+	}
+	return \%roots;
+}
+
+
+sub getRoots()
+{
+	my $self = shift;
+	my $sql = "SELECT id, name, external_id FROM roots r, meta m WHERE r.meta_id=m.id;";
+
+	my %roots;
+	
+	my $results = $self->runSQL($sql);
+	while (my(@data) = $results->fetchrow_array())
+	{
+		my $id = $data[0];
+		my $name = $data[1];
+		my $external_id = $data[2];
+		$roots{$id}{'id'} = $id;
+		$roots{$id}{'name'} = $name;
+		$roots{$id}{'external_id'} = $external_id;
+	}
+	return \%roots;
+}
+
+sub getChildren($)
+{
+	my $self = shift;
+	my ($parent_id) = @_;
+	
+	#get metas
+	my $sql = "SELECT m.id, m.name, m.external_id FROM meta m JOIN meta_sets ms ON ms.meta_meta_id=m.id WHERE ms.sets_meta_id='$parent_id';";
+	my %children;
+	
+	my $results = $self->runSQL($sql);
+	while (my(@data) = $results->fetchrow_array())
+	{
+		my $id = $data[0];
+		my $name = $data[1];
+		my $external_id = $data[2];
+		$children{'meta'}{$id}{'id'} = $id;
+		$children{'meta'}{$id}{'name'} = $name;
+		$children{'meta'}{$id}{'external_id'} = $external_id;
+	}
+	
+	#get sets
+	$sql = "SELECT s.id, s.name, s.external_id FROM sets s JOIN meta_sets ms ON ms.sets_id=s.id WHERE ms.sets_meta_id='$parent_id';";
+	
+	my $results = $self->runSQL($sql);
+	while (my(@data) = $results->fetchrow_array())
+	{
+		my $id = $data[0];
+		my $name = $data[1];
+		my $external_id = $data[2];
+		$children{'set'}{$id}{'id'} = $id;
+		$children{'set'}{$id}{'name'} = $name;
+		$children{'set'}{$id}{'external_id'} = $external_id;
+	}
+	return \%children;
+}
 
 1;

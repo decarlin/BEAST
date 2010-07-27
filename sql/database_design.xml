@@ -10,6 +10,9 @@
 <row name="name" null="0" autoincrement="0">
 <datatype>VARCHAR(128)</datatype>
 </row>
+<row name="external_id" null="1" autoincrement="0">
+<datatype>CHAR(64)</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -100,6 +103,9 @@
 <row name="name" null="0" autoincrement="0">
 <datatype>VARCHAR(128)</datatype>
 <default>'NULL'</default></row>
+<row name="external_id" null="1" autoincrement="0">
+<datatype>CHAR(64)</datatype>
+<default>NULL</default></row>
 <key type="PRIMARY" name="">
 <part>id</part>
 </key>
@@ -114,6 +120,7 @@
 </key>
 </table>
 </sql>
+
 
 
 
