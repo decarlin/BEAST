@@ -328,5 +328,44 @@ function Set(json) {
 	}
 }
 
+//Added timestamp (ts) to make sure that html element ids are unique, as the same meta/set id will appear multiple times in this hierarchy.
+function toggleChildren(id, depth, ts)
+{
+	var div_element   = document.getElementById(id + "_" + ts + "_children");
+	var arrow_element = document.getElementById(id + "_" + ts + "_arrow");
+
+	//If style.display is "block" or undefined, the element is showing.  Hide it (and show plus)
+	if(!div_element.style.display || div_element.style.display == 'block')
+	{
+		div_element.style.display = 'none';
+		arrow_element.src = 'images/plus.png';
+	}
+	//If style.display is "none", the element is hidden.  set it to "Block" to show it (and show minus)
+	else if (div_element.style.display == 'none')
+	{
+		div_element.style.display = 'block';
+		arrow_element.src = 'images/ominus.png';
+		if(div_element.loaded)
+		{
+			//We already loaded these children, no need to reload them
+		}
+		else
+		{
+			//Load children...  do this through the index.pl router.  pass the parent_id and the depth of the child
+			$("#"+id+"_"+ts+"_children").load('/cgi-bin/BEAST/index.pl', 
+				{action:"browse_dig", 
+				 parent_id:id, 
+				 depth:depth
+				},
+				function()
+				{
+					//on success, set a parameter on the div element to say that it is already loaded so that we don't reload in the future.
+					var div_element = document.getElementById(id+"_"+ts+"_children");
+					div_element.loaded = true;
+				}
+			);
+		}
+	}
+}
 
 

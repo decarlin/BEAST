@@ -21,8 +21,7 @@ use BEAST::ImportTab;
 use BEAST::MySets;
 use BEAST::Set;
 use BEAST::BeastSession;
-
-use constant DEBUG => 1;
+use BEAST::DebugHelper;
 
 # global variable
 our $cgi = new CGI();
@@ -112,16 +111,9 @@ my $browseObj = BrowseTab->new($cgi);
 		}
 	}
 
-	if(DEBUG)
-	{
-		print "<table><tr><th colspan=2>CGI Parameters</th></tr><tr><th>name</th><th>value</th></tr>";
-		my @names = $cgi->param;
-		foreach my $name (@names)
-		{
-			print "<tr><td>$name</td><td>".$cgi->param($name)."</td></tr>\n";
-		}
-		print "</table>";
-	}
+#	DebugHelper::printRequestParameters($cgi);
+
+
 	#my $activetab = $cgi->param('tab');	
 	#my $selected = 1;
 	#if ($activetab == 'search') {

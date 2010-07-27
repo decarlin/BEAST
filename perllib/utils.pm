@@ -12,12 +12,25 @@ use English;
 use Pod::Usage;
 
 our @ISA        = qw(Exporter);
-our @EXPORT     = qw(trim log_base TRUE FALSE currentTime min max setFilePermissions);
+our @EXPORT     = qw(trim log_base TRUE FALSE currentTime min max setFilePermissions getTimestamp);
 our @EXPORT_OK  = qw();
 our $VERSION    = 1.20;
 use constant DEBUG => 0;
 use constant FALSE => 0;
 use constant TRUE => 1;
+
+sub getTimestamp()
+{
+	my ($sec,$min,$hour,$mday,$mon,$year,$wday,$yday,$isdst) = localtime(time);
+	if ($mon < 10) { $mon = "0$mon"; }
+	if ($hour < 10) { $hour = "0$hour"; }
+	if ($min < 10) { $min = "0$min"; }
+	if ($sec < 10) { $sec = "0$sec"; }
+	$year=$year+1900;
+
+	return $year . $mon . $mday . $hour . $min . $sec;
+}
+
 
 sub setFilePermissions($$)
 {
