@@ -51,6 +51,11 @@ CREATE TABLE meta (
   PRIMARY KEY (id)
 );
 
+DROP TABLE IF EXISTS roots;
+CREATE TABLE roots (
+  meta_id INTEGER NOT NULL,
+  PRIMARY KEY (meta_id)
+);
 
 ALTER TABLE entity ADD FOREIGN KEY (keyspace_id) REFERENCES keyspace (id);
 ALTER TABLE set_entity ADD FOREIGN KEY (sets_id) REFERENCES sets (id);
@@ -58,4 +63,4 @@ ALTER TABLE set_entity ADD FOREIGN KEY (entity_id) REFERENCES entity (id);
 ALTER TABLE meta_sets ADD FOREIGN KEY (sets_meta_id) REFERENCES meta (id);
 ALTER TABLE meta_sets ADD FOREIGN KEY (sets_id) REFERENCES sets (id);
 ALTER TABLE meta_sets ADD FOREIGN KEY (meta_meta_id) REFERENCES meta (id);
-
+ALTER TABLE roots ADD FOREIGN KEY (meta_id) REFERENCES meta (id);

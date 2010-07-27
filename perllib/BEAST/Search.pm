@@ -5,7 +5,6 @@
 use strict;
 use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
-use DBI;
 
 use Data::Dumper;
 use BEAST::Set;
