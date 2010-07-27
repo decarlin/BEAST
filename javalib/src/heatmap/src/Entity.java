@@ -1,13 +1,13 @@
 
 public class Entity {
 	
-	private int value;
+	private String value;
 	
-	public Entity(int i) {
-		this.value = i;
+	public Entity(String str) {
+		this.value = str;
 	}
 	
-	public int getValue() {
+	public String getValue() {
 		return this.value;
 	}
 	
@@ -18,15 +18,14 @@ public class Entity {
 		} catch (Exception ex) {
 			//
 		}
-		if (ent.getValue() == this.getValue()) {
+		if (ent.getValue().compareTo(this.getValue()) == 0) {
 			return true;
 		}
 		return false;
 	}
 	
 	public String toString() {
-		Integer number = new Integer(this.value);
-		return number.toString();
+		return value;
 	}
 
 }

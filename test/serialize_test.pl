@@ -20,11 +20,12 @@ my @tree1 = $treeBuilder->findParentsForSet(114009);
 my @tree2 = $treeBuilder->findParentsForSet(142510);
 my @tree3 = $treeBuilder->findParentsForSet(123012);
 
-my $json_text = $tree3[0]->serialize();
+my @leaves = $tree3[0]->getLeafNodes();
+my $json_text = $leaves[0]->serialize();
 print "encoded:\n";
 print "$json_text:\n";
-my $newset = Set->new($json_text);
-my $new_text =  $newset->serialize();
-print "\n";
-print $new_text;
+#my $newset = Set->new($json_text);
+#my $new_text =  $newset->serialize();
+#print "\n";
+#print $new_text;
 #MySets::displaySets("test", ($tree1[0], $newset));
