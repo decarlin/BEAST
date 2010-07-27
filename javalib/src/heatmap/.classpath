@@ -3,5 +3,7 @@
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6"/>
 	<classpathentry kind="lib" path="/Users/epaull/Desktop/json-lib-2.3-jdk13.jar"/>
+	<classpathentry kind="lib" path="/Users/epaull/Desktop/javax 2/servlet"/>
+	<classpathentry kind="lib" path="/Users/epaull/Desktop/javax.servlet.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

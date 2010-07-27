@@ -1,8 +1,11 @@
 import java.awt.*;
+
+import org.json.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
@@ -57,7 +60,7 @@ public class SetEntityGrid extends JApplet {
     	
     	BufferedImage img = null;
     	try {
-    		File file = new File("/Users/epaull/Desktop/test.gif");
+    		File file = new File("heatmap.gif");
     		file.createNewFile();
     	    BufferedImage image =
     	        new BufferedImage(GRID_WIDTH, GRID_HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -94,10 +97,14 @@ public class SetEntityGrid extends JApplet {
 			 // draw the column for this set
 			Set set = (Set)setsIter.next();
 			 
-			// debug
-			g2.setColor(Color.GREEN);
-			g2.drawString(set.getName(), columnIndex + (cellWidth / 4), COLUMN_BORDER / 3);
-			 
+			// draw the column labels only if we have a non-zero border set
+			if (COLUMN_BORDER > 0) {
+				g2.setColor(Color.GREEN);
+				Rectangle2D columnLabelRect = new Rectangle(columnIndex, 0, cellWidth, COLUMN_BORDER);
+				g2.drawString("	"+set.getName(), (int)columnLabelRect.getMinX(), (int)columnLabelRect.getCenterY());
+				g2.setColor(Color.GRAY);
+				g2.draw(columnLabelRect);
+			}
 			 
 			int rowIndex = ROW_BORDER;
 			Iterator<Entity> entityIter = this.entities.iterator();
@@ -119,6 +126,7 @@ public class SetEntityGrid extends JApplet {
 				 
 				// drawing steps
 				g2.fill(rect);
+				g2.setColor(Color.GRAY);
 				g2.draw(rect);
 			}
 			 
@@ -131,21 +139,13 @@ public class SetEntityGrid extends JApplet {
 	/**
 	 * @param args
 	 */
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception{
 		// TODO Auto-generated method stub
 		
-		String jsonText1 = "{'_metadata':{'name':'viral reproduction','id':123012,'type':'set'},'_name':'mouse:GO:0016032','_delim':'^','_active':1,'_elements':{'Hcfc1':'','Oas1a':'','Banf1':'','Smarcb1':'','Fv4':'','Bcl2':''}}";
-		String jsonText2 = "{'_metadata':{'name':'viral reproduction','id':123012,'type':'set'},'_name':'mod1','_delim':'^','_active':1,'_elements':{'Hcfc1':'','Oas1a':'','Banf1':'','mod1':'','mod2':''}}";
-		String jsonText3 = "{'_metadata':{'name':'viral reproduction','id':123012,'type':'set'},'_name':'mod2','_delim':'^','_active':1,'_elements':{'mod8':'','Oas1a':'','Banf1':'','mod7':'','mod3':'','Fv4':'','mod9':''}}";
+		String jsonText1 = "[{'_metadata':{'name':'viral reproduction','id':123012,'type':'set'},'_name':'mouse:GO:0016032','_delim':'^','_active':1,'_elements':{'Hcfc1':'','Oas1a':'','Banf1':'','Smarcb1':'','Fv4':'','Bcl2':''}}]";
+		String jsonText2 = "[{'_metadata':{'name':'viral reproduction','id':123012,'type':'set'},'_name':'mod1','_delim':'^','_active':1,'_elements':{'Hcfc1':'','Oas1a':'','Banf1':'','mod1':'','mod2':''}}]";
+		String jsonText3 = "[{'_metadata':{'name':'viral reproduction','id':123012,'type':'set'},'_name':'mod2','_delim':'^','_active':1,'_elements':{'mod8':'','Oas1a':'','Banf1':'','mod7':'','mod3':'','Fv4':'','mod9':''}}]";
 
-		/*
-		int ids1[] = {114, 115, 116};
-		int ids2[] = {114, 117, 250};
-		int ids3[] = {114, 116, 130};
-		Set set1 = new Set(ids1);
-		Set set2 = new Set(ids2);
-		Set set3 = new Set(ids3);
-		*/
 		Set set1 = null;
 		Set set2 = null;
 		Set set3 = null;
