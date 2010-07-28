@@ -2,9 +2,19 @@
 public class Entity {
 	
 	private String value;
+	private int numberOfOccurances;
+	
+	public int getNumOccurances() {
+		return this.numberOfOccurances;
+	}
+	
+	public void incrementNumOccurances() {
+		this.numberOfOccurances++;
+	}
 	
 	public Entity(String str) {
 		this.value = str;
+		numberOfOccurances = 1;
 	}
 	
 	public String getValue() {

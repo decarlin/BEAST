@@ -40,7 +40,8 @@ public class Set {
 		Iterator<String> keys = elements.keys();
 
 		while (keys.hasNext()) {
-			this.entities.add(new Entity(keys.next()));
+			String entName = keys.next();
+			this.entities.add(new Entity(entName));
 		}
 		
 		JSONObject metas = jsonObj.getJSONObject("_metadata");

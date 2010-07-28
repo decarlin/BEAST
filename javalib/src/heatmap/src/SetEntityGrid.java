@@ -3,9 +3,11 @@ import java.awt.*;
 import org.json.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
@@ -16,33 +18,43 @@ public class SetEntityGrid extends JApplet {
 	private static Color background;
     private final static int GRID_HEIGHT = 400;
     private final static int GRID_WIDTH = 800;
-    private final static int ROW_BORDER = 100;
-    private final static int COLUMN_BORDER = 100;
+    private final static int ROW_BORDER = 0;
+    private final static int COLUMN_BORDER = 0;
     
     private ArrayList<Set> sets = null;
     private ArrayList<Entity> entities = null;
     
-    public SetEntityGrid(Set newsets[]) {
+    public SetEntityGrid(ArrayList<Set> newsets) {
     	
     	this.sets = new ArrayList<Set>();
     	this.entities = new ArrayList<Entity>();
     	
-    	for (int i=0; i < newsets.length; i++) {
+    	Iterator<Set> setsIter = newsets.iterator();
+    	while (setsIter.hasNext()) {
     		
+    		Set set = setsIter.next();
     		// add to the sets list
-    		sets.add(newsets[i]);
+    		sets.add(set);
     		
     		// add the entities for this set that aren't already here
-    		ArrayList<Entity> ents = newsets[i].getEntities();
+    		ArrayList<Entity> ents = set.getEntities();
     		Iterator<Entity> iter = ents.iterator();
     		while (iter.hasNext()) {
     			Entity newEnt = iter.next();
     			if (!this.entities.contains((Entity)newEnt)) {
     				this.entities.add((Entity)newEnt);
+    			} else {
+    				// increment the number of occurances of this entity
+    				int index = this.entities.indexOf((Entity)newEnt);
+    				this.entities.get(index).incrementNumOccurances();
     			}
     		}   		
-    	}	
+    	}
     	
+    	// sort entities by the number of occurances (reverse to get top ents on top)
+    	EntityComparator ec = new EntityComparator();
+    	Collections.sort(this.entities, ec);
+    	Collections.reverse(this.entities);
     }
     
     public void init() {
@@ -112,8 +124,13 @@ public class SetEntityGrid extends JApplet {
 				 
 				Entity ent = entityIter.next();
 			 
-				g2.setColor(Color.GREEN);
-				g2.drawString(ent.toString(), ROW_BORDER / 3, rowIndex + (cellHeight / 2) );
+				if (ROW_BORDER > 0) {
+					g2.setColor(Color.GREEN);
+					g2.drawString(ent.toString(), ROW_BORDER / 3, rowIndex + (cellHeight / 2) );
+					Rectangle2D rowLabelRect = new Rectangle(0, rowIndex, ROW_BORDER, cellHeight);
+					g2.setColor(Color.GRAY);
+					g2.draw(rowLabelRect);
+				}
 			 
 				Rectangle2D rect = set.getRectForOverlap(columnIndex, rowIndex, cellWidth, cellHeight);
 				// set the color of the cell based on overlap
@@ -142,24 +159,21 @@ public class SetEntityGrid extends JApplet {
 	public static void main(String[] args) throws Exception{
 		// TODO Auto-generated method stub
 		
-		String jsonText1 = "[{'_metadata':{'name':'viral reproduction','id':123012,'type':'set'},'_name':'mouse:GO:0016032','_delim':'^','_active':1,'_elements':{'Hcfc1':'','Oas1a':'','Banf1':'','Smarcb1':'','Fv4':'','Bcl2':''}}]";
-		String jsonText2 = "[{'_metadata':{'name':'viral reproduction','id':123012,'type':'set'},'_name':'mod1','_delim':'^','_active':1,'_elements':{'Hcfc1':'','Oas1a':'','Banf1':'','mod1':'','mod2':''}}]";
-		String jsonText3 = "[{'_metadata':{'name':'viral reproduction','id':123012,'type':'set'},'_name':'mod2','_delim':'^','_active':1,'_elements':{'mod8':'','Oas1a':'','Banf1':'','mod7':'','mod3':'','Fv4':'','mod9':''}}]";
+		//new Set("[{'_metadata':{'name':'viral reproduction','id':123012,'type':'set'},'_name':'mod6','_delim':'^','_active':1,'_elements':{'mod8':'','Oas1a':'','Banf1':'','mod7':'','mod3':'','Fv4':'','mod8':''}}]");
 
-		Set set1 = null;
-		Set set2 = null;
-		Set set3 = null;
-		try {
-			set1 = new Set(jsonText1);
-			set2 = new Set(jsonText2);
-			set3 = new Set(jsonText3);
-		} catch (Exception e) {
-			//
-		}
-		Set thesesets[] = {set1,set2,set3};
+		// read from standard inputs 
+		ArrayList<Set> sets = new ArrayList<Set>();
+		BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
+	    String line;
+	    while ((line = in.readLine()) != null && line.length() != 0)
+	    	try { 
+	    		sets.add(new Set(line));
+	    	} catch (Exception e) {
+	    		System.out.println("Can't parse line:" + line);
+	    		e.printStackTrace();
+	    	}
 		
-		
-		SetEntityGrid grid = new SetEntityGrid(thesesets);
+		SetEntityGrid grid = new SetEntityGrid(sets);
 		grid.init();
 		grid.makeGif();
 	}
