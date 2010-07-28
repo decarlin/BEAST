@@ -26,14 +26,11 @@ public class Set {
 		}
 	}
 	
-	public Set(String jsonText) throws Exception {
+	public Set(JSONObject jsonObj) throws Exception {
 				
 		this.entities = new ArrayList<Entity>();
 		this.meta = new HashMap<String, String>();
 
-		JSONArray arr1 = new JSONArray(jsonText);
-		JSONObject jsonObj = arr1.getJSONObject(0);
-		
 		this.name = jsonObj.getString("_name");
 		
 		JSONObject elements = jsonObj.getJSONObject("_elements");
@@ -63,6 +60,14 @@ public class Set {
 		return false;
 	}
 	
+	public int membershipValue(Entity entity) {
+		if (!this.entities.contains(entity)) {
+			return 0;
+		}
+		return 1;
+		//return this.entities;
+	}
+	
 	public ArrayList<Entity> getEntities() {
 		return this.entities;
 	}
@@ -86,11 +91,6 @@ public class Set {
 	
 	public String getName() {
 		return this.name;
-	}
-	
-	public Rectangle2D getRectForOverlap(int xstart, int ystart, int width, int height) {
-		 Rectangle2D rect = new Rectangle(xstart, ystart, width, height);
-		 return (Rectangle2D)rect;
 	}
 	
 }
