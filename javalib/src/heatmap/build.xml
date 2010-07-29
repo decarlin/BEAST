@@ -54,4 +54,16 @@
             <classpath refid="heatmap.classpath"/>
         </java>
     </target>
+    <target name="create_run_jar">
+        <jar destfile="heatmap.jar" filesetmanifest="mergewithoutmain">
+            <manifest>
+                <attribute name="Main-Class" value="SetEntityGrid"/>
+                <attribute name="Class-Path" value="."/>
+            </manifest>
+            <fileset dir="bin"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/json-lib-2.3-jdk13.jar"/>
+            <fileset dir="lib/javax 2/servlet"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/javax.servlet.jar"/>
+        </jar>
+    </target>
 </project>

@@ -13,9 +13,8 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
-import javax.swing.JApplet;
 
-public class SetEntityGrid extends JApplet {
+public class SetEntityGrid {
 	
 	private static Color background;
 	private static Grid grid;
@@ -63,17 +62,6 @@ public class SetEntityGrid extends JApplet {
     	EntityComparator ec = new EntityComparator();
     	Collections.sort(this.entities, ec);
     	Collections.reverse(this.entities);
-    }
-    
-    public void init() {
-        setBackground(Color.white);
-    }
-    
-    public void setBackground(Color c) {
-    	background = c;
-    }
-    public Color getBackground() {
-    	return this.background;
     }
     
     public void makeGif() {
@@ -182,7 +170,6 @@ public class SetEntityGrid extends JApplet {
 		sets.add(newset2);
 		
 		SetEntityGrid heatmap = new SetEntityGrid(sets);
-		heatmap.init();
 		heatmap.buildGrid();
 		heatmap.makeGif();
 		
@@ -237,7 +224,6 @@ public class SetEntityGrid extends JApplet {
 	    }
 		
 		SetEntityGrid heatmap = new SetEntityGrid(sets);
-		heatmap.init();
 		heatmap.buildGrid();
 		
 		if (ACTION.compareTo("gif") == 0) {
