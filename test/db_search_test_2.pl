@@ -19,7 +19,7 @@ my $treeBuilder = Search->new($beastDB);
 my @merged = $treeBuilder->searchOnSetDescriptions('reproduction');
 
 my $json_text;
-$json_text = $merged[1]->serialize();
+$json_text = $merged[0]->serialize();
 #print Data::Dumper->Dump([$top_level_nodes[0]]);
 print "encoded:\n";
 print "$json_text:\n";

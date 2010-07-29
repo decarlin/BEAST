@@ -12,11 +12,14 @@ public class JSONClassifier {
 			String type = metas.getString("type");
 			if (type.compareTo("set") == 0) {
 				return types[0];
+			} else if (type.compareTo("info") == 0) {
+				return types[1];
 			}
 		} catch (Exception e) {
 			//
 		}
 		
+
 		return types[1];
 	}
 

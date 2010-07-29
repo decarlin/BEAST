@@ -2,15 +2,14 @@ import java.awt.*;
 
 import org.json.*;
 
-import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.Raster;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
@@ -20,6 +19,11 @@ public class SetEntityGrid extends JApplet {
 	
 	private static Color background;
 	private static Grid grid;
+	
+	private static String FILENAME;
+	private static String ACTION;
+	private static Rectangle2D.Double SUB_GRID;
+	
     private final static int GRID_HEIGHT = 400;
     private final static int GRID_WIDTH = 800;
     private final static int ROW_BORDER = 0;
@@ -76,7 +80,7 @@ public class SetEntityGrid extends JApplet {
     	
     	BufferedImage img = null;
     	try {
-    		File file = new File("heatmap.gif");
+    		File file = new File(FILENAME);
     		file.createNewFile();
     	    BufferedImage image =
     	        new BufferedImage(GRID_WIDTH, GRID_HEIGHT, BufferedImage.TYPE_INT_RGB);
@@ -117,7 +121,7 @@ public class SetEntityGrid extends JApplet {
 			
 			// each set corresponds to a column
 			Set set = (Set)setsIter.next();
-			Column column = new Column(columnIndex);
+			Column column = new Column(columnIndex, set.getName());
 			
 			double rowIndex = 0;
 			Iterator<Entity> entityIter = this.entities.iterator();
@@ -137,6 +141,30 @@ public class SetEntityGrid extends JApplet {
 		}
 		
 		this.grid = grid;
+    }
+    
+    public String getZoomJSON() {
+    	
+    	String json = new String();
+    	
+    	HashMap<String, ArrayList<String>> map = this.grid.getSetsEntitiesForDimension(SUB_GRID);
+    	
+    	ArrayList<String> sets = map.get("sets");
+    	ArrayList<String> entities = map.get("entities");
+    	
+    	JSONArray jsonArray = new JSONArray();
+    	JSONObject setsObj = new JSONObject();
+    	JSONObject entObj = new JSONObject();
+    	try {
+			setsObj.put("sets", sets);
+			entObj.put("entities", entities);
+			jsonArray.put(setsObj);
+			jsonArray.put(entObj);
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return jsonArray.toString();
     }
     
 	/**
@@ -169,6 +197,7 @@ public class SetEntityGrid extends JApplet {
 	   
 	    JSONClassifier classifier = new JSONClassifier();
 	    
+	    boolean foundInfo = false;
 	    while ((line = in.readLine()) != null && line.length() != 0) {
 	    	try { 
 	    		JSONArray arr1 = new JSONArray(line);
@@ -177,8 +206,24 @@ public class SetEntityGrid extends JApplet {
 	    		
 	    		switch (jsonType) {
 	    	
-	    			case 1: sets.add(new Set(jsonObj));
-	    		
+	    			case 1: 
+	    					sets.add(new Set(jsonObj));
+	    					break;
+	    			case 2: 
+	    					JSONObject data = jsonObj.getJSONObject("_metadata");
+	    					FILENAME = data.getString("filename");
+	    					ACTION = data.getString("action");
+	    					if (ACTION.compareTo("zoom") == 0) {
+	    						SUB_GRID = new Rectangle2D.Double(
+	    								data.getDouble("xcoordinate"),
+	    								data.getDouble("ycoordinate"),
+	    								data.getDouble("width"),
+	    								data.getDouble("height")
+	    						);
+	    					}
+	    					foundInfo = true;
+	    					break;
+	    				
 	    		}
 	    		
 	    	} catch (Exception e) {
@@ -187,11 +232,20 @@ public class SetEntityGrid extends JApplet {
 	    	}
 	    }
 	    	
+	    if (foundInfo == false) {
+	    	throw new Exception("No metadata/info found for set of JSON strings!");    	
+	    }
 		
 		SetEntityGrid heatmap = new SetEntityGrid(sets);
 		heatmap.init();
 		heatmap.buildGrid();
-		heatmap.makeGif();
+		
+		if (ACTION.compareTo("gif") == 0) {
+			heatmap.makeGif();
+		} else if (ACTION.compareTo("zoom") == 0) {
+			String json = heatmap.getZoomJSON();
+			System.out.print(json);
+		}
 		
 	}
 }

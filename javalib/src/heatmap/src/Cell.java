@@ -26,6 +26,14 @@ public class Cell {
 		setCoordinates(xstart, ystart, width, height);
 	}
 	
+	public String getEntityName() {
+		return this.entity.getValue();
+	}
+	
+	public double getCellIndex() {
+		return rect.getMinY();
+	}
+	
 	// rectangle of 
 	public void setCoordinates(double xstart, double ystart, double width, double height) {
 		this.rect = new Rectangle2D.Double(xstart, ystart, width, height);
