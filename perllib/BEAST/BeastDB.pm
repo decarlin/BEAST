@@ -679,7 +679,7 @@ sub getChildren($)
 	#get sets
 	$sql = "SELECT s.id, s.name, s.external_id FROM sets s JOIN meta_sets ms ON ms.sets_id=s.id WHERE ms.sets_meta_id='$parent_id';";
 	
-	my $results = $self->runSQL($sql);
+	$results = $self->runSQL($sql);
 	while (my(@data) = $results->fetchrow_array())
 	{
 		my $id = $data[0];
