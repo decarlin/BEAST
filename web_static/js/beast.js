@@ -4,7 +4,7 @@ function onOpsTabSelected(event, ui) {
 	if (ui.tab.hash == "#search") {
 		onLoadSearch();
 	} else if (ui.tab.hash == '#view') {
-		onLoadView();
+		onLoadHeatmap();
 	} else if (ui.tab.hash == '#import') {
 		onLoadImport();
 	} else if (ui.tab.hash == '#browse') {
@@ -38,6 +38,13 @@ function onLoadSearch() {
 		{action:"search"}
 	);
 }
+
+function onLoadHeatmap() {
+	$('#view').load('/cgi-bin/BEAST/index.pl', 
+		{action:"heatmap"}
+	);
+}
+
 
 function onLoadView() {
 

@@ -18,6 +18,7 @@ use BEAST::CheckBoxTree;
 use BEAST::SearchTab;
 use BEAST::BrowseTab;
 use BEAST::ImportTab;
+use BEAST::ViewTab;
 use BEAST::MySets;
 use BEAST::Set;
 use BEAST::BeastSession;
@@ -40,6 +41,7 @@ our @sets;
 my $searchObj = SearchTab->new($cgi);
 my $importObj = ImportTab->new($cgi);
 my $browseObj = BrowseTab->new($cgi);
+my $viewObj = ViewTab->new($cgi);
 	
 #print Data::Dumper->Dump([$cgi]);
 #main
@@ -90,6 +92,10 @@ my $browseObj = BrowseTab->new($cgi);
 	elsif ($action eq "browse_dig")
 	{
 		$browseObj->dig($session);
+	}
+	elsif ($action eq "heatmap")
+	{
+		$viewObj->printTab($session);
 	}
 	elsif ($cgi->param('display_mysets_tree'))
 	{
