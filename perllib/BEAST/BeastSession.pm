@@ -125,7 +125,26 @@ sub loadSetsFromSession($$)
 		push @sets, Set->new($line);
 	}
 
+	unless (ref($sets[0]) eq 'Set') {
+		pop @sets;
+	}
+
 	return @sets;
+}
+
+sub loadLeafSetsFromSession($$)
+{
+	my $session = shift;
+	my $key = shift;
+
+	my @sets = loadSetsFromSession($session, $key);
+	return unless (scalar(@sets) > 0); 
+	my @leaves;
+	foreach (@sets) {
+		push @leaves, $_->getLeafNodes();
+	}
+
+	return @leaves;
 }
 
 1;

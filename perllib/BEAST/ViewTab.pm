@@ -39,28 +39,51 @@ sub printTab
 		die unless (ref($session) eq 'CGI::Session');
 	}
 
-	writeGIF($session);
+	# b64 encoded string
+	my $base64gif = getBase64Gif($session);
+
+	if ($base64gif eq "") {
+		print "Error: can't display image";
+	}
+
+	my $embeddedImage = "<img src=\"data:image/gif;base64,".$base64gif."\"/>";
+	print "<div>".$embeddedImage."</div>";
+	print "!!".$base64gif."!!";
 }
 
-sub writeGIF
+sub getBase64Gif
 {
 	my $session = shift;
 
-	my @sets = BeastSession::loadSetsFromSession($session, 'mysets');
-	unless (ref($sets[0]) eq 'Set') {
-		pop @sets;
-	}
+	my @sets = BeastSession::loadLeafSetsFromSession($session, 'mysets');
 
-	my $filename = "/tmp".$session->id.".gif";
-	my $json = "[{\"_metadata\":{\"type\":\"info\",\"action\":\"gif\",\"filename\":\"$filename\"}}]";
+	my $filename = "/tmp/".$session->id.".txt";
+	my $json = "[{\"_metadata\":{\"type\":\"info\",\"action\":\"base64gif\",\"filename\":\"$filename\"}}]";
 	foreach my $set (@sets) {
 		$json = $json."\n"."[".$set->serialize()."]";
 	}
+
 	my $command = Constants::JAVA_BIN." -jar ".Constants::HEATMAP_JAR." ";
-	print $json;
 	open COMMAND, "|-", "$command" || die "Can't pipe to java binary!";
 	print COMMAND $json;
 	close COMMAND;
+
+	print $json;
+	my $base64gif = "";
+	if (-f $filename) {
+		open GIF, $filename || return "";
+		while (<GIF>) {
+			$base64gif .= $_;		
+		}
+		close GIF;
+		unlink($filename);
+
+		return $base64gif;
+	} else {
+		print "Error: couldn't create temp file";
+	}
+
+	return "";
 }
 
 1;

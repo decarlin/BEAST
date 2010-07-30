@@ -12,7 +12,12 @@ my $json = <<EOF;
 [{"_metadata":{"name":"mitochondrial proton-transporting ATP synthase complex, catalytic core F(1)","id":"142716","type":"set"},"_name":"human:GO:0000275","_delim":"^","_active":1,"_elements":{"ATP5E":"","ATP5C1":"","ATP5B":"","ATP5D":""}}]
 EOF
 
+my $json2 = <<EOF;
+[{"_metadata":{"type":"info","action":"base64gif","filename":"/tmp/4aef68c0514d371032994c4653fb7f47.txt"}}]
+[{"_metadata":{"id":"151513","name":"viral reproduction","type":"set"},"_name":"human:GO:0016032","_delim":"^","_active":1,"_elements":{"INSR":"","LIG4":"","EIF5A":"","PARD6A":"","ACE2":"","CD209":"","TARBP2":"","HTATSF1":"","WWP2":"","FURIN":"","HIPK2":"","TGFB1":"","NEDD4":"","OPRK1":"","DERL1":"","HCFC1":"","ERVK6":"","SMARCB1":"","HMGA1":"","CD4":"","ERVK5":"","GFI1":"","BANF1":"","ICAM1":"","CD81":"","PVRL1":"","CXCR4":"","UACA":"","CCR5":"","CALCOCO2":"","USF1":"","CXCR6":"","CCL2":"","CCL1":"","TSG101":"","PPIA":"","HCFC2":"","HS3ST6":"","CTBP1":"","UBP1":"","WWP1":"","HBXIP":"","CCL4":"","PCSK5":"","PSIP1":"","NFIA":"","VAPB":"","CLEC4M":"","SMAD3":"","XRCC5":"","PVRL2":"","XRCC4":"","CTBP2":"","RRAGA":"","ITCH":"","SUPT5H":"","XRCC6":""}}]
+EOF
+
 my $command = Constants::JAVA_BIN." -jar ".Constants::HEATMAP_JAR." ";
 open COMMAND, "|-", "$command";
-print COMMAND $json;
+print COMMAND $json2;
 close COMMAND;
