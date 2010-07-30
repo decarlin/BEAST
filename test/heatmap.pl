@@ -1,3 +1,9 @@
 #!/usr/bin/perl
 
-`/projects/sysbio/apps/x86_64/jre/jre1.6.0_21/bin/java -jar /projects/sysbio/map/Projects/BEAST/javalib/heatmap.jar < mitochondria.json`;
+use lib "/projects/sysbio/map/Projects/BEAST/perllib";
+
+use BEAST::Constants;
+
+my $command = Constants::JAVA_BIN." -jar ".Constants::HEATMAP_JAR." < mitochondria.json";
+print $command;
+system($command);
