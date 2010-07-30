@@ -227,10 +227,8 @@ sub addBrowseSets()
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
 	}
-	print "one";
 	# add/merge these sets with the current working sets
 	if ($cgi->param('browsesets[]')) {
-		print "two";
 		# set of internal database ID's
 		my @checkboxdata = $cgi->param('browsesets[]');
 

@@ -22,7 +22,7 @@ function onViewTabSelected(event, ui) {
 }
 
 function clearSession() {
-	$.load('/cgi-bin/BEAST/index.pl', 
+	$.get('/cgi-bin/BEAST/index.pl', 
 		{action:"clear"}
 	);
 }
