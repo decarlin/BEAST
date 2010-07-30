@@ -23,6 +23,8 @@ our $VERSION    = 1.0;
 
 
 use constant TEMP_DIR => "/projects/sysbio/map/Papers/MetaTrans/perl/Data";
+use constant JAVA_BIN => "/projects/sysbio/apps/x86_64/jre/jre1.6.0_21/bin/java";
+use constant HEATMAP_JAR => "/projects/sysbio/map/Projects/BEAST/javalib/heatmap.jar";
 use constant WEB_STATIC_DIR => "/projects/sysbio/map/Projects/BEAST/web_static";
 use constant WEB_SCRIPT_DIR => "/projects/sysbio/map/Projects/BEAST/web_scripts";
 use constant DEBUG => 1;
