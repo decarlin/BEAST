@@ -57,6 +57,7 @@ sub writeGIF
 		$json = $json."\n"."[".$set->serialize()."]";
 	}
 	my $command = Constants::JAVA_BIN." -jar ".Constants::HEATMAP_JAR." ";
+	print $json;
 	open COMMAND, "|-", "$command" || die "Can't pipe to java binary!";
 	print COMMAND $json;
 	close COMMAND;

@@ -1,11 +1,15 @@
 import java.awt.*;
 
+import org.apache.commons.codec.binary.Base64;
+
 import org.json.*;
 
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -13,6 +17,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import javax.imageio.ImageIO;
+import javax.swing.JApplet;
 
 public class SetEntityGrid {
 	
@@ -64,6 +69,10 @@ public class SetEntityGrid {
     	Collections.reverse(this.entities);
     }
     
+    public void setBackground(Color c) {
+    	background = c;
+    }
+
     public void makeGif() {
     	
     	BufferedImage img = null;
@@ -84,6 +93,37 @@ public class SetEntityGrid {
     		System.out.print("error!");
     	}
   
+    }
+    
+    public void makeGifEncodeToString() {
+    	BufferedImage img = null;
+    	try {
+    	    BufferedImage image =
+    	        new BufferedImage(GRID_WIDTH, GRID_HEIGHT, BufferedImage.TYPE_INT_RGB);
+    	    
+    	    Graphics2D g2 = (Graphics2D)image.createGraphics();
+        	this.grid.paintGrid(g2, Color.RED, Color.BLACK, Color.GREEN);
+    	    
+        	String encodedString = imageToBase64String(image);
+        	System.out.print(encodedString);
+    	    g2.dispose();
+    		
+    	} catch (Exception e) {
+    		
+    		System.out.print("error!");
+    	}    	
+    }
+    
+    public static String imageToBase64String(BufferedImage image) throws IOException {
+    	
+    	ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    	ImageIO.write( image, "gif", baos );
+    	baos.flush();
+    	byte[] byteArray = baos.toByteArray();
+    	baos.close();
+    	
+    	Base64 encoder = new Base64();
+    	return encoder.encodeToString(byteArray);
     }
     
 
@@ -170,6 +210,7 @@ public class SetEntityGrid {
 		sets.add(newset2);
 		
 		SetEntityGrid heatmap = new SetEntityGrid(sets);
+		heatmap.init();
 		heatmap.buildGrid();
 		heatmap.makeGif();
 		
@@ -198,8 +239,10 @@ public class SetEntityGrid {
 	    					break;
 	    			case 2: 
 	    					JSONObject data = jsonObj.getJSONObject("_metadata");
-	    					FILENAME = data.getString("filename");
 	    					ACTION = data.getString("action");
+	    					if (ACTION.compareTo("gif") == 0) {
+	    						FILENAME = data.getString("filename");
+	    					}
 	    					if (ACTION.compareTo("zoom") == 0) {
 	    						SUB_GRID = new Rectangle2D.Double(
 	    								data.getDouble("xcoordinate"),
@@ -231,6 +274,8 @@ public class SetEntityGrid {
 		} else if (ACTION.compareTo("zoom") == 0) {
 			String json = heatmap.getZoomJSON();
 			System.out.print(json);
+		} else if (ACTION.compareTo("base64gif") == 0) {
+			heatmap.makeGifEncodeToString();
 		}
 		
 	}

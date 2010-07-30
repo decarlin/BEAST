@@ -64,6 +64,7 @@
             <zipfileset excludes="META-INF/*.SF" src="lib/json-lib-2.3-jdk13.jar"/>
             <fileset dir="lib/javax 2/servlet"/>
             <zipfileset excludes="META-INF/*.SF" src="lib/javax.servlet.jar"/>
+            <zipfileset excludes="META-INF/*.SF" src="lib/commons-codec-1.4.jar"/>
         </jar>
     </target>
 </project>
