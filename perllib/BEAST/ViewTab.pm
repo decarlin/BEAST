@@ -63,12 +63,12 @@ sub getBase64Gif
 		$json = $json."\n"."[".$set->serialize()."]";
 	}
 
-	my $command = Constants::JAVA_BIN." -jar ".Constants::HEATMAP_JAR." ";
+	my $command = Constants::JAVA_BIN." -jar ".Constants::HEATMAP_JAR." 1 > ".Constants::JAVA_ERROR_LOG." 2>&1";
 	open COMMAND, "|-", "$command" || die "Can't pipe to java binary!";
 	print COMMAND $json;
 	close COMMAND;
 
-	print $json;
+	print $command;
 	my $base64gif = "";
 	if (-f $filename) {
 		open GIF, $filename || return "";
@@ -81,6 +81,8 @@ sub getBase64Gif
 		return $base64gif;
 	} else {
 		print "Error: couldn't create temp file";
+		my $errlog = Constants::JAVA_ERROR_LOG;
+		print `cat $errlog`;
 	}
 
 	return "";

@@ -68,6 +68,13 @@ my $viewObj = ViewTab->new($cgi);
 			displayMySetsTree();
 		}
 	}
+	elsif ($cgi->param('addbrowse'))
+	{
+		addBrowseSets();
+		if ($cgi->param('type') eq "tree") {
+			displayMySetsTree();
+		}
+	}
 	elsif ($cgi->param('addimportfile'))
 	{
 		addImportSets();
@@ -115,6 +122,9 @@ my $viewObj = ViewTab->new($cgi);
 		{
 			displayMySetsTree();
 		}
+	}
+	elsif ($action eq 'clear') {
+		$session->clear();
 	}
 
 #	DebugHelper::printRequestParameters($cgi);
@@ -201,11 +211,42 @@ sub addSearchSets()
 	if ($cgi->param('searchsets[]')) {
 		my @checkboxdata = $cgi->param('searchsets[]');
 		my @searchSets = BeastSession::loadMergeSetsFromSession($session, 'searchsets', \@checkboxdata);
-		if ($#sets == -1) {
+		if (scalar(@sets) == 0) {
 			@sets = @searchSets;
 		} else {
 			@sets = Set::mergeDisjointCollections(\@sets, \@searchSets);
 		}
+	}
+	return unless (scalar(@sets) > 0);
+	BeastSession::saveSetsToSession($session, 'mysets', @sets);
+}
+
+sub addBrowseSets()
+{
+	@sets = BeastSession::loadSetsFromSession($session, 'mysets');
+	unless (ref($sets[0]) eq 'Set') {
+		pop @sets;
+	}
+	print "one";
+	# add/merge these sets with the current working sets
+	if ($cgi->param('browsesets[]')) {
+		print "two";
+		# set of internal database ID's
+		my @checkboxdata = $cgi->param('browsesets[]');
+
+		my $beastDB = BeastDB->new;
+		$beastDB->connectDB();
+		my $treeBuilder = Search->new($beastDB);
+
+		my @browseSets = $treeBuilder->getSetsByIds(@checkboxdata);
+		$beastDB->disconnectDB();
+
+		if (scalar(@sets) == 0) {
+			@sets = @browseSets;
+		} else {
+			@sets = Set::mergeDisjointCollections(\@sets, \@browseSets);
+		}
+
 	}
 	return unless (scalar(@sets) > 0);
 	BeastSession::saveSetsToSession($session, 'mysets', @sets);

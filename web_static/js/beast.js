@@ -21,6 +21,12 @@ function onViewTabSelected(event, ui) {
 	}
 }
 
+function clearSession() {
+	$.load('/cgi-bin/BEAST/index.pl', 
+		{action:"clear"}
+	);
+}
+
 function onLoadImport() {
 	$('#import').load('/cgi-bin/BEAST/index.pl', 
 		{action:"import"}
@@ -182,6 +188,38 @@ function onAddSearchSets(form) {
 		  {'addsearch':'yes',
 		   'type':'flat',
 		   'searchsets[]': selects }
+		);
+	}
+}
+
+function onAddBrowseSets(form) {
+	var importtext;
+	var importtype;
+
+	// serialize the metadata selects
+	var checkedElements = new Array();
+	var j = 0;
+    	for (var i=0; i < form.browse.length; i++) {
+		if (form.browse[i].checked == 1) {
+			checkedElements[j] = form.browse[i].value;
+			j++;
+		}
+	}	
+
+	var $mysets_tab = $('#mysets_tab').tabs();
+	var selected = $mysets_tab.tabs('option', 'selected');
+
+	if (selected == 0) {
+		$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
+		  {'addbrowse':'yes',
+		   'type':'tree',
+		   'browsesets[]': checkedElements }
+		);
+ 	} else if (selected == 1) {
+		$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
+		  {'addbrowse':'yes',
+		   'type':'flat',
+		   'browsesets[]': checkedElements }
 		);
 	}
 }

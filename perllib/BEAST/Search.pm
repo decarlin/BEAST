@@ -69,6 +69,20 @@ sub findParentsByTerm
 	return @nodes;
 }
 
+sub getSetsByIds
+{
+	my $self = shift;
+	my @ids = @_;
+
+	my @nodes;
+	foreach (@ids) {
+		my @trees = $self->findParentsForSet($_);
+		push @nodes, $trees[0];
+	}	
+
+	return mergeResults(@nodes);
+}
+
 sub findParentsForSetByExtID($)
 {
 	my $self = shift;
@@ -106,11 +120,11 @@ sub findParentsForSet($)
 	# find set elements
 	my $set_elements = {};
 
-	# not working yet
-	my @elements_for_this_set = $beastDB->getEntitiesForSet($set_id);
-	foreach (@elements_for_this_set) {
-		$set_elements->{$_} = "";
-	}
+	# this makes the browser way, way slow -- we need to do lazy adds when entities need to be viewed
+	#my @elements_for_this_set = $beastDB->getEntitiesForSet($set_id);
+	#foreach (@elements_for_this_set) {
+	#	$set_elements->{$_} = "";
+	#}
 
 	my $set = Set->new($set_ext_id, 1, $set_metadata, $set_elements);
 	my $metadata_element = { "$set_ext_id" => $set };
@@ -227,6 +241,14 @@ sub searchOnSetDescriptions
 			}
 		}
 	}
+
+	return mergeResults(@results);
+}
+
+# private static method
+sub mergeResults
+{
+	my @results = @_;
 
 	my $merged_results = {};
 	if ($#results > -1) {

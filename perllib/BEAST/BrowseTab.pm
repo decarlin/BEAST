@@ -68,6 +68,9 @@ sub printTab
 #	my $roots = $beastDB->findRoots();
 	my $roots = $beastDB->getRoots();
 	
+	print "<form id=\"browsecategories\">";
+	print "<input type='button' value='Add To My Sets' onClick=\"return onAddBrowseSets(this.form);\"><br>";
+
 	#For all the roots returned above, print the html to display them
 	#automatically set the depth passed to the children to 1
 	foreach my $root (keys %{$roots})
@@ -81,6 +84,8 @@ sub printTab
 		print "<div id='$id\_$ts\_children' style='display:none'></div></div>";
 	}
 	$beastDB->disconnectDB();
+
+	print "</form>";
 }
 
 sub dig
@@ -131,7 +136,6 @@ sub dig
 		print "<div id='$id\_$ts\_children' style='display:none'></div></div>";
 	}
 	
-
 	$beastDB->disconnectDB();
 }
 

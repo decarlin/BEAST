@@ -8,3 +8,4 @@ prod:
 	
 	cd javalib/src/heatmap && make jar
 	cp -R javalib/src/heatmap/heatmap.jar ${MAP}/BEAST/javalib
+	cp -R javalib/src/heatmap/heatmap.jar ${CGI-BIN}/BEAST/bin
