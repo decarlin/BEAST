@@ -309,6 +309,16 @@ function onUpdateMySets(form) {
 
 }
 
+function onClearMySets() {
+
+	<!-- build search opts data structure -->
+
+	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
+		{mysets:"clear"}
+	);
+
+}
+
 function onSearchSets() {
 	var form = document.getElementById('searchcategories');
 

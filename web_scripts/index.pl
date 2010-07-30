@@ -64,23 +64,17 @@ my $viewObj = ViewTab->new($cgi);
 	elsif ($cgi->param('addsearch'))
 	{
 		addSearchSets();
-		if ($cgi->param('type') eq "tree") {
-			displayMySetsTree();
-		}
+		displayMySets($cgi);
 	}
 	elsif ($cgi->param('addbrowse'))
 	{
 		addBrowseSets();
-		if ($cgi->param('type') eq "tree") {
-			displayMySetsTree();
-		}
+		displayMySets($cgi);
 	}
 	elsif ($cgi->param('addimportfile'))
 	{
 		addImportSets();
-		if ($cgi->param('type') eq "tree") {
-			displayMySetsTree();
-		} 
+		displayMySets($cgi);
 	}
 	elsif ($action eq "search")
 	{
@@ -114,6 +108,11 @@ my $viewObj = ViewTab->new($cgi);
 	}
 	elsif ($cgi->param('mysets'))
 	{
+		if ($cgi->param('mysets') eq 'clear') {
+			my @list = ('mysets');
+			$session->clear([@list]);
+			displayMySetsTree();
+		}
 		if ($cgi->param('format') && ($cgi->param('format') eq 'json'))
 		{
 			getMySetsJSON();		
@@ -138,7 +137,14 @@ my $viewObj = ViewTab->new($cgi);
 
 }# end main
 
-
+sub displayMySets()
+{
+	if ($cgi->param('type') eq "tree") {
+		displayMySetsTree();
+	}  else {
+		displayMySetsFlat();
+	}
+}
 
 sub displayMySetsFlat()
 {
@@ -164,7 +170,8 @@ sub displayMySetsTree()
 	return unless (scalar(@sets) > 0); 
 
 	print "<form id=\"mysetsform\">";
-	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\"><br>";
+	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\">";
+	print "<input type='button' value='Clear' onClick=\"return onClearMySets();\"><br>";
 	if ($cgi->param('checkedelements[]')) {
 		my @checked = $cgi->param('checkedelements[]');	
 		my $checked_hash = BeastSession::buildCheckedHash(@checked);
