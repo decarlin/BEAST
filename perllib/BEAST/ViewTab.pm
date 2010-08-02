@@ -47,8 +47,7 @@ sub printTab
 	}
 
 	my $embeddedImage = "<img src=\"data:image/gif;base64,".$base64gif."\"/>";
-	print "<div>".$embeddedImage."</div>";
-	print "!!".$base64gif."!!";
+	print $embeddedImage;
 }
 
 sub getBase64Gif
@@ -63,12 +62,16 @@ sub getBase64Gif
 		$json = $json."\n"."[".$set->serialize()."]";
 	}
 
-	my $command = Constants::JAVA_BIN." -jar ".Constants::HEATMAP_JAR." 1 > ".Constants::JAVA_ERROR_LOG." 2>&1";
+	print $json;
+
+	my $command = Constants::JAVA_32_BIN." -jar ".Constants::HEATMAP_JAR." 1 > ".Constants::JAVA_ERROR_LOG." 2>&1";
 	open COMMAND, "|-", "$command" || die "Can't pipe to java binary!";
 	print COMMAND $json;
 	close COMMAND;
 
-	print $command;
+	# debug
+	# print $command;
+
 	my $base64gif = "";
 	if (-f $filename) {
 		open GIF, $filename || return "";
