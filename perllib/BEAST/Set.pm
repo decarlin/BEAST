@@ -95,6 +95,12 @@ sub get_id
 	return ($id =~ /\d+/) ? $id : undef;	
 }
 
+sub is_active
+{
+	my $self = shift;
+	return $self->{'_active'};
+}
+
 sub get_element
 {
 	my $self = shift;

@@ -144,6 +144,10 @@ sub loadLeafSetsFromSession($$)
 	$beastDB->connectDB();
 
 	my @sets = loadSetsFromSession($session, $key);
+	unless (ref($sets[0]) eq 'Set') {
+		pop @sets;
+	}
+	
 	return unless (scalar(@sets) > 0); 
 	my @leaves;
 	foreach (@sets) {
@@ -151,6 +155,9 @@ sub loadLeafSetsFromSession($$)
 		my @set_leaves = $set->getLeafNodes();
 		foreach (@set_leaves) {
 			my $leaf = $_;
+			# skip inactive elements
+			next if ($leaf->is_active == 0);
+
 			my @elements_for_this_set = $beastDB->getEntitiesForSet($leaf->get_id);
 			foreach (@elements_for_this_set) {
 				$leaf->set_element($_,"");
