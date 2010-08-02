@@ -98,10 +98,14 @@ sub beginTreeSection($$)
 	my $arrow = $display ? "images/ominus.png" : "images/plus.png";
 	$display = $display ? "block":"none";
 	print "<div id='$divID' style='$marginleft'>";
-	print "<input style='$marginleft' type=checkbox name=\"$fullName\" $checkedText>";
-	print "<span onclick=\"swapDivPlusMinus2('$divID\_content', '$divID\_arrow');\" class='expandable_header' >";
-	print "<img id='$divID\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$name $desc";
-	print "<span>";
+	print "<input style='$marginleft' type=checkbox name=\"$fullName\" value=\"$db_id\" $checkedText>";
+	if ($type eq 'meta') {
+		print "<span onclick=\"swapDivPlusMinus2('$divID\_content', '$divID\_arrow');\" class='expandable_header' >";
+		print "<img id='$divID\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$name $desc";
+		print "</span>";
+	} elsif ($type eq 'set') {
+		print "<span>&nbsp;$name $desc</span>";
+	}
 	print "</div>\n";
 	print "<div id='$divID\_content' style='display:$display'>\n";
 
