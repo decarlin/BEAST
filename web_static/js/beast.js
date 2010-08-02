@@ -46,6 +46,7 @@ function onLoadSearch() {
 }
 
 function onLoadHeatmap() {
+	$('#view').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#view').load('/cgi-bin/BEAST/index.pl', 
 		{action:"heatmap"}
 	);
