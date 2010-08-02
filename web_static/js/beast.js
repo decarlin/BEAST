@@ -28,18 +28,21 @@ function clearSession() {
 }
 
 function onLoadImport() {
+	$('#import').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#import').load('/cgi-bin/BEAST/index.pl', 
 		{action:"import"}
 	);
 }
 
 function onLoadBrowse() {
+	$('#browse').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#browse').load('/cgi-bin/BEAST/index.pl', 
 		{action:"browse"}
 	);
 }
 
 function onLoadSearch() {
+	$('#search').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#search').load('/cgi-bin/BEAST/index.pl', 
 		{action:"search"}
 	);
@@ -86,12 +89,14 @@ function onLoadView() {
 }
 
 function onLoadMySetsTree(event, ui) {
+	$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
 		{display_mysets_tree:"yes"}
 	);
 }
 
 function onLoadMySetsFlat(event, ui) {
+	$('#mysets_flat').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
 		{display_mysets_flat:"yes"}
 	);
@@ -179,12 +184,14 @@ function onAddSearchSets(form) {
 	var selected = $mysets_tab.tabs('option', 'selected');
 
 	if (selected == 0) {
+		$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 		$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
 		  {'addsearch':'yes',
 		   'type':'tree',
 		   'searchsets[]': selects }
 		);
  	} else if (selected == 1) {
+		$('#mysets_flat').empty().html('<img src="images/ajax-loader.gif" />');
 		$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
 		  {'addsearch':'yes',
 		   'type':'flat',
@@ -211,12 +218,14 @@ function onAddBrowseSets(form) {
 	var selected = $mysets_tab.tabs('option', 'selected');
 
 	if (selected == 0) {
+		$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 		$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
 		  {'addbrowse':'yes',
 		   'type':'tree',
 		   'browsesets[]': checkedElements }
 		);
  	} else if (selected == 1) {
+		$('#mysets_flat').empty().html('<img src="images/ajax-loader.gif" />');
 		$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
 		  {'addbrowse':'yes',
 		   'type':'flat',
@@ -236,12 +245,14 @@ function onAddImportSets(form) {
 	var selected = $mysets_tab.tabs('option', 'selected');
 
 	if (selected == 0) {
+		$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 		$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
 		  {'addimportfile':'yes',
 		   'type':'tree',
 		   'importsets[]': selects }
 		);
  	} else if (selected == 1) {
+		$('#mysets_flat').empty().html('<img src="images/ajax-loader.gif" />');
 		$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
 		  {'addimportfile':'Yes',
 		   'type':'flat',
@@ -303,6 +314,7 @@ function onUpdateMySets(form) {
 	<!-- build search opts data structure -->
 	var checkedElements = getChecked(form);
 
+	$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
 		{mysets:"yes",
 		 'checkedelements[]': checkedElements}
@@ -314,6 +326,7 @@ function onClearMySets() {
 
 	<!-- build search opts data structure -->
 
+	$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
 		{mysets:"clear"}
 	);
@@ -336,6 +349,7 @@ function onSearchSets() {
 	}
 
 
+	$('#search').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#search').load('/cgi-bin/BEAST/index.pl', 
 		{action:"search",
 		 searchtext: form.searchtext.value, 
