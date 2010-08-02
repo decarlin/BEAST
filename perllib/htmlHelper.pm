@@ -57,14 +57,21 @@ sub printFooter()
     print "</html>\n";
 }
 
-sub beginTreeSection($$$$$)
+sub beginTreeSection($$)
 {
-	my $section = shift;
-	my $display = shift;
-	my $checkedBool = shift;
-	my $desc = shift || "()";
-	my $div_id = shift;
-	my $fullName = $section;
+	my $name = shift;
+	my $info_hash = shift;
+
+	die unless (ref($info_hash) eq 'HASH');
+
+	my $display = $info_hash->{'display'};
+	my $checkedBool = $info_hash->{'checked'};
+	my $desc = $info_hash->{'desc'} || "()";
+	my $div_id = $info_hash->{'div_id'};
+	my $db_id = $info_hash->{'db_id'};
+	my $type = $info_hash->{'type'};
+
+	my $fullName = $name;
 
 	my $checkedText = "";
 	if ($checkedBool == 1) {
@@ -80,20 +87,20 @@ sub beginTreeSection($$$$$)
 	my $delim = Constants::SET_NAME_DELIM;
 	my @nameComponents;
 	my $marginleft = "margin-left:0px;";
-	if (@nameComponents = split(/$delim/, $section)) {
-		$section = $nameComponents[-1];
+	if (@nameComponents = split(/$delim/, $name)) {
+		$name = $nameComponents[-1];
 		$marginleft = "margin-left:".(($#nameComponents)*10)."px;";
 	}
 
 	# must be unique
-	my $divID = $div_id.Constants::SET_NAME_DELIM.$section;	
+	my $divID = $div_id.Constants::SET_NAME_DELIM.$name;	
 	
 	my $arrow = $display ? "images/ominus.png" : "images/plus.png";
 	$display = $display ? "block":"none";
 	print "<div id='$divID' style='$marginleft'>";
 	print "<input style='$marginleft' type=checkbox name=\"$fullName\" $checkedText>";
 	print "<span onclick=\"swapDivPlusMinus2('$divID\_content', '$divID\_arrow');\" class='expandable_header' >";
-	print "<img id='$divID\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$section $desc";
+	print "<img id='$divID\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$name $desc";
 	print "<span>";
 	print "</div>\n";
 	print "<div id='$divID\_content' style='display:$display'>\n";

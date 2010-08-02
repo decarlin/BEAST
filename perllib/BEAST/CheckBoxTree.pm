@@ -44,14 +44,21 @@ sub buildCheckBoxTree($$$)
 
 	my @list;
 
+	# key metadata: is this a meta or a set
+	my $info_hash = {};
+
 	if ($key eq "") { 
 		# in this case we're starting at the top of the hash -- key is blank
 		@list = keys %{$ref}; 
+		$info_hash->{'db_id'} = $ref->{'_id'};
+		$info_hash->{'type'} = $ref->{'_type'};
 	} else {
 		if (ref($ref) eq 'HASH') {
 			@list = keys %$ref;
+			$info_hash->{'db_id'} = $ref->{'_id'};
+			$info_hash->{'type'} = $ref->{'_type'};
 			# value is 1 or 0 depending on whether this set is active
-			$isActiveElement = $ref->{'_active'};
+			$info_hash->{'checked'} = $ref->{'_active'};
 		} elsif (!ref($ref)) {
 			$list[0] = $ref;
 		} else {
@@ -63,8 +70,12 @@ sub buildCheckBoxTree($$$)
 	if (exists $ref->{'_desc'}) {
 		$desc = "(".$ref->{'_desc'}.")";
 	}
+	$info_hash->{'desc'} = $desc;
+	$info_hash->{'div_id'} = $divID;
+	$info_hash->{'display'} = 'FALSE';
+
 	unless ($key eq "") {
-	  htmlHelper::beginTreeSection($key, 'FALSE', $isActiveElement, $desc, $divID);
+	  htmlHelper::beginTreeSection($key, $info_hash);
 	}
 
 	foreach (@list) { 
