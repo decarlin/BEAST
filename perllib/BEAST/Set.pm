@@ -87,6 +87,14 @@ sub get_name
 	return $self->{'_name'};
 }
 
+sub get_id
+{
+	my $self = shift;
+	my $id = $self->get_metadata_value('id');
+
+	return ($id =~ /\d+/) ? $id : undef;	
+}
+
 sub get_element
 {
 	my $self = shift;

@@ -137,12 +137,29 @@ sub loadLeafSetsFromSession($$)
 	my $session = shift;
 	my $key = shift;
 
+	## 
+	##  We do have to get the entities from the DB at this point
+	##
+	my $beastDB = BeastDB->new;
+	$beastDB->connectDB();
+
 	my @sets = loadSetsFromSession($session, $key);
 	return unless (scalar(@sets) > 0); 
 	my @leaves;
 	foreach (@sets) {
-		push @leaves, $_->getLeafNodes();
+		my $set = $_;
+		my @set_leaves = $set->getLeafNodes();
+		foreach (@set_leaves) {
+			my $leaf = $_;
+			my @elements_for_this_set = $beastDB->getEntitiesForSet($leaf->get_id);
+			foreach (@elements_for_this_set) {
+				$leaf->set_element($_,"");
+			}
+			push @leaves, $leaf;
+		}
 	}
+
+	$beastDB->disconnectDB();
 
 	return @leaves;
 }

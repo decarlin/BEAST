@@ -62,7 +62,10 @@ sub getBase64Gif
 		$json = $json."\n"."[".$set->serialize()."]";
 	}
 
-	print $json;
+	# debug
+	#my $test_json = $json;
+	#$test_json =~ s/\n/<br>/g;	
+	#print $test_json;
 
 	my $command = Constants::JAVA_32_BIN." -jar ".Constants::HEATMAP_JAR." 1 > ".Constants::JAVA_ERROR_LOG." 2>&1";
 	open COMMAND, "|-", "$command" || die "Can't pipe to java binary!";
