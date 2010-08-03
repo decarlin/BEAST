@@ -357,6 +357,28 @@ function onSearchSets() {
 	);
 }
 
+function setCheckboxesOfChildren(htmlElement, checkedState) {
+    	for (var i=0; i < htmlElement.children.length; i++) {
+		if (htmlElement.children[i].type == "checkbox") {
+			htmlElement.children[i].checked = checkedState;	
+		} else if (htmlElement.children[i].tagName == 'DIV') {
+			setCheckboxesOfChildren(htmlElement.children[i], checkedState);
+		} 
+	}
+}
+
+function updateMetaCheckBox(divID, checkedState) {
+
+	var children = document.getElementById(divID+"_content");	
+    	for (var i=0; i < children.children.length; i++) {
+		if (children.children[i].type == "checkbox") {
+			children.children[i].checked = checkedState;	
+		} else if (children.children[i].tagName == 'DIV') {
+			setCheckboxesOfChildren(children.children[i], checkedState);
+		} 
+	}
+}
+
 function handleKeypress(e) {
 	if (e.which == 13) {
 		alert('enter pressed!');

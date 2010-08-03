@@ -99,14 +99,15 @@ sub beginTreeSection($$)
 	my $arrow = $display ? "images/ominus.png" : "images/plus.png";
 	$display = $display ? "block":"none";
 	print "<div id='$divID' style='$marginleft'>";
-	print "<input style='$marginleft' type=checkbox name=\"$fullName\" value=\"$db_id\" $checkedText>";
 	if ($type eq 'meta') {
+		print "<input style='$marginleft' type=checkbox onClick='updateMetaCheckBox(\"$divID\", this.checked)' name=\"$fullName\" value=\"$db_id\" $checkedText>";
 		print "<span onClick=\"swapDivPlusMinus2('$divID\_content', '$divID\_arrow');\" class='expandable_header' >";
 		print "<img id='$divID\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$name $desc";
 		print "</span>";
 		print "</div>\n";
 		print "<div id='$divID\_content' style='display:$display'>\n";
 	} elsif ($type eq 'set') {
+		print "<input style='$marginleft' type=checkbox name=\"$fullName\" value=\"$db_id\" $checkedText>";
 		my $ts = getTimestamp();
 		my $depth = scalar(@nameComponents) + 3;
 		print "<span onClick='onSetClick($db_id, $depth, \"$ts\")' class='expandable_header'><b>&nbsp;$name</b> $desc</span>";
