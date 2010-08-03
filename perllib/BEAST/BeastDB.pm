@@ -448,7 +448,7 @@ sub getEntitiesForSet($$)
 	my @names;
 	foreach (@ids) {
 		my $name = $self->getEntityNameFromID($_);
-		push @names, $name;
+		push @names, uc($name);
 	}
 	return @names;
 }

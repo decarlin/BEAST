@@ -160,7 +160,7 @@ sub loadLeafSetsFromSession($$)
 
 			my @elements_for_this_set = $beastDB->getEntitiesForSet($leaf->get_id);
 			foreach (@elements_for_this_set) {
-				$leaf->set_element($_,"");
+				$leaf->set_element(uc($_),"");
 			}
 			push @leaves, $leaf;
 		}
