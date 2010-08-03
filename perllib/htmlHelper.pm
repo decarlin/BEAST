@@ -108,8 +108,8 @@ sub beginTreeSection($$)
 		print "<div id='$divID\_content' style='display:$display'>\n";
 	} elsif ($type eq 'set') {
 		my $ts = getTimestamp();
-		my $depth = scalar(@nameComponents) + 1;
-		print "<span onClick='onSetClick($db_id, $depth, \"$ts\")' class='expandable_header'>&nbsp;$name $desc</span>";
+		my $depth = scalar(@nameComponents) + 3;
+		print "<span onClick='onSetClick($db_id, $depth, \"$ts\")' class='expandable_header'><b>&nbsp;$name</b> $desc</span>";
 		print "</div>\n";
 		print "<div id='$db_id\_$ts\_content' style='display:$display'>\n";
 	}

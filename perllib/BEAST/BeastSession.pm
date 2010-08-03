@@ -143,6 +143,8 @@ sub loadLeafSetsFromSession($$)
 	my $beastDB = BeastDB->new;
 	$beastDB->connectDB();
 
+	my $uniq_sets = {};
+	
 	my @sets = loadSetsFromSession($session, $key);
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
@@ -155,6 +157,11 @@ sub loadLeafSetsFromSession($$)
 		my @set_leaves = $set->getLeafNodes();
 		foreach (@set_leaves) {
 			my $leaf = $_;
+
+			# no duplicates		
+			next if (exists $uniq_sets->{$leaf->get_name});
+			$uniq_sets->{$leaf->get_name} = 1;
+
 			# skip inactive elements
 			next if ($leaf->is_active == 0);
 

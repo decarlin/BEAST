@@ -97,9 +97,12 @@ my $viewObj = ViewTab->new($cgi);
 	elsif ($action eq "get_set_elements")
 	{
 		my @entities = getEntitiesForSet($cgi->param('db_id'));
+		my $margin = $cgi->param('depth') * 10;
+		print "<span style=\"margin-left:".$margin."px;\" >";
 		foreach (@entities) {
 			print $_."&nbsp;";
 		}
+		print "</span>";
 	}
 	elsif ($action eq "heatmap")
 	{
