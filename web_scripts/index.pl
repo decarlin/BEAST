@@ -183,7 +183,7 @@ sub displayMySetsTree()
 		my @checked = $cgi->param('checkedelements[]');	
 		my $checked_hash = BeastSession::buildCheckedHash(@checked);
 		#print Data::Dumper->Dump([$checked_hash]);
-		@sets = MySets::updateActiveElements($checked_hash, @sets);	
+		MySets::updateActiveElements($checked_hash, @sets);	
 		BeastSession::saveSetsToSession($session, 'mysets', @sets);
 	}
 	MySets::displaySetsTree("mysets", @sets);

@@ -101,6 +101,18 @@ sub is_active
 	return $self->{'_active'};
 }
 
+sub set_active
+{
+	my $self = shift;
+	$self->{'_active'} = 1;
+}
+
+sub set_inactive
+{
+	my $self = shift;
+	$self->{'_active'} = 0;
+}
+
 sub get_element
 {
 	my $self = shift;
@@ -327,6 +339,28 @@ sub mergeCheckbox_Inactivate
 	  	}
 	}
 }
+
+sub mergeCheckbox_Simple
+{
+	my $self = shift;
+	my $checkboxHash = shift;
+
+	if (exists $checkboxHash->{$self->get_name}) {
+		$self->set_active;
+	} else {
+		$self->set_inactive;
+	}
+
+	foreach ($self->get_element_names) {
+		my $name = $_;
+	 	my $element = $self->get_element($name);
+	     
+	  	if (ref($element) eq 'Set') {
+			$element->mergeCheckbox_Simple($checkboxHash);
+	  	}
+	}
+}
+
 
 sub getLeafNodes()
 {

@@ -23,13 +23,8 @@ sub updateActiveElements
 	foreach (@sets) {
 		my $set = $_;
 		my $name = $set->get_name;
-		if (exists $checkedHash->{$name}) {
-			$set->mergeCheckbox_Inactivate($checkedHash);
-			push @selected_sets, $set;
-		}
+		$set->mergeCheckbox_Simple($checkedHash);
 	}
-
-	return @selected_sets;
 }
 
 
