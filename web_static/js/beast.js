@@ -438,4 +438,38 @@ function toggleChildren(id, depth, ts)
 	}
 }
 
+function onSetClick(id, depth, ts)
+{
+	var div_element   = document.getElementById(id + "_" + ts + "_content");
 
+	//If style.display is "block" or undefined, the element is showing.  Hide it (and show plus)
+	if(!div_element.style.display || div_element.style.display == 'block')
+	{
+		div_element.style.display = 'none';
+	}
+	//If style.display is "none", the element is hidden.  set it to "Block" to show it (and show minus)
+	else if (div_element.style.display == 'none')
+	{
+		div_element.style.display = 'block';
+		if(div_element.loaded)
+		{
+			//We already loaded these children, no need to reload them
+		}
+		else
+		{
+			//Load children...  do this through the index.pl router.  pass the parent_id and the depth of the child
+			$("#"+id+"_"+ts+"_content").load('/cgi-bin/BEAST/index.pl', 
+				{action:"get_set_elements", 
+				 db_id:id, 
+				 depth:depth
+				},
+				function()
+				{
+					//on success, set a parameter on the div element to say that it is already loaded so that we don't reload in the future.
+					var div_element = document.getElementById(id+"_"+ts+"_content");
+					div_element.loaded = true;
+				}
+			);
+		}
+	}
+}

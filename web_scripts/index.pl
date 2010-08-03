@@ -94,6 +94,13 @@ my $viewObj = ViewTab->new($cgi);
 	{
 		$browseObj->dig($session);
 	}
+	elsif ($action eq "get_set_elements")
+	{
+		my @entities = getEntitiesForSet($cgi->param('db_id'));
+		foreach (@entities) {
+			print $_."&nbsp;";
+		}
+	}
 	elsif ($action eq "heatmap")
 	{
 		$viewObj->printTab($session);
@@ -255,6 +262,20 @@ sub addBrowseSets()
 	}
 	return unless (scalar(@sets) > 0);
 	BeastSession::saveSetsToSession($session, 'mysets', @sets);
+}
+
+sub getEntitiesForSet
+{
+	my $id = shift;
+
+	my $beastDB = BeastDB->new;
+	$beastDB->connectDB();
+
+	my @entities = $beastDB->getEntitiesForSet($id);
+
+	$beastDB->disconnectDB();
+
+	return @entities;
 }
 
 sub addImportSets()

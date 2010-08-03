@@ -13,6 +13,7 @@ use CGI qw(:standard);
 use CGI;
 use CGI::Carp qw(fatalsToBrowser);
 use BEAST::Constants;
+use utils;
 
 our @ISA		= qw(Exporter);
 #our @EXPORT	= qw(printHeader printFooter $WEB_ROOT $WEB_CGI $WEB_STATIC $WEB_TEMP $PATH_CGI $PATH_STATIC $PATH_TEMP $TEMP_CHMOD );
@@ -100,14 +101,18 @@ sub beginTreeSection($$)
 	print "<div id='$divID' style='$marginleft'>";
 	print "<input style='$marginleft' type=checkbox name=\"$fullName\" value=\"$db_id\" $checkedText>";
 	if ($type eq 'meta') {
-		print "<span onclick=\"swapDivPlusMinus2('$divID\_content', '$divID\_arrow');\" class='expandable_header' >";
+		print "<span onClick=\"swapDivPlusMinus2('$divID\_content', '$divID\_arrow');\" class='expandable_header' >";
 		print "<img id='$divID\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$name $desc";
 		print "</span>";
+		print "</div>\n";
+		print "<div id='$divID\_content' style='display:$display'>\n";
 	} elsif ($type eq 'set') {
-		print "<span>&nbsp;$name $desc</span>";
+		my $ts = getTimestamp();
+		my $depth = scalar(@nameComponents) + 1;
+		print "<span onClick='onSetClick($db_id, $depth, \"$ts\")' class='expandable_header'>&nbsp;$name $desc</span>";
+		print "</div>\n";
+		print "<div id='$db_id\_$ts\_content' style='display:$display'>\n";
 	}
-	print "</div>\n";
-	print "<div id='$divID\_content' style='display:$display'>\n";
 
 }
 sub beginSection($$)
