@@ -49,7 +49,7 @@ sub buildCheckBoxTree($$$)
 
 	if ($key eq "") { 
 		# in this case we're starting at the top of the hash -- key is blank
-		@list = keys %{$ref}; 
+		@list = sort { $ref->{$a}->{'_id'} <=> $ref->{$b}->{'_id'} }keys %{$ref}; 
 		$info_hash->{'db_id'} = $ref->{'_id'};
 		$info_hash->{'type'} = $ref->{'_type'};
 	} else {

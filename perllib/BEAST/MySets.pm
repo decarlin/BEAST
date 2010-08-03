@@ -60,11 +60,7 @@ sub displaySetsFlat
 	my $divID = shift;
 	my @sets = @_;
 
-	my @leaves;
-	foreach (@sets) {
-		push @leaves, $_->getLeafNodes();
-	}
-	displaySetsTree($divID, @leaves);
+	displaySetsTree($divID, @sets);
 }
 
 sub getDisplayHash

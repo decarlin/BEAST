@@ -15,7 +15,7 @@ our $FALSE = 0;
 package Set;
 
 ##
-## Static Methods: parseSetLines
+## Static Methods: parseSetLines, sortByName
 ##
 
 sub new

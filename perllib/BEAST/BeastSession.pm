@@ -132,10 +132,12 @@ sub loadSetsFromSession($$)
 	return @sets;
 }
 
-sub loadLeafSetsFromSession($$)
+sub loadLeafSetsFromSession
 {
 	my $session = shift;
 	my $key = shift;
+	# 1 yes, 0 no
+	my $keep_inactive = shift || 1;
 
 	## 
 	##  We do have to get the entities from the DB at this point
@@ -143,7 +145,7 @@ sub loadLeafSetsFromSession($$)
 	my $beastDB = BeastDB->new;
 	$beastDB->connectDB();
 
-	my $uniq_sets = {};
+	my $uniq_leaves = {};
 	
 	my @sets = loadSetsFromSession($session, $key);
 	unless (ref($sets[0]) eq 'Set') {
@@ -151,7 +153,6 @@ sub loadLeafSetsFromSession($$)
 	}
 	
 	return unless (scalar(@sets) > 0); 
-	my @leaves;
 	foreach (@sets) {
 		my $set = $_;
 		my @set_leaves = $set->getLeafNodes();
@@ -159,22 +160,28 @@ sub loadLeafSetsFromSession($$)
 			my $leaf = $_;
 
 			# no duplicates		
-			next if (exists $uniq_sets->{$leaf->get_name});
-			$uniq_sets->{$leaf->get_name} = 1;
+			my $name = $leaf->get_name();
+			next if (exists $uniq_leaves->{$name});
 
-			# skip inactive elements
-			next if ($leaf->is_active == 0);
+			# skip inactive elements, if directed to do so
+			next if (($keep_inactive == 0) && ($leaf->is_active == 0));
 
 			my @elements_for_this_set = $beastDB->getEntitiesForSet($leaf->get_id);
 			foreach (@elements_for_this_set) {
 				$leaf->set_element(uc($_),"");
 			}
-			push @leaves, $leaf;
+			$uniq_leaves->{$name} = $leaf;
 		}
 	}
 
 	$beastDB->disconnectDB();
 
+	# sort on the unique internal database ID
+	my @leaves;
+	foreach (sort { $uniq_leaves->{$a}->{'_metadata'}->{'id'} <=> $uniq_leaves->{$b}->{'_metadata'}->{'id'} } keys %$uniq_leaves) {
+		#print $_."<br>";
+		push @leaves, $uniq_leaves->{$_};
+	}
 	return @leaves;
 }
 

@@ -158,10 +158,7 @@ sub displayMySets()
 
 sub displayMySetsFlat()
 {
-	@sets = BeastSession::loadSetsFromSession($session, 'mysets');
-	unless (ref($sets[0]) eq 'Set') {
-		pop @sets;
-	}
+	@sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 0);
 
 	return unless (scalar(@sets) > 0); 
 
