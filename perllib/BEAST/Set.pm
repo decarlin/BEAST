@@ -95,6 +95,33 @@ sub get_id
 	return ($id =~ /\d+/) ? $id : undef;	
 }
 
+sub pare_inactive_leaves
+{
+	my $self = shift;
+
+	my $type = $self->get_metadata_value('type');
+	my $active = $self->is_active;
+
+	if ($type eq 'set' && $active == 1) {
+		return 1;
+	} elsif ($type eq 'set' && $active == 0) {
+		return 0;
+	} else {
+		my $one_active = 0;
+		foreach (keys %{$self->{'_elements'}}) {
+			my $name = $_;
+			my $element = $self->get_element($name);
+			if ($element->pare_inactive_leaves > 0) {
+				$one_active = 1;
+			} else {
+				# clean inactive subtrees
+				$self->delete_element($name);
+			}
+		}
+		return $one_active;
+	}
+}
+
 sub is_active
 {
 	my $self = shift;

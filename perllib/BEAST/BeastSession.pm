@@ -95,8 +95,10 @@ sub mergeWithCheckbox
 		my $set = $_;
 		my $name = $set->get_name;
 		if (exists $checked_hash->{$name}) {
-			$set->mergeCheckbox_Remove($checked_hash);
-			push @selected_sets, $set;
+			$set->mergeCheckbox_Simple($checked_hash);
+			if ($set->pare_inactive_leaves > 0) {
+				push @selected_sets, $set;
+			}
 		}
 	}
 

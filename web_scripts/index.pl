@@ -228,6 +228,7 @@ sub addSearchSets()
 		if (scalar(@sets) == 0) {
 			@sets = @searchSets;
 		} else {
+			# fixme: checkbox conflicts for searchSets should resolve to overriding by new SearchSets
 			@sets = Set::mergeDisjointCollections(\@sets, \@searchSets);
 		}
 	}
