@@ -29,6 +29,8 @@ use constant HEATMAP_JAR => "/projects/sysbio/map/Projects/BEAST/javalib/heatmap
 use constant JAVA_ERROR_LOG => "/tmp/beast_java_errlog.txt";
 use constant WEB_STATIC_DIR => "/projects/sysbio/map/Projects/BEAST/web_static";
 use constant WEB_SCRIPT_DIR => "/projects/sysbio/map/Projects/BEAST/web_scripts";
+use constant VIEW_WIDTH => "600";
+use constant VIEW_HEIGHT => "600";
 use constant DEBUG => 1;
 use constant SET_NAME_DELIM => "<>";
     

@@ -29,8 +29,8 @@ public class SetEntityGrid {
     private static String ACTION;
     private static Rectangle2D.Double SUB_GRID;
     
-    private final static int GRID_HEIGHT = 400;
-    private final static int GRID_WIDTH = 800;
+    private static int GRID_HEIGHT;
+    private static int GRID_WIDTH;
     private final static int ROW_BORDER = 0;
     private final static int COLUMN_BORDER = 0;
     
@@ -251,6 +251,8 @@ public class SetEntityGrid {
                             ACTION = data.getString("action");
                             if (ACTION.compareTo("gif") == 0 || ACTION.compareTo("base64gif") == 0) {
                                 FILENAME = data.getString("filename");
+			        GRID_HEIGHT = data.getInt("height");
+                                GRID_WIDTH = data.getInt("width");
                             }
                             if (ACTION.compareTo("zoom") == 0) {
                                 SUB_GRID = new Rectangle2D.Double(

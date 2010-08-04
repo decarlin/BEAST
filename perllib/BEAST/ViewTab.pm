@@ -57,7 +57,9 @@ sub getBase64Gif
 	my @sets = BeastSession::loadLeafSetsFromSession($session, 'mysets');
 
 	my $filename = "/tmp/".$session->id.".txt";
-	my $json = "[{\"_metadata\":{\"type\":\"info\",\"action\":\"base64gif\",\"filename\":\"$filename\"}}]";
+	my $json = "[{\"_metadata\":{\"type\":\"info\",\"action\":\"base64gif\",\"filename\":\"$filename\"";
+	$json .= ',"width":"'.Constants::VIEW_WIDTH.'","height":"'.Constants::VIEW_HEIGHT.'"';
+	$json .= "}}]";
 	foreach my $set (@sets) {
 		$json = $json."\n"."[".$set->serialize()."]";
 	}
