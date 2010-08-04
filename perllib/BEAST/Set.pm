@@ -230,6 +230,12 @@ sub mergeTree($)
 		return $FALSE;
 	}
 
+	# trick: if one is active, they should both be
+	# set as active as part of the merge
+	if ( ($self->is_active == 0) || ($tree2->is_active == 1) ) {
+		$self->set_active;
+	}
+
 	my @children_of_1 = $self->get_element_names;
 	my @children_of_2 = $tree2->get_element_names;
 
