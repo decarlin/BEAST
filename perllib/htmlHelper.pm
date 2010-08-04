@@ -110,7 +110,7 @@ sub beginTreeSection($$)
 		print "<input style='$marginleft' type=checkbox name=\"$fullName\" value=\"$db_id\" $checkedText>";
 		my $ts = getTimestamp();
 		my $depth = scalar(@nameComponents) + 3;
-		print "<span onClick='onSetClick($db_id, $depth, \"$ts\")' class='expandable_header'><b>&nbsp;$name</b> $desc</span>";
+		print "<span onClick='onSetClick(\"$db_id\", $depth, \"$ts\")' class='expandable_header'><b>&nbsp;$name</b> $desc</span>";
 		print "</div>\n";
 		print "<div id='$db_id\_$ts\_content' style='display:$display'>\n";
 	}

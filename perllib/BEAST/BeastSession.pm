@@ -134,6 +134,21 @@ sub loadSetsFromSession($$)
 	return @sets;
 }
 
+sub loadImportSetsFromSession($)
+{
+	my $session = shift;
+
+	my @sets = loadSetsFromSession($session, 'mysets');
+	foreach (@sets) {
+		my $set = $_;
+		if ($set->get_name eq 'ImportSets') {
+			return $set->get_elements;
+		}
+	}
+
+	return undef;
+}
+
 sub loadLeafSetsFromSession
 {
 	my $session = shift;

@@ -149,6 +149,18 @@ sub get_element
 	return ($TRUE, $self->{'_elements'}->{$element_name});
 }
 
+sub get_elements
+{
+	my $self = shift;
+
+	my @elements;
+	foreach ($self->get_element_names) {
+		push @elements, $self->get_element($_);
+	}
+
+	return @elements;
+}
+
 sub set_element
 {
 	my $self = shift;
@@ -485,6 +497,7 @@ sub parseSetLines
 		my $set = Set->new($name, "1", $metadata, $elements);
 		# set meta type to 'set' 
 		$set->set_metadata_value('type', 'set');
+		$set->set_metadata_value('id', 'local:'.$name);
 		push @sets, $set;
 	}
 

@@ -96,7 +96,7 @@ my $viewObj = ViewTab->new($cgi);
 	}
 	elsif ($action eq "get_set_elements")
 	{
-		my @entities = getEntitiesForSet($cgi->param('db_id'));
+		my @entities = getEntitiesForSet($session, $cgi->param('db_id'));
 		my $margin = $cgi->param('depth') * 10;
 		print "<span style=\"margin-left:".$margin."px;\" >";
 		foreach (@entities) {
@@ -267,14 +267,28 @@ sub addBrowseSets()
 
 sub getEntitiesForSet
 {
+	my $session = shift;
 	my $id = shift;
 
-	my $beastDB = BeastDB->new;
-	$beastDB->connectDB();
+	my @entities;
 
-	my @entities = $beastDB->getEntitiesForSet($id);
+	if ($id =~ /^local:(.*)/) {
+		my $name = $1;	
+		my @importSets = BeastSession::loadImportSetsFromSession($session);
+		foreach (@importSets) {
+			my $set = $_;
+			if ($set->get_name eq $name) {
+				@entities = $set->get_element_names;
+				last;
+			}
+		}
+	} else {
+		my $beastDB = BeastDB->new;
+		$beastDB->connectDB();
 
-	$beastDB->disconnectDB();
+		@entities = $beastDB->getEntitiesForSet($id);
+		$beastDB->disconnectDB();
+	}
 
 	return @entities;
 }
