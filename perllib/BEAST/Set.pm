@@ -191,6 +191,15 @@ sub get_metadata_value
 	return $self->{'_metadata'}->{$key};
 }
 
+sub set_metadata_value
+{
+	my $self = shift;
+	my $key = shift;
+	my $value = shift;
+
+	$self->{'_metadata'}->{$key} = $value;
+}
+
 
 #
 # Find a place where they differ, then add the second tree's subsets to the first 
@@ -474,6 +483,8 @@ sub parseSetLines
 		}
 
 		my $set = Set->new($name, "1", $metadata, $elements);
+		# set meta type to 'set' 
+		$set->set_metadata_value('type', 'set');
 		push @sets, $set;
 	}
 

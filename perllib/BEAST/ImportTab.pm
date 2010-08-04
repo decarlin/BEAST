@@ -133,6 +133,7 @@ MULTI_LINE_STR
 			<input type='button' value='Add To My Sets' onClick="return onAddImportSets(this.form);"/><br>
 MULTILINE_STR
 		# to do : merge with mysets
+		
 		BeastSession::saveSetsToSession($session, 'importsets', @sets);
 	}
 	print "</p></form>";

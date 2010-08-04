@@ -287,18 +287,38 @@ sub addImportSets()
 	}
 	#print Data::Dumper->Dump([@sets]);
 
+	my @mergedSets;
 	# add/merge these sets with the current working sets
 	if ($cgi->param('importsets[]')) {
 		my @checkboxdata = $cgi->param('importsets[]');
 		my @importSets = BeastSession::loadMergeSetsFromSession($session, 'importsets', \@checkboxdata);
+		# generate the top level set
+		my $metadata = { 'type' => 'meta' };
+		my $elements = {};
+		foreach (@importSets) {
+			$elements->{$_->get_name} = $_;
+		}
+		my $importSet = Set->new('ImportSets', "1", $metadata, $elements);
+		my @array;
+		push @array, $importSet;
+
 		if (scalar(@sets) == 0) {
-			@sets = @importSets;
+			@mergedSets = @array;
 		} else {
-			@sets = Set::mergeDisjointCollections(\@sets, \@importSets);
+		 	foreach (@sets) {
+				my $set = $_;
+				my @tmp = ($set);
+				if ($set->get_name eq 'ImportSets') {
+					my @importedSets = Set::mergeDisjointCollections(\@tmp, \@array);
+					push @mergedSets, $importedSets[0];
+				} else {
+					push @mergedSets, $set;
+				}
+			}
 		}
 	}
-	return unless (scalar(@sets) > 0);
-	BeastSession::saveSetsToSession($session, 'mysets', @sets);
+	return unless (scalar(@mergedSets) > 0);
+	BeastSession::saveSetsToSession($session, 'mysets', @mergedSets);
 }
 
 
