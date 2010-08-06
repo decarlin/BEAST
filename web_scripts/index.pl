@@ -108,6 +108,12 @@ my $viewObj = ViewTab->new($cgi);
 	{
 		$viewObj->printTab($session);
 	}
+	elsif ($action eq "column_highlight")
+	{
+		my $gifInfo = BeastSession::getHeatmapInfoFromSession($session);
+		my $column = ViewTab::getColumn($gifInfo, $cgi->param('x_coord'), $cgi->param('y_coord'));
+		displayMySetsFlat($column);
+	}
 	elsif ($cgi->param('display_mysets_tree'))
 	{
 		displayMySetsTree();
@@ -158,12 +164,13 @@ sub displayMySets()
 
 sub displayMySetsFlat()
 {
+	my $column = shift || "";
 	@sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 0);
 
 	return unless (scalar(@sets) > 0); 
 
 	print "<form id=\"mysetsform_flat\">";
-	MySets::displaySetsFlat("mysets", @sets);
+	MySets::displaySetsFlat("mysets", $column, @sets);
 	print "</form>";
 }
 

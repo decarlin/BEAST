@@ -53,7 +53,10 @@ sub displaySetsTree
 sub displaySetsFlat
 {
 	my $divID = shift;
+	my $selectedColumn = shift;
 	my @sets = @_;
+
+	print $selectedColumn."!!";
 
 	displaySetsTree($divID, @sets);
 }

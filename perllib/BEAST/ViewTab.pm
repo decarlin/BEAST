@@ -7,6 +7,7 @@ package ViewTab;
 use strict;
 use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
+use POSIX;
 use htmlHelper;
 use Data::Dumper;
 use BEAST::BeastSession;
@@ -57,6 +58,7 @@ sub getBase64Gif
 	my @sets = BeastSession::loadLeafSetsFromSession($session, 'mysets');
 
 	my $filename = "/tmp/".$session->id.".txt";
+	my $info_filename = $filename.".json";
 	my $json = "[{\"_metadata\":{\"type\":\"info\",\"action\":\"base64gif\",\"filename\":\"$filename\"";
 	$json .= ',"width":"'.Constants::VIEW_WIDTH.'","height":"'.Constants::VIEW_HEIGHT.'"';
 	$json .= "}}]";
@@ -86,6 +88,18 @@ sub getBase64Gif
 		close GIF;
 		unlink($filename);
 
+		if (-f $info_filename) {
+			open INFO, $info_filename || return "";
+			my @lines = <INFO>;
+			close INFO;
+			unlink($info_filename);
+			BeastSession::saveGifInfoToSession($session, $lines[0]);
+		} else {
+			print "Error: couldn't create temp info file";
+			my $errlog = Constants::JAVA_ERROR_LOG;
+			print `cat $errlog`;
+		}
+
 		return $base64gif;
 	} else {
 		print "Error: couldn't create temp file";
@@ -95,5 +109,20 @@ sub getBase64Gif
 
 	return "";
 }
+
+sub getColumn($$$)
+{
+	my $jsonObj = shift;
+	my $x_coord = shift;
+	my $y_coord = shift;
+
+	my $col = $jsonObj->{'column_width'};
+	my @sets = @{$jsonObj->{'columns'}};
+
+	my $index = $x_coord / $col;
+	$index = floor($index);
+	return $sets[$index];
+}
+
 
 1;

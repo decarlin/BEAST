@@ -11,6 +11,8 @@ use Data::Dumper;
 use BEAST::Set;
 use BEAST::Constants;
 
+use JSON -convert_blessed_universally;
+
 package BeastSession;
 
 sub saveSetsToSession
@@ -36,6 +38,29 @@ sub saveSetsToSession
 	}
 
 	$session->param($key, $mysetsstr);
+}
+
+sub saveGifInfoToSession
+{
+	my $session = shift;
+	my $json_string = shift;
+
+	die unless (ref($session) eq 'CGI::Session');
+
+	$session->param('heatmap_info', $json_string);
+}
+
+sub getHeatmapInfoFromSession
+{
+	my $session = shift;
+
+	die unless (ref($session) eq 'CGI::Session');
+
+	my $json_string = $session->param('heatmap_info');
+
+	my $json = JSON->new->utf8;
+	my $jsonObj = $json->decode($json_string);
+	return $jsonObj;
 }
 
 sub buildCheckedHash
