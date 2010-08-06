@@ -495,3 +495,15 @@ function onSetClick(id, depth, ts)
 		}
 	}
 }
+
+function onImageClick(event) {
+        pos_x = event.offsetX?(event.offsetX):event.pageX-document.getElementById("grid_image_div").offsetLeft;
+        pos_y = event.offsetY?(event.offsetY):event.pageY-document.getElementById("pointer_div").offsetTop;
+	$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
+		{action:"column_highlight",
+		x_coord:pos_x,
+		y_coord:pos_y
+		}
+	);
+}
+

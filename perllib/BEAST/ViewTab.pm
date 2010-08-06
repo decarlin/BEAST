@@ -46,7 +46,7 @@ sub printTab
 		print "Error: can't display image";
 	}
 
-	my $embeddedImage = "<img src=\"data:image/gif;base64,".$base64gif."\"/>";
+	my $embeddedImage = "<img id=\"grid_image_div\" onclick='onImageClick(event)' src=\"data:image/gif;base64,".$base64gif."\"/>";
 	print $embeddedImage;
 }
 
