@@ -26,6 +26,7 @@ public class SetEntityGrid {
     private static Grid grid;
     
     private static String FILENAME;
+    private static String INFO_FILE;
     private static String ACTION;
     private static Rectangle2D.Double SUB_GRID;
     
@@ -33,6 +34,9 @@ public class SetEntityGrid {
     private static int GRID_WIDTH;
     private final static int ROW_BORDER = 0;
     private final static int COLUMN_BORDER = 0;
+    
+    private static double CELL_WIDTH;
+    private static double CELL_HEIGHT;
     
     private ArrayList<Set> sets = null;
     private ArrayList<Entity> entities = null;
@@ -78,8 +82,10 @@ public class SetEntityGrid {
         
         BufferedImage img = null;
         try {
+            
             File file = new File(FILENAME);
             file.createNewFile();
+  
             BufferedImage image =
                 new BufferedImage(GRID_WIDTH, GRID_HEIGHT, BufferedImage.TYPE_INT_RGB);
             
@@ -89,12 +95,41 @@ public class SetEntityGrid {
             ImageIO.write(image, "gif", file);
             g2.dispose();
             
+            createInfoFile();
+            
         } catch (Exception e) {
             
-            System.out.print("error!");
+            System.out.print(e.getStackTrace());
         }
   
     }
+    
+    public void createInfoFile() throws Exception {
+        
+        JSONObject jObj = new JSONObject();
+        jObj.put("column_width", CELL_WIDTH);
+        jObj.put("row_height", CELL_HEIGHT);
+        
+        String columnNames[] = new String[this.sets.size()];
+        Iterator iter = this.sets.iterator();
+        int i = 0;
+        while (iter.hasNext()) {            
+            columnNames[i++] = ((Set)iter.next()).getName();
+        }
+        
+        jObj.put("columns", columnNames);
+        
+        try {
+            File infoFile = new File(INFO_FILE);
+            infoFile.createNewFile();
+            FileWriter fw = new FileWriter(infoFile);
+            fw.write(jObj.toString());
+            fw.close();
+        } catch (Exception e) {
+            System.out.print(e.getStackTrace());
+        }       
+    }
+                         
     
     public void makeGifEncodeToString() {
         BufferedImage img = null;
@@ -146,8 +181,8 @@ public class SetEntityGrid {
         // math!
         int numColumns = this.sets.size();
         int numRows = this.entities.size();
-        double cellWidth = (double)(GRID_WIDTH - ROW_BORDER) / (double)numColumns;
-        double cellHeight = (double)(GRID_HEIGHT - COLUMN_BORDER)/ (double)numRows;        
+        CELL_WIDTH = (double)(GRID_WIDTH - ROW_BORDER) / (double)numColumns;
+        CELL_HEIGHT = (double)(GRID_HEIGHT - COLUMN_BORDER)/ (double)numRows;        
         
         Iterator<Set> setsIter = this.sets.iterator();
                
@@ -166,15 +201,15 @@ public class SetEntityGrid {
                 
                 // entity/set pairs correspond to a cell
                 Entity ent = entityIter.next();
-                Cell cell = new Cell(columnIndex, rowIndex, cellWidth, cellHeight, set, ent);
+                Cell cell = new Cell(columnIndex, rowIndex, CELL_WIDTH, CELL_HEIGHT, set, ent);
                 
                 column.addCell(cell);
                 
-                rowIndex = rowIndex + cellHeight;
+                rowIndex = rowIndex + CELL_HEIGHT;
             }         
             grid.addColumn(column);
             
-            columnIndex = columnIndex + cellWidth;             
+            columnIndex = columnIndex + CELL_WIDTH;             
         }
         
         this.grid = grid;
@@ -251,8 +286,9 @@ public class SetEntityGrid {
                             ACTION = data.getString("action");
                             if (ACTION.compareTo("gif") == 0 || ACTION.compareTo("base64gif") == 0) {
                                 FILENAME = data.getString("filename");
-			        GRID_HEIGHT = data.getInt("height");
-                                GRID_WIDTH = data.getInt("width");
+                                INFO_FILE = FILENAME + ".json";
+                                GRID_HEIGHT = data.getInt("width");
+                                GRID_WIDTH = data.getInt("height");
                             }
                             if (ACTION.compareTo("zoom") == 0) {
                                 SUB_GRID = new Rectangle2D.Double(
