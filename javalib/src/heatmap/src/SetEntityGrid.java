@@ -151,6 +151,8 @@ public class SetEntityGrid {
             fw.close();
             
             g2.dispose();
+
+            createInfoFile();
             
         } catch (Exception e) {
             
