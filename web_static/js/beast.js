@@ -505,5 +505,11 @@ function onImageClick(event) {
 		y_coord:pos_y
 		}
 	);
+
+	var colData = document.getElementById('gif_info').value;
+	var data = colData.split('^');
+	
+	var width = data[0];
+	var columns = data[1].split(',');
 }
 

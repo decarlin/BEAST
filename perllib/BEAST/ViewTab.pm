@@ -12,6 +12,7 @@ use htmlHelper;
 use Data::Dumper;
 use BEAST::BeastSession;
 use BEAST::Constants;
+use JSON -convert_blessed_universally;
 
 our $TRUE = 1;
 our $FALSE = 0;
@@ -41,13 +42,27 @@ sub printTab
 	}
 
 	# b64 encoded string
-	my $base64gif = getBase64Gif($session);
+	my ($base64gif, $info) = getBase64Gif($session);
 
 	if ($base64gif eq "") {
 		print "Error: can't display image";
 	}
 
+	my $json = JSON->new->utf8;
+	my $jsonObj = $json->decode($info);
+	my $width = $jsonObj->{'column_width'};
+	my $columns = $jsonObj->{'columns'};
+	my @columns = @$columns;
+
+	my $infoStr = $width."^";
+	$infoStr .= $columns[0];
+	for my $i (1 .. $#columns) {
+		$infoStr .= ",".$columns[$i];
+	}
+
+	my $infotag = "<input id=\"gif_info\" type=\"hidden\" value='$infoStr'/>";
 	my $embeddedImage = "<img id=\"grid_image_div\" onclick='onImageClick(event)' src=\"data:image/gif;base64,".$base64gif."\"/>";
+	print $infotag;
 	print $embeddedImage;
 }
 
@@ -88,19 +103,22 @@ sub getBase64Gif
 		close GIF;
 		unlink($filename);
 
+		my $info;
 		if (-f $info_filename) {
 			open INFO, $info_filename || return "";
 			my @lines = <INFO>;
+			$info = $lines[0];
+			$info =~ s/^\s+//;	
 			close INFO;
 			unlink($info_filename);
-			BeastSession::saveGifInfoToSession($session, $lines[0]);
+			BeastSession::saveGifInfoToSession($session, $info);
 		} else {
 			print "Error: couldn't create temp info file";
 			my $errlog = Constants::JAVA_ERROR_LOG;
 			print `cat $errlog`;
 		}
 
-		return $base64gif;
+		return ($base64gif, $info);
 	} else {
 		print "Error: couldn't create temp file";
 		my $errlog = Constants::JAVA_ERROR_LOG;
