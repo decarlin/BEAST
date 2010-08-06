@@ -31,6 +31,8 @@ sub updateActiveElements
 sub displaySetsTree
 {
 	my $divID = shift;
+	# associative array ref
+	my $selected = shift;
 	my @sets = @_;
 
 	my $displayData = {};
@@ -39,11 +41,17 @@ sub displaySetsTree
 		my $set = $_;
  		my $name = $set->get_name;
 
-		$displayData->{$name} = getDisplayHash($set);
+		$displayData->{$name} = getDisplayHash($set, $selected);
 		$displayData->{$name}->{'_active'} = $set->{'_active'};
 		$displayData->{$name}->{'_desc'} = $set->get_metadata_value('name');
 		$displayData->{$name}->{'_type'} = $set->get_metadata_value('type');
 		$displayData->{$name}->{'_id'} = $set->get_metadata_value('id');
+
+		if (ref($selected) eq 'HASH' && exists $selected->{$name}) {
+			$displayData->{$name}->{'_selected'} = 1;
+		} else {
+			$displayData->{$name}->{'_selected'} = 0;
+		}
 	}
 
 	#print Data::Dumper->Dump([$displayData]);
@@ -53,17 +61,17 @@ sub displaySetsTree
 sub displaySetsFlat
 {
 	my $divID = shift;
-	my $selectedColumn = shift;
+	my $selected = shift;
 	my @sets = @_;
 
-	print $selectedColumn."!!";
 
-	displaySetsTree($divID, @sets);
+	displaySetsTree($divID, $selected, @sets);
 }
 
 sub getDisplayHash
 {
 	my $set = shift;
+	my $selected = shift;
 
 	my $displayData = {};
 
@@ -79,7 +87,7 @@ sub getDisplayHash
 			
 		if (ref($element) eq 'Set') {
 			# element is a set -- add the sub-data hash to this 
-			$displayData->{$element_name} = getDisplayHash($element);	
+			$displayData->{$element_name} = getDisplayHash($element, $selected);	
 			$displayData->{$element_name}->{'_active'} = $element->{'_active'};
 
 			## add metadata to display
@@ -87,6 +95,12 @@ sub getDisplayHash
 			$displayData->{$element_name}->{'_type'} = $element->get_metadata_value('type');
 			$displayData->{$element_name}->{'_id'} = $element->get_metadata_value('id');
 		
+			if (ref($selected) eq 'HASH' && exists $selected->{$element_name}) {
+				$displayData->{$element_name}->{'_selected'} = 1;
+			} else {
+				$displayData->{$element_name}->{'_selected'} = 0;
+			}
+
 		} else {
 			# element is either 0 or 1 depending on whether it's active
 			$displayData->{$element_name} = $element;

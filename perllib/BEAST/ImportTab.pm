@@ -128,7 +128,7 @@ MULTI_LINE_STR
 	<p>
 MULTI_LINE_STR
 	if (scalar(@sets) > 0 && ref($sets[0]) eq 'Set') {
-		MySets::displaySetsTree("import", @sets);
+		MySets::displaySetsTree("import", "", @sets);
 		print <<MULTILINE_STR;
 			<input type='button' value='Add To My Sets' onClick="return onAddImportSets(this.form);"/><br>
 MULTILINE_STR

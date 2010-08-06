@@ -63,6 +63,45 @@ sub getHeatmapInfoFromSession
 	return $jsonObj;
 }
 
+# selected is a hash ref of
+# names of selected columns
+# 
+sub saveSelectedColumns
+{
+	my $session = shift;
+	my $selected = shift;
+
+	die unless (ref($session) eq 'CGI::Session');
+
+	my $json_string = $session->param('heatmap_info');
+
+	my $json = JSON->new->utf8;
+	my $jsonObj = $json->decode($json_string);
+
+	$jsonObj->{'selected_columns'} = $selected;
+
+	$session->param('heatmap_info', $json->encode($jsonObj));
+}
+
+sub getSelectedColumns
+{
+	my $session = shift;
+
+	die unless (ref($session) eq 'CGI::Session');
+
+	my $json_string = $session->param('heatmap_info');
+	if (!$json_string || $json_string eq "") { return ""; }
+
+	my $json = JSON->new->utf8;
+	my $jsonObj = $json->decode($json_string);
+
+	my $selected = $jsonObj->{'selected_columns'};
+
+	if (!$selected || $selected eq "") { return ""; }
+
+	return $selected;
+}
+
 sub buildCheckedHash
 {
 	my @checked_sets = @_;

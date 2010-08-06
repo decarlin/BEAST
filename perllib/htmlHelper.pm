@@ -71,6 +71,7 @@ sub beginTreeSection($$)
 	my $div_id = $info_hash->{'div_id'};
 	my $db_id = $info_hash->{'db_id'};
 	my $type = $info_hash->{'type'};
+	my $selected = $info_hash->{'selected'};
 
 	my $fullName = $name;
 
@@ -85,6 +86,12 @@ sub beginTreeSection($$)
 		$display = 1;
 	}
 
+	my $bg_color = 'white';
+	if ($selected == 1) {
+		$bg_color = 'yellow';
+	}
+	$bg_color = "background-color:".$bg_color.";";
+
 	my $delim = Constants::SET_NAME_DELIM;
 	my @nameComponents;
 	my $marginleft = "margin-left:0px;";
@@ -98,7 +105,7 @@ sub beginTreeSection($$)
 	
 	my $arrow = $display ? "images/ominus.png" : "images/plus.png";
 	$display = $display ? "block":"none";
-	print "<div id='$divID' style='$marginleft'>";
+	print "<div id='$divID' style='".$marginleft.$bg_color."'>";
 	if ($type eq 'meta') {
 		print "<input style='$marginleft' type=checkbox onClick='updateMetaCheckBox(\"$divID\", this.checked)' name=\"$fullName\" value=\"$db_id\" $checkedText>";
 		print "<span onClick=\"swapDivPlusMinus2('$divID\_content', '$divID\_arrow');\" class='expandable_header' >";

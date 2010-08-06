@@ -112,7 +112,9 @@ my $viewObj = ViewTab->new($cgi);
 	{
 		my $gifInfo = BeastSession::getHeatmapInfoFromSession($session);
 		my $column = ViewTab::getColumn($gifInfo, $cgi->param('x_coord'), $cgi->param('y_coord'));
-		displayMySetsFlat($column);
+		my $selected = { $column => 1 };
+		BeastSession::saveSelectedColumns($session, $selected);
+		displayMySetsFlat();
 	}
 	elsif ($cgi->param('display_mysets_tree'))
 	{
@@ -164,19 +166,21 @@ sub displayMySets()
 
 sub displayMySetsFlat()
 {
-	my $column = shift || "";
 	@sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 0);
+	my $selected = BeastSession::getSelectedColumns($session);
 
 	return unless (scalar(@sets) > 0); 
 
 	print "<form id=\"mysetsform_flat\">";
-	MySets::displaySetsFlat("mysets", $column, @sets);
+	MySets::displaySetsFlat("mysets", $selected, @sets);
 	print "</form>";
 }
 
 sub displayMySetsTree()
 {
 	@sets = BeastSession::loadSetsFromSession($session, 'mysets');
+	my $selected = BeastSession::getSelectedColumns($session);
+
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
 	}
@@ -193,7 +197,7 @@ sub displayMySetsTree()
 		MySets::updateActiveElements($checked_hash, @sets);	
 		BeastSession::saveSetsToSession($session, 'mysets', @sets);
 	}
-	MySets::displaySetsTree("mysets", @sets);
+	MySets::displaySetsTree("mysets", $selected, @sets);
 	print "</form>";
 }
 

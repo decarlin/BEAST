@@ -21,6 +21,7 @@ sub buildCheckBoxTree($$$)
 	my $dataRef = shift;
 	my $key = shift;
 	my $divID = shift;
+	# name of the selected element
 
 	die "$dataRef not a hash ref!" unless (ref $dataRef eq 'HASH');
 	my @keys;
@@ -52,6 +53,7 @@ sub buildCheckBoxTree($$$)
 		@list = sort { $ref->{$a}->{'_id'} <=> $ref->{$b}->{'_id'} }keys %{$ref}; 
 		$info_hash->{'db_id'} = $ref->{'_id'};
 		$info_hash->{'type'} = $ref->{'_type'};
+		$info_hash->{'selected'} = $ref->{'_selected'};
 	} else {
 		if (ref($ref) eq 'HASH') {
 			@list = keys %$ref;
@@ -59,6 +61,7 @@ sub buildCheckBoxTree($$$)
 			$info_hash->{'type'} = $ref->{'_type'};
 			# value is 1 or 0 depending on whether this set is active
 			$info_hash->{'checked'} = $ref->{'_active'};
+			$info_hash->{'selected'} = $ref->{'_selected'};
 		} elsif (!ref($ref)) {
 			$list[0] = $ref;
 		} else {
@@ -88,7 +91,7 @@ sub buildCheckBoxTree($$$)
 			## this element as well
 			my $index = ($key eq "") ? $name : $key.Constants::SET_NAME_DELIM.$name;
 			buildCheckBoxTree($dataRef, $index, $divID); 
-		} elsif ($name =~ /_desc|_type|_id/) {
+		} elsif ($name =~ /_desc|_type|_id|_selected/) {
 			next;
 		} else {
 
