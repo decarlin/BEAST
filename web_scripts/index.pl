@@ -330,16 +330,22 @@ sub addImportSets()
 		if (scalar(@sets) == 0) {
 			@mergedSets = @array;
 		} else {
+			my $already_contains_import = 0;
 		 	foreach (@sets) {
 				my $set = $_;
 				my @tmp = ($set);
 				if ($set->get_name eq 'ImportSets') {
 					my @importedSets = Set::mergeDisjointCollections(\@tmp, \@array);
 					push @mergedSets, $importedSets[0];
+					$already_contains_import = 1;
 				} else {
+					# add to the new set
 					push @mergedSets, $set;
 				}
 			}
+			if ($already_contains_import == 0) {
+				push @mergedSets, $importSet;
+			}	
 		}
 	}
 	return unless (scalar(@mergedSets) > 0);
