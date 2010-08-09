@@ -7,14 +7,28 @@
 	font-style:italic;
 }
 
+.mysets_flat
+{
+	width:375px;
+	height:600px;
+	overflow:scroll;
+}
+
+.mysets_tree
+{
+	width:375px;
+	height:600px;
+	overflow:scroll;
+}
+
 .mysets_div
 {
 	position:absolute;
 	left:0px;
 	top:0px;
 	width:400px;
-	padding:10px;
 	min-height:600px;
+	padding:10px;
 }
 
 .myopstabs_div

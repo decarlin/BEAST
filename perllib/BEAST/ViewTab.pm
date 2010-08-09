@@ -61,7 +61,7 @@ sub printTab
 	}
 
 	my $infotag = "<input id=\"gif_info\" type=\"hidden\" value='$infoStr'/>";
-	my $embeddedImage = "<img id=\"grid_image_div\" onMouseMove='onImageHover(event)' src=\"data:image/gif;base64,".$base64gif."\"/>";
+	my $embeddedImage = "<img id=\"grid_image_div\" onClick='onImageClick(event)' onMouseMove='onImageHover(event)' src=\"data:image/gif;base64,".$base64gif."\"/>";
 	print $infotag;
 	print $embeddedImage;
 }

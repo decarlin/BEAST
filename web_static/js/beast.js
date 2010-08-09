@@ -496,7 +496,19 @@ function onSetClick(id, depth, ts)
 	}
 }
 
+function onImageClick(event) {
+	document.imageLock = true;
+	highlightElement(event);
+}
+
 function onImageHover(event) {
+	if (document.imageLock) {
+		return;
+	}
+	highlightElement(event);
+}
+
+function highlightElement(event) {
         pos_x = event.offsetX?(event.offsetX):event.pageX-document.getElementById("grid_image_div").offsetLeft;
         pos_y = event.offsetY?(event.offsetY):event.pageY-document.getElementById("pointer_div").offsetTop;
 	//$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
@@ -512,23 +524,30 @@ function onImageHover(event) {
 	var column_width = data[0];
 	var columns = data[1].split(',');
 
-	// math...
+	// scroll math
+	var scrollDiv = document.getElementById('mysets_flat');
+	var scrollSpan = scrollDiv.scrollHeight - scrollDiv.offsetHeight;
+	var scrollIncrement = scrollSpan / columns.length;
+
+	// column math...
 	var colIndex = Math.floor(pos_x / column_width);
 	try
 	{
+		var scrollHeight = 0;
 		for (var i=0; i < columns.length; i++)
 		{
-			var div = document.getElementById("mysets_flat"+"<>"+columns[i]);
+			var div_flat = document.getElementById("mysets_flat"+"<>"+columns[i]);
 			if (i == colIndex) {
-				div.style.backgroundColor = "yellow";
+				div_flat.style.backgroundColor = "yellow";
+				scrollDiv.scrollTop = Math.floor(scrollIncrement * i);
 			} else {
-				div.style.backgroundColor = "white";
+				div_flat.style.backgroundColor = "white";
 			}
 		}
 	}
 	catch (error) 
 	{
-		alert("failed to find element:"+columns[colIndex]);
+		//
 	}
 }
 
