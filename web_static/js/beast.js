@@ -49,6 +49,9 @@ function onLoadSearch() {
 }
 
 function onLoadHeatmap() {
+
+	document.imageLock = false;
+
 	$('#view').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#view').load('/cgi-bin/BEAST/index.pl', 
 		{action:"heatmap"}
@@ -57,6 +60,8 @@ function onLoadHeatmap() {
 
 
 function onLoadView() {
+
+	document.imageLock = false;
 
 	$.getJSON('/cgi-bin/BEAST/index.pl',  { mysets:"yes", format:"json" }, 
 		function(data){
@@ -96,6 +101,9 @@ function onLoadMySetsTree(event, ui) {
 }
 
 function onLoadMySetsFlat(event, ui) {
+
+	document.imageLock = false;
+
 	$('#mysets_flat').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
 		{display_mysets_flat:"yes"}
