@@ -172,7 +172,7 @@ sub displayMySetsFlat()
 	return unless (scalar(@sets) > 0); 
 
 	print "<form id=\"mysetsform_flat\">";
-	MySets::displaySetsFlat("mysets", $selected, @sets);
+	MySets::displaySetsFlat("mysets_flat", $selected, @sets);
 	print "</form>";
 }
 

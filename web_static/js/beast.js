@@ -496,20 +496,39 @@ function onSetClick(id, depth, ts)
 	}
 }
 
-function onImageClick(event) {
+function onImageHover(event) {
         pos_x = event.offsetX?(event.offsetX):event.pageX-document.getElementById("grid_image_div").offsetLeft;
         pos_y = event.offsetY?(event.offsetY):event.pageY-document.getElementById("pointer_div").offsetTop;
-	$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
-		{action:"column_highlight",
-		x_coord:pos_x,
-		y_coord:pos_y
-		}
-	);
+	//$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
+	//	{action:"column_highlight",
+	//	x_coord:pos_x,
+	//	y_coord:pos_y
+	//	}
+	//);
 
 	var colData = document.getElementById('gif_info').value;
 	var data = colData.split('^');
 	
-	var width = data[0];
+	var column_width = data[0];
 	var columns = data[1].split(',');
+
+	// math...
+	var colIndex = Math.floor(pos_x / column_width);
+	try
+	{
+		for (var i=0; i < columns.length; i++)
+		{
+			var div = document.getElementById("mysets_flat"+"<>"+columns[i]);
+			if (i == colIndex) {
+				div.style.backgroundColor = "yellow";
+			} else {
+				div.style.backgroundColor = "white";
+			}
+		}
+	}
+	catch (error) 
+	{
+		alert("failed to find element:"+columns[colIndex]);
+	}
 }
 
