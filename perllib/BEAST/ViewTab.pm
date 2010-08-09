@@ -41,6 +41,8 @@ sub printTab
 		die unless (ref($session) eq 'CGI::Session');
 	}
 
+	# sanity check first: if no sets 
+	return if (BeastSession::checkMySetsNull($session) == 0);
 	# b64 encoded string
 	my ($base64gif, $info) = getBase64Gif($session);
 

@@ -198,6 +198,17 @@ sub loadSetsFromSession($$)
 	return @sets;
 }
 
+sub checkMySetsNull($)
+{
+	my $session = shift;
+	my @sets = loadSetsFromSession($session, 'mysets');	
+	unless (ref($sets[0]) eq 'Set') {
+		pop @sets;
+	}
+	if (scalar(@sets) == 0) { return 0; }
+	return 1;
+}
+
 sub loadImportSetsFromSession($)
 {
 	my $session = shift;
