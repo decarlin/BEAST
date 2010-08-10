@@ -119,9 +119,29 @@
 <part>meta_id</part>
 </key>
 </table>
+<table x="805" y="135" name="sets_info">
+<row name="sets_id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default><relation table="sets" row="id" />
+</row>
+<row name="name" null="1" autoincrement="0">
+<datatype>VARCHAR(64)</datatype>
+<default>NULL</default></row>
+<row name="value" null="1" autoincrement="0">
+<datatype>VARCHAR(64)</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>sets_id</part>
+</key>
+</table>
+<table x="883" y="397" name="new table">
+<row name="id" null="1" autoincrement="1">
+<datatype>INTEGER</datatype>
+<default>NULL</default></row>
+<key type="PRIMARY" name="">
+<part>id</part>
+</key>
+</table>
 </sql>
-
-
-
 
 <!-- http://ondras.zarovi.cz/sql/demo/ -->

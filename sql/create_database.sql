@@ -57,10 +57,18 @@ CREATE TABLE roots (
   PRIMARY KEY (meta_id)
 );
 
+DROP TABLE IF EXISTS sets_info;
+CREATE TABLE sets_info (
+  sets_id INTEGER NOT NULL,
+  name VARCHAR(64) NOT NULL,
+  value VARCHAR(64) DEFAULT NULL
+);
+
 ALTER TABLE entity ADD FOREIGN KEY (keyspace_id) REFERENCES keyspace (id);
 ALTER TABLE set_entity ADD FOREIGN KEY (sets_id) REFERENCES sets (id);
 ALTER TABLE set_entity ADD FOREIGN KEY (entity_id) REFERENCES entity (id);
 ALTER TABLE meta_sets ADD FOREIGN KEY (sets_meta_id) REFERENCES meta (id);
 ALTER TABLE meta_sets ADD FOREIGN KEY (sets_id) REFERENCES sets (id);
 ALTER TABLE meta_sets ADD FOREIGN KEY (meta_meta_id) REFERENCES meta (id);
+ALTER TABLE sets_info ADD FOREIGN KEY (sets_id) REFERENCES sets (id);
 ALTER TABLE roots ADD FOREIGN KEY (meta_id) REFERENCES meta (id);
