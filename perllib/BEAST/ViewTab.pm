@@ -71,8 +71,8 @@ sub printTab
 sub getBase64Gif
 {
 	my $session = shift;
-
-	my @sets = BeastSession::loadLeafSetsFromSession($session, 'mysets');
+	
+	my @sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 0);
 
 	my $filename = "/tmp/".$session->id.".txt";
 	my $info_filename = $filename.".json";

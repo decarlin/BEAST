@@ -229,7 +229,7 @@ sub loadLeafSetsFromSession
 	my $session = shift;
 	my $key = shift;
 	# 1 yes, 0 no
-	my $keep_inactive = shift || 1;
+	my $keep_inactive = shift;
 
 	## 
 	##  We do have to get the entities from the DB at this point

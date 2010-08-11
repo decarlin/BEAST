@@ -166,7 +166,7 @@ sub displayMySets()
 
 sub displayMySetsFlat()
 {
-	@sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 0);
+	@sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 1);
 	my $selected = BeastSession::getSelectedColumns($session);
 
 	return unless (scalar(@sets) > 0); 
