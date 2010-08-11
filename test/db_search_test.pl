@@ -19,7 +19,7 @@ my $treeBuilder = Search->new($beastDB);
 
 #
 my $searchopts = {
-	'keyspace' => { 'organism' => 'mouse' }
+	'source' => [ 'go' ]
 };
 
 
@@ -68,7 +68,7 @@ if ($tree1[0]->mergeTree($tree2[0]) > 0) {
 print "Testing leaf node find test:\n\n\n";
 
 #my @top_level_nodes = $treeBuilder->findParentsByTerm('mitochondrial fusion');
-my @top_level_nodes = $treeBuilder->findParentsByTerm('recombinase activity');
+my @top_level_nodes = $treeBuilder->findParentsByTerm('recombinase activity', $searchopts);
 
 print $top_level_nodes[0]->serialize();
 #$top_level_nodes[1]->mergeTree($top_level_nodes[2]);

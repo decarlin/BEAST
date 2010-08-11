@@ -66,9 +66,10 @@ sub printTab
 	# build these from checkbox options
 	my $searchopts = {
 		'keyspace' => { 
-			'organism' => [ 'mouse', 'human' ],	
-			'source'   => [ 'entrez' ],
+			'keyspace_organism' => [ 'mouse', 'human' ],	
+			'keyspace_source'   => [ 'entrez' ],
 		},
+		'source' => [ 'go' ]
 	};
 
 	my $input = $self->{'_input'};
@@ -110,6 +111,7 @@ MULTILINE_STR
 	my $at_least_one_checked = $FALSE;
 	my $at_least_one_unchecked = $FALSE;
 
+	# this is for the keyspace opts
 	my $checkedopts = {'keyspace' => {}};
 	foreach (keys %{$searchopts->{'keyspace'}}) {
 	  my $key = $_;
@@ -126,6 +128,33 @@ MULTILINE_STR
 				$checkedopts->{'keyspace'}->{$key} = [ @chk, $name ];
 			} else {
 				$checkedopts->{'keyspace'}->{$key} = [ $name ];
+			}
+		} else {
+			$at_least_one_unchecked = $TRUE;
+		}
+
+		print "<input type=checkbox name=\"$key:$name\" $checkedon>$name<br>\n";
+	  }
+	  htmlHelper::endSection($key);
+	}
+
+	# for everything else
+	foreach (keys %{$searchopts}) {
+	  my $key = $_;
+	  next if ($key =~ /keyspace/);
+	  htmlHelper::beginSection($key, 'FALSE');
+	  foreach (@{$searchopts->{$key}}) { 
+		my $name = $_;
+		my $checkedon = "";
+		if (grep(/$key\:$name/, @checked)) {
+			$at_least_one_checked = $TRUE;
+			$checkedon = "checked='yes'";
+			my @chk;
+			if (exists $checkedopts->{$key}) {
+				@chk = @{$checkedopts->{$key}};
+				$checkedopts->{$key} = [ @chk, $name ];
+			} else {
+				$checkedopts->{$key} = [ $name ];
 			}
 		} else {
 			$at_least_one_unchecked = $TRUE;

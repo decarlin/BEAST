@@ -50,9 +50,10 @@ sub findParentsByTerm
 	my $beastDB = $self->{'_beast_db'};
 	my @set_ids;
 	if ($search_opts && $search_opts->{'keyspace'}) {
-		@set_ids = $beastDB->searchSetsByTermRestrictKeyspace($term, $search_opts->{'keyspace'});
+		@set_ids = $beastDB->searchSetsByTerm($search_opts, $term);
+		#@set_ids = $beastDB->searchSetsByTermRestrictKeyspace($term, $search_opts->{'keyspace'});
 	} else {
-		@set_ids = $beastDB->searchSetsByTerm($term);
+		@set_ids = $beastDB->searchSetsByTerm($search_opts, $term);
 	}
 
 	unless ($#set_ids > -1 ) { return $FALSE; }

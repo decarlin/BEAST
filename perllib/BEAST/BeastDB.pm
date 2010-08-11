@@ -467,7 +467,8 @@ sub searchSetsByTermRestrictKeyspace($$$)
 	my $self = shift;
 	my $search_text = shift;
 	# hash ref
-	my $keyspace_opts = shift;
+	my $opts = shift;
+	my $keyspace_opts = $opts->{'keyspace'};
 
 	# current fields
 	foreach (keys %$keyspace_opts) {
@@ -523,13 +524,33 @@ sub searchSetsByTermRestrictKeyspace($$$)
 sub searchSetsByTerm($)
 {
 	my $self = shift;
+	my $opts = shift;
 	my ($search_text) = @_;
 
-
-	my $template = "SELECT DISTINCT sets.id FROM sets,set_entity WHERE sets.id=set_entity.sets_id AND name LIKE '%var1%'";
+	foreach (keys %$opts) {
+		my $key = $_;
+		my @values = $opts->{$key};
+		foreach (@values) {
+			
+		}
+	}
+	my $template = "SELECT DISTINCT sets.id FROM sets,set_entity,sets_info WHERE sets.id=set_entity.sets_id AND sets.id=sets_info.sets_id AND sets.name LIKE '%var1%'";
 
 	$search_text = escapeSQLString($search_text);
 	$template =~ s/var1/$search_text/;
+
+	# add the set info...
+	foreach (keys %$opts) {
+		my $key = $_;
+		next if ($key eq 'keyspace');
+		my @values = @{$opts->{$key}};
+		next if (scalar(@values) == 0);
+		$template .= " AND sets_info.name='".$key."' AND (";		
+		for my $i (0 .. ($#values - 1)) {
+			$template .= "sets_info.value='".$values[$i]."' OR ";		
+		}
+		$template .= "sets_info.value='".$values[-1]."')";
+	}
 
 	my $results = $self->runSQL($template);
 
