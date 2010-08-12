@@ -99,19 +99,26 @@ foreach (keys %$sga_interactions) {
 	# add the set
 	my $set_id = $importer->existsSet($gene);
 	if ($set_id > 0) {
-		print "set already exists in DB!: $name\n";
+		print "set already exists in DB!: $gene\n";
 	} else {
-		#$id = $importer->insertSet($gene, $gene);
-		if ($set_id =~ /\d+/) {
-			print "Added set id:$set_id for set $gene\n";
-			print "inserting info element for set: $name\n";
-			my $meta_id = $importer->insertSQL("INSERT INTO sets_info (sets_id, name, value) VALUES (".$set_id.", 'source', 'boon_sga');");
-			unless ($meta_id =~ /\d+/) {
-				print "failed to get ID for $name\n";
-			}		
-		} else {
-			print "Failed to add set $gene!\n";
+		$set_id = $importer->insertSet($gene, $gene);
+		unless ($set_id =~ /\d+/) { 
+			print "failed to add set $gene, quitting!\n";
+			exit 1;	
 		}
+		print "Added set id:$set_id for set $gene\n";
+		print "inserting info element for set: $gene\n";
+		my $meta_id = $importer->insertSQL("INSERT INTO sets_info (sets_id, name, value) VALUES ('".$set_id."', 'source', 'boon_sga');");
+		unless ($meta_id =~ /\d+/) {
+			print "failed to add info for $gene\n";
+		}		
+	}
+
+	if ($set_id =~ /\d+/) {
+	#
+	} else {
+			print "Failed to add set $gene!\n";
+			exit 1;
 	}
 	
 	# add set type
@@ -132,14 +139,14 @@ foreach (keys %$sga_interactions) {
 			print "already exists: $gene_id\n";
 		} else {
 			print "inserting : $interaction_gene entity\n";
-			#$id = $importer->insertEntity($interaction_gene, 'NULL', $interaction_gene, $keyspace);
+			$gene_id = $importer->insertEntity($interaction_gene, 'NULL', $interaction_gene, $keyspace);
 		}
 
 		if ($importer->existsSetEntityRel($set_id, $gene_id) > 0) {
-			print "set already exists in DB!: $name\n";
+			print "set-entity rel already exists in DB!: $gene - $interaction_gene\n";
 		} else {
 			print "no relation in DB, adding...\n";
-			#$importer->insertSetEntityRel($set_id, $gene_id, $normalizedSCORE);
+			$importer->insertSetEntityRel($set_id, $gene_id, $normalizedSCORE);
 			unless ($importer->existsSetEntityRel($set_id, $gene_id) > 0) {
 				print "Failed to add!\n";	
 			}
