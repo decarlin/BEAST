@@ -24,6 +24,7 @@ sub convert_from_sci
 
 use Getopt::Long;
 use Math::BigFloat;
+use BEAST::BeastDB;
 
 my $sga_file = '';
 GetOptions("sgadata=s" => \$sga_file);
@@ -85,18 +86,67 @@ foreach (keys %$sga_interactions) {
 #print "lowest:".$lowestNEGATIVE."\n";
 #print "highest:".$highestPOSITIVE."\n";
 
+our $importer = BeastDB->new('dev');
+$importer->connectDB();
+
+# yeast
+my $keyspace = 3;
+
 foreach (keys %$sga_interactions) {
+
 	my $gene = $_;
+
+	# add the set
+	my $set_id = $importer->existsSet($gene);
+	if ($set_id > 0) {
+		print "set already exists in DB!: $name\n";
+	} else {
+		#$id = $importer->insertSet($gene, $gene);
+		if ($set_id =~ /\d+/) {
+			print "Added set id:$set_id for set $gene\n";
+			print "inserting info element for set: $name\n";
+			my $meta_id = $importer->insertSQL("INSERT INTO sets_info (sets_id, name, value) VALUES (".$set_id.", 'source', 'boon_sga');");
+			unless ($meta_id =~ /\d+/) {
+				print "failed to get ID for $name\n";
+			}		
+		} else {
+			print "Failed to add set $gene!\n";
+		}
+	}
+	
+	# add set type
+
+	## first add each element to the database, then add the mapping
 	foreach (keys %{$sga_interactions->{$gene}} ) {
-		print "$gene\t".$_."\t";
-		my $score = $sga_interactions->{$gene}->{$_};
+		my $interaction_gene = $_;	
+		my $score = $sga_interactions->{$gene}->{$interaction_gene};
 		my $normalizedSCORE;
 		if ($score > 0) {
 			$normalizedSCORE = $score / $highestPOSITIVE;
 		} else {
 			$normalizedSCORE = $score / (-$lowestNEGATIVE);
 		}
-		print $normalizedSCORE."\n";
+		# insert
+		my $gene_id;
+		if (($gene_id = $importer->existsEntity($interaction_gene, $keyspace)) > 0) {
+			print "already exists: $gene_id\n";
+		} else {
+			print "inserting : $interaction_gene entity\n";
+			#$id = $importer->insertEntity($interaction_gene, 'NULL', $interaction_gene, $keyspace);
+		}
+
+		if ($importer->existsSetEntityRel($set_id, $gene_id) > 0) {
+			print "set already exists in DB!: $name\n";
+		} else {
+			print "no relation in DB, adding...\n";
+			#$importer->insertSetEntityRel($set_id, $gene_id, $normalizedSCORE);
+			unless ($importer->existsSetEntityRel($set_id, $gene_id) > 0) {
+				print "Failed to add!\n";	
+			}
+		}
+		
 	}
+
 }
 
+$importer->disconnectDB();
