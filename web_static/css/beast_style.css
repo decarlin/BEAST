@@ -7,16 +7,16 @@
 	font-style:italic;
 }
 
-.mysets_flat
+.mysets_scroll_tab
 {
-	width:375px;
+	width:370px;
 	height:600px;
 	overflow:scroll;
 }
 
-.mysets_tree
+.myops_scroll_tab
 {
-	width:375px;
+	width:770px;
 	height:600px;
 	overflow:scroll;
 }
@@ -27,7 +27,7 @@
 	left:0px;
 	top:0px;
 	width:400px;
-	min-height:600px;
+	height:655px;
 	padding:10px;
 }
 
@@ -36,7 +36,7 @@
 	position:absolute;
 	left:420px;
 	top:0px;
-	min-width:800px;
-	padding: 10px;
-	min-height:600px;
+	width:800px;
+	padding:10px;
+	height:655;
 }
