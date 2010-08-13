@@ -289,8 +289,8 @@ public class SetEntityGrid {
                             if (ACTION.compareTo("gif") == 0 || ACTION.compareTo("base64gif") == 0) {
                                 FILENAME = data.getString("filename");
                                 INFO_FILE = FILENAME + ".json";
-                                GRID_HEIGHT = data.getInt("width");
-                                GRID_WIDTH = data.getInt("height");
+                                GRID_HEIGHT = data.getInt("height");
+                                GRID_WIDTH = data.getInt("width");
                             }
                             if (ACTION.compareTo("zoom") == 0) {
                                 SUB_GRID = new Rectangle2D.Double(
