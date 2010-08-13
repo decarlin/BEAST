@@ -29,7 +29,7 @@ function doOnLoad()
 		}
 	);
 	// this is a hack: browse is the default tab selected on page load -- we need to load it manually
-	onLoadBrowse();
+	onLoadSearch();
 	clearSession();
 }
 		</script>
@@ -63,7 +63,6 @@ function doOnLoad()
 			</div> <!-- mysets_tab -->
 			<div class="myopstabs_div" id="tabs">
 				<ul>
-					<li><a href="#browse">Browse</a></li>
 					<li><a href="#search">Search</a></li>
 					<li><a href="#import">Import</a></li>
 					<li><a href="#members_view">Members View</a></li>
@@ -71,9 +70,6 @@ function doOnLoad()
 					<li><a href="http://sysbio.soe.ucsc.edu/BEAST/admin_pages/admin.html">Admin</a></li>
 				</ul>
 
-				<div id="browse">
-				</div> <!-- browse -->
-			
 				<div id="search">
 				</div> <!-- search -->
 
