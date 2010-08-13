@@ -43,10 +43,14 @@ sub new
 			'_delim'	=> '^',
 		};
 	} elsif (@_ == 1) {
-		my $json_text = shift;
-
-		my $json = JSON->new->utf8;
-		$self = $json->decode($json_text);
+		
+		my $json_text_or_hash = shift;
+		if (ref($json_text_or_hash) eq 'HASH') {
+			$self = $json_text_or_hash;
+		} else {
+			my $json = JSON->new->utf8;
+			$self = $json->decode($json_text_or_hash);
+		}
 
 		# self, and all it's elements are just hash refs now
 		# -- we need to recursively bless each into being a 'Set' object
@@ -57,7 +61,7 @@ sub new
 			next unless (ref($self->{'_elements'}->{$element_name}) eq 'HASH');
 
 			# element is another set -- create it
-			$self->{'_elements'}->{$element_name} = Set->new($json->encode($self->{'_elements'}->{$element_name}));
+			$self->{'_elements'}->{$element_name} = Set->new($self->{'_elements'}->{$element_name});
 		}
 
 	} elsif (!@_) {
