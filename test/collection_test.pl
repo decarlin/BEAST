@@ -16,3 +16,5 @@ my @sets = ($set2, $set3);
 my $collection1 = Collection->new('sets', @sets);
 my $json = $collection1->serialize();
 print $json."\n";
+my $clone = Collection->new('json', $json);
+print $clone->serialize()."\n";
