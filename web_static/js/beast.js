@@ -3,8 +3,8 @@ var checked = false;
 function onOpsTabSelected(event, ui) {
 	if (ui.tab.hash == "#search") {
 		onLoadSearch();
-	} else if (ui.tab.hash == '#view') {
-		onLoadHeatmap();
+	} else if (ui.tab.hash == '#members_view') {
+		onLoadHeatmapMembersView();
 	} else if (ui.tab.hash == '#import') {
 		onLoadImport();
 	} else if (ui.tab.hash == '#browse') {
@@ -48,13 +48,14 @@ function onLoadSearch() {
 	);
 }
 
-function onLoadHeatmap() {
+function onLoadHeatmapMembersView() {
 
 	document.imageLock = false;
 
-	$('#view').empty().html('<img src="images/ajax-loader.gif" />');
-	$('#view').load('/cgi-bin/BEAST/index.pl', 
-		{action:"heatmap"}
+	$('#members_view').empty().html('<img src="images/ajax-loader.gif" />');
+	$('#members_view').load('/cgi-bin/BEAST/index.pl', 
+		{action:"heatmap",
+		 type:"members"}
 	);
 }
 

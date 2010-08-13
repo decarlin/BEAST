@@ -106,7 +106,11 @@ my $viewObj = ViewTab->new($cgi);
 	}
 	elsif ($action eq "heatmap")
 	{
-		$viewObj->printTab($session);
+		if ($cgi->param('type') eq 'members') {
+			$viewObj->printTab($session);
+		} elsif ($cgi->param('type') eq 'sets') {
+			#
+		}
 	}
 	elsif ($action eq "column_highlight")
 	{
