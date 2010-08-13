@@ -51,20 +51,20 @@ while (my $line = <SGA>) {
 
 	#print $queryGENE."\t".$queryGENE."\t".$arrayGENE."\t".$arrayGENE."\t".$interactionSCORE."\t".$standardDEV."\t".$float_pVAL."\n";	
 
-	$queryGENE = uc($queryGENE);
-	$arrayGENE = uc($arrayGENE);
+	$queryORF = uc($queryORF);
+	$arrayORF = uc($arrayORF);
 	# map query_gene_name to 
-	unless ($sga_interactions->{$queryGENE}) {
-		$sga_interactions->{$queryGENE} = { $queryGENE => $interactionSCORE };
+	unless ($sga_interactions->{$queryORF}) {
+		$sga_interactions->{$queryORF} = { $queryORF => $interactionSCORE };
 	} else {
-		$sga_interactions->{$queryGENE}->{$queryGENE} = $interactionSCORE;
+		$sga_interactions->{$queryORF}->{$queryORF} = $interactionSCORE;
 	}
 
 	# now map the other
-	unless ($sga_interactions->{$arrayGENE}) {
-		$sga_interactions->{$arrayGENE} = { $queryGENE => $interactionSCORE };
+	unless ($sga_interactions->{$arrayORF}) {
+		$sga_interactions->{$arrayORF} = { $queryORF => $interactionSCORE };
 	} else {
-		$sga_interactions->{$arrayGENE}->{$queryGENE} = $interactionSCORE;
+		$sga_interactions->{$arrayORF}->{$queryORF} = $interactionSCORE;
 	}
 }
 close (SGA);

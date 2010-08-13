@@ -16,6 +16,7 @@ EOF
 use Getopt::Long;
 use Math::BigFloat;
 use BEAST::BeastDB;
+use BEAST::Loader;
 
 my $chemdata_file = '';
 GetOptions("chemdata_file=s" => \$chemdata_file);
@@ -59,3 +60,24 @@ close (CHD);
 #	print $hash->{'gene'}.":".$hash->{'value'};
 #	print "\n";
 #}
+
+my $importer = BeastDB->new('dev');
+$importer->connectDB();
+
+my $loader = Loader->new($importer);
+
+for my $i (1 .. (scalar(@$columns) - 1)) {
+	my $column = $columns->[$i];
+	my $column_name = $column->{'name'};
+	my @genes = @{$column->{'genes'}};
+
+	my $set_id = $loader->addSet($column_name, 'chemdiv');
+	foreach (@genes) {
+		my $gene = $_;
+		my $gene_name = $gene->{'gene'};
+		my $membership_value = $gene->{'value'};
+		$loader->addEntityToSet($gene_name, $set_id, '3', $membership_value);
+	}	
+}
+
+$importer->disconnectDB();
