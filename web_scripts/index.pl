@@ -133,18 +133,22 @@ my $viewObj = ViewTab->new($cgi);
 	}
 	elsif ($cgi->param('mysets'))
 	{
-		if ($cgi->param('mysets') eq 'clear') {
-			my @list = ('mysets');
-			$session->clear([@list]);
-			displayMySetsTree();
-		}
-		if ($cgi->param('format') && ($cgi->param('format') eq 'json'))
-		{
-			getMySetsJSON();		
-		}
-		else
-		{
-			displayMySetsTree();
+		if ($cgi->param('type') eq 'tree') {
+			if ($cgi->param('mysets') eq 'clear') {
+				my @list = ('mysets');
+				$session->clear([@list]);
+				displayMySetsTree();
+			}
+			if ($cgi->param('format') && ($cgi->param('format') eq 'json'))
+			{
+				getMySetsJSON();		
+			}
+			else
+			{
+				displayMySetsTree();
+			}
+		} elsif ($cgi->param('type') eq 'flat') {
+			displayMySetsFlat();
 		}
 	}
 	elsif ($action eq 'clear') {
@@ -173,12 +177,22 @@ sub displayMySets()
 
 sub displayMySetsFlat()
 {
+	print "<form id=\"mysetsform_flat\">";
+	print "<input type='button' value='Update' onClick=\"return onUpdateMySetsFlat(this.form);\">";
+	print "<input type='button' value='Clear' onClick=\"return onClearMySetsFlat();\"><br>";
+	if ($cgi->param('checkedelements[]')) {
+		my @checked = $cgi->param('checkedelements[]');	
+		my $checked_hash = BeastSession::buildCheckedHash(@checked);
+		#print Data::Dumper->Dump([$checked_hash]);
+		my @mysets = BeastSession::loadSetsFromSession($session, 'mysets');
+		MySets::updateActiveElements($checked_hash, @mysets);	
+		BeastSession::saveSetsToSession($session, 'mysets', @mysets);
+	}
+
 	@sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 1);
 	my $selected = BeastSession::getSelectedColumns($session);
-
 	return unless (scalar(@sets) > 0); 
 
-	print "<form id=\"mysetsform_flat\">";
 	MySets::displaySetsFlat("mysets_flat", $selected, @sets);
 	print "</form>";
 }

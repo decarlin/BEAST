@@ -326,6 +326,21 @@ function onUpdateMySets(form) {
 	$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
 		{mysets:"yes",
+		 type:"tree",
+		 'checkedelements[]': checkedElements}
+	);
+
+}
+
+function onUpdateMySetsFlat(form) {
+
+	<!-- build search opts data structure -->
+	var checkedElements = getChecked(form);
+
+	$('#mysets_flat').empty().html('<img src="images/ajax-loader.gif" />');
+	$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
+		{mysets:"yes",
+		 type:"flat",
 		 'checkedelements[]': checkedElements}
 	);
 
@@ -337,6 +352,17 @@ function onClearMySets() {
 
 	$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
+		{mysets:"clear"}
+	);
+
+}
+
+function onClearMySetsFlat() {
+
+	<!-- build search opts data structure -->
+
+	$('#mysets_flat').empty().html('<img src="images/ajax-loader.gif" />');
+	$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
 		{mysets:"clear"}
 	);
 
