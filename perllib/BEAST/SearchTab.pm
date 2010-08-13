@@ -69,7 +69,7 @@ sub printTab
 			'keyspace_organism' => [ 'mouse', 'human' ],	
 			'keyspace_source'   => [ 'entrez' ],
 		},
-		'source' => [ 'go' ]
+		'source' => [ 'go', 'chemdiv', 'boon_sga' ]
 	};
 
 	my $input = $self->{'_input'};
