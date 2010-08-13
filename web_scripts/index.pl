@@ -81,6 +81,9 @@ my $viewObj = ViewTab->new($cgi);
 		# replace the search tab to include the search results
 
 		$searchObj->printTab($session);
+		unless ($cgi->param('searchtext')) {
+			$browseObj->printTab($session);
+		}
 	}
 	elsif ($action eq "import")
 	{
