@@ -47,11 +47,12 @@ sub findParentsByTerm
 	my $term = shift;
 	my $search_opts = shift || undef;
 
+	my $num_keyspace_opts = scalar(keys %{$search_opts->{'keyspace'}});
+
 	my $beastDB = $self->{'_beast_db'};
 	my @set_ids;
-	if ($search_opts && $search_opts->{'keyspace'}) {
-		@set_ids = $beastDB->searchSetsByTerm($search_opts, $term);
-		#@set_ids = $beastDB->searchSetsByTermRestrictKeyspace($term, $search_opts->{'keyspace'});
+	if ($search_opts && $num_keyspace_opts > 0) {
+		@set_ids = $beastDB->searchSetsByTermRestrictKeyspace($term, $search_opts);
 	} else {
 		@set_ids = $beastDB->searchSetsByTerm($search_opts, $term);
 	}

@@ -468,12 +468,15 @@ sub searchSetsByTermRestrictKeyspace($$$)
 	my $search_text = shift;
 	# hash ref
 	my $opts = shift;
-	my $keyspace_opts = $opts->{'keyspace'};
+	my $tmp_opts = $opts->{'keyspace'};
 
+	my $keyspace_opts = {};
 	# current fields
-	foreach (keys %$keyspace_opts) {
-		unless ($_ = /organism|source|version|description/) {
-			return 0;
+	foreach (keys %$tmp_opts) {
+		my $opt = $_;
+		if ($opt =~ /keyspace_organism|keyspace_source|keyspace_version|keyspace_description/) {
+			$opt =~ /keyspace_(.*)/;	
+			$keyspace_opts->{$1} = $tmp_opts->{$opt};
 		}
 	}
 
@@ -481,6 +484,7 @@ sub searchSetsByTermRestrictKeyspace($$$)
 
 	my $template .= " SELECT sets.id FROM sets ";
 	$template .= "JOIN set_entity ON sets.id = set_entity.sets_id ";
+	$template .= "JOIN sets_info ON sets.id = sets_info.sets_id ";
 	$template .= "JOIN entity ON set_entity.entity_id = entity.id ";
 	$template .= "JOIN keyspace ON entity.keyspace_id = keyspace.id";
 
@@ -503,8 +507,20 @@ sub searchSetsByTermRestrictKeyspace($$$)
 		}
 		$template = $template.") ";
 	}
-	$template = $template."AND sets.name LIKE '%".$search_text."%';";
+	$template = $template."AND sets.name LIKE '%".$search_text."%'";
 
+	# add the set info...
+	foreach (keys %$opts) {
+		my $key = $_;
+		next if ($key eq 'keyspace');
+		my @values = @{$opts->{$key}};
+		next if (scalar(@values) == 0);
+		$template .= " AND sets_info.name='".$key."' AND (";		
+		for my $i (0 .. ($#values - 1)) {
+			$template .= "sets_info.value='".$values[$i]."' OR ";		
+		}
+		$template .= "sets_info.value='".$values[-1]."')";
+	}
 	# debug
 	#print $template;
 
