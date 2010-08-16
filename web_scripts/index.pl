@@ -125,7 +125,7 @@ my $viewObj = ViewTab->new($cgi);
 	}
 	elsif ($action eq "clear")
 	{
-		$session->clear();
+		$session->clear('mysets');
 	}
 	elsif ($cgi->param('display_mysets_tree'))
 	{
