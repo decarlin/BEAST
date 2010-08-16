@@ -147,7 +147,7 @@ sub findParentsForSet($)
 	# immediate parents, should all be meta.id's
 	my @set_parents = $beastDB->getParentsForSet($set_id);	
 
-	if ( $#set_parents == -1 || (!ref($set_parents[0]))) {
+	if ( $#set_parents == -1 ) {
 		return $FALSE;
 	}
 
