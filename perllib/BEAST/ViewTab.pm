@@ -72,7 +72,7 @@ sub getBase64Gif
 {
 	my $session = shift;
 	
-	my @sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 0);
+	my @sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 0, 1);
 
 	my $filename = "/tmp/".$session->id.".txt";
 	my $info_filename = $filename.".json";

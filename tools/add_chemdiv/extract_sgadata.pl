@@ -91,13 +91,27 @@ $importer->connectDB();
 
 # yeast
 my $keyspace = 3;
+	
+#my $meta_id;
+#my $meta_external_id = "boon_sga";
+#my $meta_name = "Boon Syn Lethals of Yeast Knockouts";
+#if (($meta_id = $importer->existsMeta($meta_external_id)) == 0) {
+##	print "doesn't exist: $meta_external_id!...adding...\n";
+#	$meta_id = $importer->insertMeta($meta_external_id, $meta_name);
+#} else {
+#	print "Meta already exists! id:$meta_id\n";
+#}
 
 foreach (keys %$sga_interactions) {
 
 	my $gene = $_;
 
 	# add the set
-	my $set_id = $importer->existsSet($gene);
+	#my $set_id = $importer->existsSet($gene);
+	#print "adding set: $set_id\n";
+	#$importer->insertSetMetaRel(202895, $set_id);
+	#next;
+
 	if ($set_id > 0) {
 		print "set already exists in DB!: $gene\n";
 	} else {
@@ -122,6 +136,7 @@ foreach (keys %$sga_interactions) {
 	}
 	
 	# add set type
+	# add meta:
 
 	## first add each element to the database, then add the mapping
 	foreach (keys %{$sga_interactions->{$gene}} ) {
@@ -155,5 +170,6 @@ foreach (keys %$sga_interactions) {
 	}
 
 }
+
 
 $importer->disconnectDB();

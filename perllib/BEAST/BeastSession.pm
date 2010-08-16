@@ -230,6 +230,8 @@ sub loadLeafSetsFromSession
 	my $key = shift;
 	# 1 yes, 0 no
 	my $keep_inactive = shift;
+	# 1 yes, 0 no
+	my $include_elements = shift;
 
 	## 
 	##  We do have to get the entities from the DB at this point
@@ -258,9 +260,11 @@ sub loadLeafSetsFromSession
 			# skip inactive elements, if directed to do so
 			next if (($keep_inactive == 0) && ($leaf->is_active == 0));
 
-			my @elements_for_this_set = $beastDB->getEntitiesForSet($leaf->get_id);
-			foreach (@elements_for_this_set) {
-				$leaf->set_element(uc($_),"");
+			if ($include_elements == 1) {
+				my @elements_for_this_set = $beastDB->getEntitiesForSet($leaf->get_id);
+				foreach (@elements_for_this_set) {
+					$leaf->set_element(uc($_),"");
+				}
 			}
 			$uniq_leaves->{$name} = $leaf;
 		}
