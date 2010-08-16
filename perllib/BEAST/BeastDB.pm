@@ -433,24 +433,28 @@ sub getEntitiesForSet($$)
 	my $self = shift;
 	my $set_id = shift;
 
-	my $template = "SELECT entity_id FROM set_entity WHERE sets_id='var1';";
+	my $template = "SELECT entity_id,member_value FROM set_entity WHERE sets_id='var1';";
 
 	$template =~ s/var1/$set_id/;
 
 	my $results = $self->runSQL($template);
 	my $rows_ref = $results->fetchall_arrayref();
-	my @ids;
+	my $ids_values = {};
 	if (ref($rows_ref) eq 'ARRAY') {
 		foreach (@$rows_ref) {
-			push @ids, $_->[0];
+			my ($id, $value) = ($_->[0], $_->[1]);
+			$ids_values->{$id} = $value;
 		}
 	}
-	my @names;
-	foreach (@ids) {
-		my $name = $self->getEntityNameFromID($_);
-		push @names, uc($name);
+
+	my $names_values = {};
+	foreach (keys %$ids_values) {
+		my $id = $_;
+		my $name = $self->getEntityNameFromID($id);
+		my $member_value = $ids_values->{$id};
+		$names_values->{uc($name)} = $member_value;
 	}
-	return @names;
+	return $names_values;
 }
 
 # sets -> keyspace.organism='blah'

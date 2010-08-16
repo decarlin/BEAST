@@ -261,9 +261,10 @@ sub loadLeafSetsFromSession
 			next if (($keep_inactive == 0) && ($leaf->is_active == 0));
 
 			if ($include_elements == 1) {
-				my @elements_for_this_set = $beastDB->getEntitiesForSet($leaf->get_id);
-				foreach (@elements_for_this_set) {
-					$leaf->set_element(uc($_),"");
+				my $elements_for_this_set = $beastDB->getEntitiesForSet($leaf->get_id);
+				foreach (keys %$elements_for_this_set) {
+					# the element is the membership value -1 to 1, or NULL
+					$leaf->set_element(uc($_),$elements_for_this_set->{$_});
 				}
 			}
 			$uniq_leaves->{$name} = $leaf;

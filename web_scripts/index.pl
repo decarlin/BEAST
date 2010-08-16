@@ -302,7 +302,7 @@ sub getEntitiesForSet
 	my $session = shift;
 	my $id = shift;
 
-	my @entities;
+	my $entities;
 
 	if ($id =~ /^local:(.*)/) {
 		my $name = $1;	
@@ -310,19 +310,28 @@ sub getEntitiesForSet
 		foreach (@importSets) {
 			my $set = $_;
 			if ($set->get_name eq $name) {
-				@entities = $set->get_element_names;
-				last;
+				my @ents = $set->get_element_names;
+				return @ents;
 			}
 		}
 	} else {
 		my $beastDB = BeastDB->new;
 		$beastDB->connectDB();
 
-		@entities = $beastDB->getEntitiesForSet($id);
+		$entities = $beastDB->getEntitiesForSet($id);
 		$beastDB->disconnectDB();
 	}
 
-	return @entities;
+	my @list;
+	foreach (keys %$entities) {
+		if ($entities->{$_}) {
+			push @list, "$_:".$entities->{$_};
+		} else {
+			push @list, $_;	
+		}
+	}
+
+	return @list;
 }
 
 sub addImportSets()
