@@ -123,6 +123,10 @@ my $viewObj = ViewTab->new($cgi);
 		BeastSession::saveSelectedColumns($session, $selected);
 		displayMySetsFlat();
 	}
+	elsif ($action eq "clear")
+	{
+		$session->clear();
+	}
 	elsif ($cgi->param('display_mysets_tree'))
 	{
 		displayMySetsTree();
@@ -150,9 +154,6 @@ my $viewObj = ViewTab->new($cgi);
 		} elsif ($cgi->param('type') eq 'flat') {
 			displayMySetsFlat();
 		}
-	}
-	elsif ($action eq 'clear') {
-		$session->clear();
 	}
 
 #	DebugHelper::printRequestParameters($cgi);

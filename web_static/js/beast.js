@@ -352,7 +352,7 @@ function onClearMySets() {
 
 	$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
-		{mysets:"clear"}
+		{action:"clear"}
 	);
 
 }
@@ -363,7 +363,7 @@ function onClearMySetsFlat() {
 
 	$('#mysets_flat').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
-		{mysets:"clear"}
+		{action:"clear"}
 	);
 
 }
