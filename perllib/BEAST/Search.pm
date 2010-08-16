@@ -59,11 +59,17 @@ sub findParentsByTerm
 
 	unless ($#set_ids > -1 ) { return $FALSE; }
 
+
 	my @nodes;
 	foreach (@set_ids) {
-		my @node = $self->findParentsForSet($_);	
+		my $set_id = $_;
+		my @node = $self->findParentsForSet($set_id);	
 		if (ref($node[0]) eq 'Set') {
 			push @nodes, $node[0];
+		} else {
+			# no parents: some sets do not exist in a heirarchy -- just return the
+			# set in this case
+			push @nodes, $self->getSetFromID($set_id);
 		}
 	}
 
@@ -101,6 +107,36 @@ sub findParentsForSetByExtID($)
 # Build the meta heirarchy from the bottom up:
 # start with the leaf (the set) and find all it's parents
 #
+sub getSetFromID($)
+{
+	my $self = shift;
+	my $set_id = shift;
+
+	# database object
+	my $beastDB = $self->{'_beast_db'};
+
+	# create the set object, and assign it to a 'elements' hash reference, 
+	# which each meta parent will point to 
+	my ($set_name, $set_ext_id) = $beastDB->getSetNameExtIdFromID($set_id);
+	my $set_metadata = { 'type' => 'set', 'name' => "$set_name", 'id' => $set_id };
+	# find set elements
+	my $set_elements = {};
+
+	# this makes the browser way, way slow -- we need to do lazy adds when entities need to be viewed
+	#my @elements_for_this_set = $beastDB->getEntitiesForSet($set_id);
+	#foreach (@elements_for_this_set) {
+	#	$set_elements->{$_} = "";
+	#}
+
+	my $set = Set->new($set_ext_id, 1, $set_metadata, $set_elements);
+
+	return $set;
+}
+
+#
+# Build the meta heirarchy from the bottom up:
+# start with the leaf (the set) and find all it's parents
+#
 sub findParentsForSet($)
 {
 	my $self = shift;
@@ -111,7 +147,7 @@ sub findParentsForSet($)
 	# immediate parents, should all be meta.id's
 	my @set_parents = $beastDB->getParentsForSet($set_id);	
 
-	if ($#set_parents == -1) {
+	if ( $#set_parents == -1 || (!ref($set_parents[0]))) {
 		return $FALSE;
 	}
 
