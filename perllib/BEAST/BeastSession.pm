@@ -263,8 +263,13 @@ sub loadLeafSetsFromSession
 			if ($include_elements == 1) {
 				my $elements_for_this_set = $beastDB->getEntitiesForSet($leaf->get_id);
 				foreach (keys %$elements_for_this_set) {
-					# the element is the membership value -1 to 1, or NULL
-					$leaf->set_element(uc($_),$elements_for_this_set->{$_});
+					my $el = $_;
+					if ($elements_for_this_set->{$el} =~ /-?\d+\.?\d+?/) {
+						# the element is the membership value -1 to 1, or NULL
+						$leaf->set_element(uc($el),$elements_for_this_set->{$el});
+					} else {
+						$leaf->set_element(uc($el),"");
+					}
 				}
 			}
 			$uniq_leaves->{$name} = $leaf;
