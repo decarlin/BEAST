@@ -10,10 +10,10 @@ public class Cell {
     private Set set;
     private Entity entity;
     // -1 to 1
-    private float membershipValue = -2;
+    private double membershipValue = -2;
     
     // lazy instantiation
-    private float getMembershipValue() {
+    private double getMembershipValue() {
         if (this.membershipValue < -1) {
             this.membershipValue = set.membershipValue(this.entity);
         }

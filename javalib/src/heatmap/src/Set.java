@@ -15,6 +15,7 @@ public class Set {
     private String name;
     private ArrayList<Entity> entities;
     private HashMap<String, String> meta;
+    private HashMap<String, double[]> set_entity_map;
     
     public Set(String ids[]) {
         
@@ -30,6 +31,7 @@ public class Set {
                 
         this.entities = new ArrayList<Entity>();
         this.meta = new HashMap<String, String>();
+        this.set_entity_map = new HashMap<String, double[]>();
 
         this.name = jsonObj.getString("_name");
         
@@ -37,8 +39,17 @@ public class Set {
         Iterator<String> keys = elements.keys();
 
         while (keys.hasNext()) {
-            String entName = keys.next();
+            String entName = keys.next();  
             this.entities.add(new Entity(entName));
+            
+            if (elements.isNull(entName) || "".equals(elements.get(entName))) {
+                continue;
+            }
+            
+            // get the membership value
+            double[] membership_value = new double[1];
+            membership_value[0] = elements.getDouble(entName);
+            this.set_entity_map.put(entName, membership_value);
         }
         
         JSONObject metas = jsonObj.getJSONObject("_metadata");
@@ -60,7 +71,11 @@ public class Set {
         return false;
     }
     
-    public int membershipValue(Entity entity) {
+    public double membershipValue(Entity entity) {
+        if (this.set_entity_map.containsKey(entity.getValue())) {
+            double[] value = this.set_entity_map.get(entity.getValue());
+            return value[0];
+        }
         if (!this.entities.contains(entity)) {
             return 0;
         }

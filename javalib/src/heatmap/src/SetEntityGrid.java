@@ -40,6 +40,7 @@ public class SetEntityGrid {
     
     private ArrayList<Set> sets = null;
     private ArrayList<Entity> entities = null;
+    private HashMap<String,String> set_entity_mappings = null;
     
     public SetEntityGrid(ArrayList<Set> newsets) {
         
@@ -151,9 +152,9 @@ public class SetEntityGrid {
             fw.close();
             
             g2.dispose();
-
-            createInfoFile();
             
+            createInfoFile();
+
         } catch (Exception e) {
             
             System.out.print("error!");
@@ -202,7 +203,7 @@ public class SetEntityGrid {
             while (entityIter.hasNext()) {
                 
                 // entity/set pairs correspond to a cell
-                Entity ent = entityIter.next();
+                Entity ent = entityIter.next();                
                 Cell cell = new Cell(columnIndex, rowIndex, CELL_WIDTH, CELL_HEIGHT, set, ent);
                 
                 column.addCell(cell);
@@ -247,7 +248,7 @@ public class SetEntityGrid {
     public static void main(String[] args) throws Exception{
         // TODO Auto-generated method stub
         
-        /*
+        /* 
         Set newset1 = new Set((new JSONArray("[{'_metadata':{'name':'viral reproduction','id':123012,'type':'set'},'_name':'mod6','_delim':'^','_active':1,'_elements':{'mod8':'','Oas1a':'','Banf1':'','mod7':'','mod3':'','Fv4':'','mod81':''}}]")).getJSONObject(0));
         Set newset2 = new Set((new JSONArray("[{'_metadata':{'name':'viral reproduction','id':123012,'type':'set'},'_name':'mod6','_delim':'^','_active':1,'_elements':{'mod1':'','Oas1a':'','Banf1':'','mod12':'','mod3':'','Fv4':'','mod81':''}}]")).getJSONObject(0));
 
@@ -281,7 +282,9 @@ public class SetEntityGrid {
                 switch (jsonType) {
             
                     case 1: 
-                            sets.add(new Set(jsonObj));
+                            Set set = new Set(jsonObj);
+                            sets.add(set);
+                            set.getEntities();
                             break;
                     case 2: 
                             JSONObject data = jsonObj.getJSONObject("_metadata");
