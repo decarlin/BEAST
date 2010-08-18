@@ -121,7 +121,8 @@ sub dig
 		my $name = $children->{'set'}{$child}{'name'};
 		my $external_id = $children->{'set'}{$child}{'external_id'};
 		print "<div><input style='margin-left:$indent_depth;' type='checkbox' name='browse' value='$id'/>";
-		print "<span onClick='show_entities(\"$id\", $child_depth, \"$ts\")' class='expandable_header'><img id='$id\_$ts\_arrow' src='images/plus.png' height='10px' width='10px'>$external_id ($name)</span>";
+		#print "<span onClick='show_entities(\"$id\", $child_depth, \"$ts\")' class='expandable_header'><img id='$id\_$ts\_arrow' src='images/plus.png' height='10px' width='10px'>$external_id ($name)</span>";
+		print "<span>$external_id ($name)</span>";
 		print "<div id='$id\_$ts\_children' style='display:none'></div></div>";
 	}
 
