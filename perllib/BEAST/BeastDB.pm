@@ -66,10 +66,17 @@ sub new
 	my $dev = shift || undef;
 
 	my $self;
-	if ((defined $dev) && ($dev eq 'dev'))
-	{
+	if ((defined $dev) && ($dev eq 'dev')) {
 		$self = {
 		'_db_name' 	=> 'BEAST_dev',
+		'_hostname'	=> 'localhost',
+		'_port'		=> '3306',
+		'_username'	=> 'stuartLabMember',
+		'_pass'		=> 'sysbio',
+		};
+	} elsif ((defined $dev) && ($dev eq 'test')) {
+		$self = {
+		'_db_name' 	=> 'BEAST_test',
 		'_hostname'	=> 'localhost',
 		'_port'		=> '3306',
 		'_username'	=> 'stuartLabMember',

@@ -73,9 +73,9 @@ for my $i (1 .. (scalar(@$columns) - 1)) {
 
 	my $set_id = $loader->addSet($column_name, 'chemdiv');
 
-	print "adding set: $set_id\n";
-	$importer->insertSetMetaRel(202896, $set_id);
-	next;
+	#print "adding set: $set_id\n";
+	#$importer->insertSetMetaRel(202896, $set_id);
+	#next;
 	
 
 	foreach (@genes) {

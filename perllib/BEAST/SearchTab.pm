@@ -98,9 +98,9 @@ sub printTab
 	print <<MULTILINE_STR;
 	<form id="searchcategories">
 	<input type='button' value="Select/Deselect All" onclick="checkAll('searchcategories');">
-	<b> Search: </b><input type='text' name="searchtext" value="$searchtext" size="25">
+	<b> Filter: </b><input type='text' name="searchtext" value="$searchtext" size="25">
 	<!-- Send selected filter categories to display pannel via ajax -->
-	<input type='button' name='activetab' value='search' onClick="return onSearchSets();">
+	<input type='button' name='activetab' value='filter' onClick="return onSearchSets();">
 MULTILINE_STR
 
 	my @checked;

@@ -132,6 +132,15 @@ sub is_active
 	return $self->{'_active'};
 }
 
+sub has_db_id
+{
+	my $self = shift;
+	if ($self->get_metadata_value('id') =~ /\d\d+/) {
+		return $TRUE;
+	}
+	return $FALSE;
+}
+
 sub set_active
 {
 	my $self = shift;
@@ -142,6 +151,17 @@ sub set_inactive
 {
 	my $self = shift;
 	$self->{'_active'} = 0;
+}
+
+sub get_ex_id
+{
+	my $self = shift;
+	
+	if (exists $self->{'_metadata'}->{'ex_id'}) {
+		return $self->get_metadata_value('ex_id');
+	} else {
+		return $self->get_name;
+	}
 }
 
 sub get_element
@@ -197,6 +217,13 @@ sub get_element_names
 	my $self = shift;
 
 	return (keys %{$self->{'_elements'}});	
+}
+
+sub get_metadata_names
+{
+	my $self = shift;
+
+	return (keys %{$self->{'_metadata'}});	
 }
 
 sub get_metadata_value
@@ -458,6 +485,54 @@ sub getLeafNodes()
 	}
 
 	return @leafnodes;
+}
+
+sub insertDB
+{
+	my $self = shift;
+	my $db = shift;
+	my $error_ref = shift;
+
+	unless (ref($db) eq 'BeastDB') {
+		$$error_ref = "Bad BeastDB Handle";
+		return $FALSE;
+	}
+
+	my $source = $self->get_metadata_value('source');
+	unless ($source) {
+		$$error_ref = "No Source Metadata";
+		return $FALSE;
+	}
+
+	my $set_internal_id = $db->existsSet($self->get_name);
+
+
+	if ($set_internal_id > 0) {
+		$$error_ref = "Set Already In DB";
+		# already in DB, do nothing...
+	} else {
+		$set_internal_id = $db->insertSet($self->get_name, $self->get_ex_id);
+		unless ($set_internal_id =~ /\d+/) { 
+			$$error_ref = "Failed to Insert Set";
+			return $FALSE;	
+		} else {
+			$$error_ref = "Added Set To DB";
+		}
+
+	
+		foreach my $meta ($self->get_metadata_names) {
+			my $sql = "INSERT INTO sets_info (sets_id, name, value) VALUES ('";
+			$sql .= "$set_internal_id"."', '"."$meta"."', '".$self->get_metadata_value($meta)."');";
+
+			my $meta_id = $db->insertSQL($sql);
+			unless ($meta_id =~ /\d+/) {
+				$$error_ref = "Failed to Add Metadata";
+				return $FALSE;
+			}		
+		}
+	}
+
+	$self->set_metadata_value('id', $set_internal_id);
 }
 
 sub parseSetLines
