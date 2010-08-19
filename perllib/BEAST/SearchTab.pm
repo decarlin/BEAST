@@ -72,6 +72,34 @@ sub printTab
 		'source' => [ 'go', 'chemdiv', 'boon_sga' ]
 	};
 
+	# build the searchopts as a tree
+	my $mouse = Set->new('mouse', 1, {'type' => 'set'}, "");
+	my $human = Set->new('human', 1, {'type' => 'set'}, "");
+	my $keyspace_organism = Set->new('keyspace_organism', 1,{'type' => 'meta'}, {'mouse' => $mouse, 'human' => $human});
+
+	my $entrez = Set->new('entrez', 1,{'type' => 'set'}, "");
+	my $keyspace_source = Set->new('keyspace_source', 1, {'type' => 'meta'}, {'entrez' => $entrez});
+
+	my $keyspace = Set->new('keyspace', 1, {'type' => 'meta'}, 
+		{'keyspace_source' => $keyspace_source, 'keyspace_organism' => $keyspace_organism});
+
+	my $go = Set->new('go', 1, {'type' => 'set'}, "");
+	my $curated = Set->new('curated', 1, {'type' => 'meta'}, {'go' => $go});
+
+	my $chemdiv = Set->new('chemdiv', 1, {'type' => 'set'}, "");
+	my $boon_sga = Set->new('boon_sga', 1, {'type' => 'set'}, "");
+	my $experimental = Set->new('experimental', 1, {'type' => 'meta'}, {'chemdiv' => $chemdiv, 'boon_sga' => $boon_sga});
+
+	my $source = Set->new('source', 1, {'type' => 'meta'}, {'experimental' => $experimental, 'curated' => $curated});
+	
+	my $opts = Set->new('searchopts', 1, {'type' => 'meta'}, {'keyspace' => $keyspace, 'source' => $source});
+
+	my @opts = ($opts);
+	#MySets::displaySetsTree("search_opts", "", @opts);
+	#print Data::Dumper->Dump([$opts]);
+
+	# end build options
+
 	my $input = $self->{'_input'};
 
 	my $searchtext = "";

@@ -78,6 +78,8 @@ sub getDisplayHash
 	my $setname = $set->get_name;
 	my @element_names = $set->get_element_names;
 
+	if ($element_names[0] eq "") { return {}};
+
 	foreach (@element_names) {
 		my $element_name = $_;	
 		my ($retval, $element) = $set->get_element($element_name);

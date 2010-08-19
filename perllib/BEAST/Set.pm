@@ -169,6 +169,7 @@ sub get_element
 	my $self = shift;
 	my $element_name = shift;
 
+	unless (ref($self->{'_elements'}) eq 'HASH') { return ($FALSE, ""); }
 	unless (exists($self->{'_elements'}->{$element_name})) { return ($FALSE, ""); }
 	return ($TRUE, $self->{'_elements'}->{$element_name});
 }
@@ -216,7 +217,11 @@ sub get_element_names
 {
 	my $self = shift;
 
-	return (keys %{$self->{'_elements'}});	
+	if (ref($self->{'_elements'}) eq 'HASH') {
+		return (keys %{$self->{'_elements'}});	
+	} else {
+		return "";
+	}
 }
 
 sub get_metadata_names
