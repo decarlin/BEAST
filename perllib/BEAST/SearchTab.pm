@@ -57,36 +57,6 @@ sub printTab
 	if (defined $session) {
 		die unless (ref($session) eq 'CGI::Session');
 	}
-	# Search filter/checkbox categories to display
-	# Hash reference: keys are refs to arrays of strings
-
-	# build the searchopts as a tree
-	my $mouse = Set->new('mouse', 1, {'type' => 'set_option'}, "");
-	my $human = Set->new('human', 1, {'type' => 'set_option'}, "");
-	my $keyspace_organism = Set->new('keyspace_organism', 1,{'type' => 'meta_option'}, {'mouse' => $mouse, 'human' => $human});
-
-	my $entrez = Set->new('entrez', 1,{'type' => 'set_option'}, "");
-	my $keyspace_source = Set->new('keyspace_source', 1, {'type' => 'meta_option'}, {'entrez' => $entrez});
-
-	my $keyspace = Set->new('keyspace', 1, {'type' => 'meta_option'}, 
-		{'keyspace_source' => $keyspace_source, 'keyspace_organism' => $keyspace_organism});
-
-	my $go = Set->new('go', 1, {'type' => 'set_option'}, "");
-	my $curated = Set->new('curated', 1, {'type' => 'meta_option'}, {'go' => $go});
-
-	my $chemdiv = Set->new('chemdiv', 1, {'type' => 'set_option'}, "");
-	my $boon_sga = Set->new('boon_sga', 1, {'type' => 'set_option'}, "");
-	my $experimental = Set->new('experimental', 1, {'type' => 'meta_option'}, {'chemdiv' => $chemdiv, 'boon_sga' => $boon_sga});
-
-	my $source = Set->new('source', 1, {'type' => 'meta_option'}, {'experimental' => $experimental, 'curated' => $curated});
-	
-	my $opts = Set->new('Filter_Options', 1, {'type' => 'meta_option'}, {'keyspace' => $keyspace, 'source' => $source});
-
-	my @opts = ($opts);
-	#MySets::displaySetsTree("search_opts", "", @opts);
-	#print Data::Dumper->Dump([$opts]);
-
-	# end build options
 
 	my $input = $self->{'_input'};
 
@@ -99,16 +69,46 @@ sub printTab
 	if ($input->param('checkedfilters[]')) {
 		@checked = $input->param('checkedfilters[]');
 	}
-
-	# build search opts data structure
-	my $activeFilters = {};
+	my $checkedopts = {
+		'mouse' => 0,
+		'human' => 0,
+		'entrez' => 0,
+		'go' => 0,
+		'chemdiv' => 0,
+		'boon_sga' => 0,
+	};
 	foreach (@checked) {
-		my ($category, $type) = split(/:/,$_);
-		unless ($activeFilters->{$category}) { 
-			$activeFilters->{$category} => []; 
-		}
-		push @{$activeFilters->{$category}}, $type;
+		$_ =~ s/.*<>//g;
+		$checkedopts->{$_} = 1;
 	}
+
+	# Search filter/checkbox categories to display
+	# Hash reference: keys are refs to arrays of strings
+
+	# build the searchopts as a tree
+	my $mouse = Set->new('mouse', $checkedopts->{'mouse'}, {'type' => 'set_option'}, "");
+	my $human = Set->new('human', $checkedopts->{'human'}, {'type' => 'set_option'}, "");
+	my $keyspace_organism = Set->new('keyspace_organism', 1,{'type' => 'meta_option'}, {'mouse' => $mouse, 'human' => $human});
+
+	my $entrez = Set->new('entrez', $checkedopts->{'entrez'},{'type' => 'set_option'}, "");
+	my $keyspace_source = Set->new('keyspace_source', 1, {'type' => 'meta_option'}, {'entrez' => $entrez});
+
+	my $keyspace = Set->new('keyspace', 1, {'type' => 'meta_option'}, 
+		{'keyspace_source' => $keyspace_source, 'keyspace_organism' => $keyspace_organism});
+
+	my $go = Set->new('go', $checkedopts->{'go'}, {'type' => 'set_option'}, "");
+	my $curated = Set->new('curated', 1, {'type' => 'meta_option'}, {'go' => $go});
+
+	my $chemdiv = Set->new('chemdiv', $checkedopts->{'chemdiv'}, {'type' => 'set_option'}, "");
+	my $boon_sga = Set->new('boon_sga', $checkedopts->{'boon_sga'}, {'type' => 'set_option'}, "");
+	my $experimental = Set->new('experimental', 1, {'type' => 'meta_option'}, {'chemdiv' => $chemdiv, 'boon_sga' => $boon_sga});
+
+	my $source = Set->new('source', 1, {'type' => 'meta_option'}, {'experimental' => $experimental, 'curated' => $curated});
+	
+	my $opts = Set->new('Filter_Options', 1, {'type' => 'meta_option'}, {'keyspace' => $keyspace, 'source' => $source});
+	my @opts = ($opts);
+
+	# end build options
 
 	## Create Form element and the rest...
 	print <<MULTILINE_STR;
@@ -116,12 +116,14 @@ sub printTab
 	<b> Filter: </b><input type='text' name="searchtext" value="$searchtext" size="25">
 	<!-- Send selected filter categories to display pannel via ajax -->
 	<input type='button' name='activetab' value='filter' onClick="return onSearchSets();">
+	<div>&nbsp;</div>
 MULTILINE_STR
 
 
 	MySets::displaySetsTree("search_opts", "", @opts);
-	my $checkedopts;
+	#print @checked;
 
+	my $checkedopts;
 	my $FULL_SEARCH = $TRUE;
 
 	unless ($searchtext eq "") {

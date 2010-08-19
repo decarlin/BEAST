@@ -356,24 +356,13 @@ function onClearMySetsFlat() {
 function onSearchSets() {
 	var form = document.getElementById('searchcategories');
 
-	<!-- build search opts data structure -->
-	var checkedFilters = new Array();
-	var j = 0;
-    	for (var i=0; i < form.elements.length; i++) {
-		if (form.elements[i].type == "checkbox") {
-			if (form.elements[i].checked == 1) {
-				checkedFilters[j] = form.elements[i].name;
-				j++;
-			}
-		}
-	}
-
+	var selects = getChecked(form);
 
 	$('#search').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#search').load('/cgi-bin/BEAST/index.pl', 
 		{action:"search",
 		 searchtext: form.searchtext.value, 
-		 'checkedfilters[]': checkedFilters} 
+		 'checkedfilters[]': selects} 
 	);
 }
 
