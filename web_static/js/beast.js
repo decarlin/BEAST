@@ -111,21 +111,6 @@ function onLoadMySetsFlat(event, ui) {
 	);
 }
 
-function checkAll(formId) {
-    if (checked == false)
-    {
-        checked = true
-    }
-    else
-    {
-        checked = false
-    }
-    var form = document.getElementById(formId);
-    for (var i=0; i < form.elements.length; i++) {
-        form.elements[i].checked = checked;
-    }
-}
-
 function selectStyle(selected, deselected)
 {
     var el = document.getElementById(selected);

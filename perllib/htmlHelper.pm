@@ -71,6 +71,7 @@ sub beginTreeSection($$)
 	my $div_id = $info_hash->{'div_id'};
 	my $db_id = $info_hash->{'db_id'};
 	my $type = $info_hash->{'type'};
+	my $use = $info_hash->{'use'};
 	my $selected = $info_hash->{'selected'};
 
 	my $fullName = $name;
@@ -113,11 +114,24 @@ sub beginTreeSection($$)
 		print "</span>";
 		print "</div>\n";
 		print "<div id='$divID\_content' style='display:$display'>\n";
+	} elsif ($type eq 'meta_option') {
+		print "<span onClick=\"swapDivPlusMinus2('$divID\_content', '$divID\_arrow');\" class='expandable_header' >";
+		print "<img id='$divID\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;<b>$name</b>";
+		print "</span>";
+		print "</div>\n";
+		print "<div id='$divID\_content' style='display:$display'>\n";
 	} elsif ($type eq 'set') {
 		print "<input style='$marginleft' type=checkbox name=\"$fullName\" value=\"$db_id\" $checkedText>";
 		my $ts = getTimestamp();
 		my $depth = scalar(@nameComponents) + 3;
 		print "<span onClick='onSetClick(\"$db_id\", $depth, \"$ts\")' class='expandable_header'><b>&nbsp;$name</b> $desc</span>";
+		print "</div>\n";
+		print "<div id='$db_id\_$ts\_content' style='display:$display'>\n";
+	} elsif ($type eq 'set_option') {
+		print "<input style='$marginleft' type=checkbox name=\"$fullName\" value=\"$db_id\" $checkedText>";
+		my $ts = getTimestamp();
+		my $depth = scalar(@nameComponents) + 3;
+		print "<span onClick='onSetClick(\"$db_id\", $depth, \"$ts\")' class='expandable_header'>&nbsp;$name</span>";
 		print "</div>\n";
 		print "<div id='$db_id\_$ts\_content' style='display:$display'>\n";
 	}
