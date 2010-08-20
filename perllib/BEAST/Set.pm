@@ -174,9 +174,9 @@ sub get_element
 	my $self = shift;
 	my $element_name = shift;
 
-	unless (ref($self->{'_elements'}) eq 'HASH') { return ($FALSE, ""); }
-	unless (exists($self->{'_elements'}->{$element_name})) { return ($FALSE, ""); }
-	return ($TRUE, $self->{'_elements'}->{$element_name});
+	unless (ref($self->{'_elements'}) eq 'HASH') { return ""; }
+	unless (exists($self->{'_elements'}->{$element_name})) { return ""; }
+	return $self->{'_elements'}->{$element_name};
 }
 
 sub get_elements
@@ -501,6 +501,8 @@ sub insertDB
 {
 	my $self = shift;
 	my $db = shift;
+	# yes, we have to know this
+	my $keyspace_id = shift;
 	my $error_ref = shift;
 
 	unless (ref($db) eq 'BeastDB') {
@@ -540,8 +542,22 @@ sub insertDB
 				return $FALSE;
 			}		
 		}
-	}
 
+		foreach my $element_name ($self->get_element_names) {
+			my $element_id;
+			unless (($element_id = $db->existsEntity($element_name, $keyspace_id)) > 0) {
+				$$error_ref = "Entity ".$element_name." doesn't exist in DB";
+				return $FALSE;
+			}
+
+			if ($db->existsSetEntityRel($set_internal_id, $element_id) > 0) {
+				#
+			} else {
+				$db->insertSetEntityRel($set_internal_id, $element_id, $self->get_element($element_name));
+			}
+		}
+	}
+					
 	$self->set_metadata_value('id', $set_internal_id);
 }
 
@@ -586,7 +602,11 @@ sub parseSetLines
 		my $elements = {};
 		for my $i (1 .. $#components) 
 		{
-			$elements->{$components[$i]} = "";	
+			if ($components[$i] =~ /(\S+)\^(-?[\d\.]+)/) {
+				$elements->{$1} = $2;
+			} else {
+				$elements->{$components[$i]} = "";	
+			}
 		}
 
 		my $set = Set->new($name, "1", $metadata, $elements);
