@@ -26,11 +26,12 @@ GetOptions("import_dir=s" => \$import_directory);
 
 die &usage() unless (-d $import_directory);
 
-my $elements_file = $import_directory."/elements_file.tab";
-my $sets_file = $import_directory."/sets_file.tab";
-my $meta_file = $import_directory."/metas_file.tab";
-my $meta_mappings_file = $import_directory."/meta_mappings_file.tab";
-my $meta_sets_mappings_file = $import_directory."/meta_sets_mappings_file.tab";
+my $keyspaces_file = $import_directory."/keyspaces.tab";
+my $elements_file = $import_directory."/elements.tab";
+my $sets_file = $import_directory."/sets.tab";
+my $meta_file = $import_directory."/metas.tab";
+my $meta_mappings_file = $import_directory."/meta_mappings.tab";
+my $meta_sets_mappings_file = $import_directory."/meta_sets_mappings.tab";
 
 die &usage('no sets file') unless (-f $sets_file);
 die &usage('no elements file') unless (-f $elements_file);
