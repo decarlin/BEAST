@@ -479,17 +479,7 @@ sub searchSetsByTermRestrictKeyspace($$$)
 	my $search_text = shift;
 	# hash ref
 	my $opts = shift;
-	my $tmp_opts = $opts->{'keyspace'};
-
-	my $keyspace_opts = {};
 	# current fields
-	foreach (keys %$tmp_opts) {
-		my $opt = $_;
-		if ($opt =~ /keyspace_organism|keyspace_source|keyspace_version|keyspace_description/) {
-			$opt =~ /keyspace_(.*)/;	
-			$keyspace_opts->{$1} = $tmp_opts->{$opt};
-		}
-	}
 
 	$search_text = escapeSQLString($search_text);
 
@@ -501,7 +491,7 @@ sub searchSetsByTermRestrictKeyspace($$$)
 
 	my $j = 0;
 	$template = $template." WHERE ";
-	foreach (keys %$keyspace_opts) 
+	foreach (keys %{$opts->{'keyspace'}}) 
 	{
 		if ($j != 0) 
 		{
@@ -509,7 +499,7 @@ sub searchSetsByTermRestrictKeyspace($$$)
 		}
 		$j++;
 		my $key = $_;
-		my @values = @{$keyspace_opts->{$key}};
+		my @values = @{$opts->{'keyspace'}->{$key}};
 		
 		$template = $template." ( keyspace.".$key." = '".$values[0]."' ";
 		for my $i (1 .. $#values) 
@@ -521,10 +511,9 @@ sub searchSetsByTermRestrictKeyspace($$$)
 	$template = $template."AND sets.name LIKE '%".$search_text."%'";
 
 	# add the set info...
-	foreach (keys %$opts) {
+	foreach (keys %{$opts->{'sets_info'}}) {
 		my $key = $_;
-		next if ($key eq 'keyspace');
-		my @values = @{$opts->{$key}};
+		my @values = @{$opts->{'sets_info'}->{$key}};
 		next if (scalar(@values) == 0);
 		$template .= " AND sets_info.name='".$key."' AND (";		
 		for my $i (0 .. ($#values - 1)) {
@@ -554,23 +543,14 @@ sub searchSetsByTerm($)
 	my $opts = shift;
 	my ($search_text) = @_;
 
-	foreach (keys %$opts) {
-		my $key = $_;
-		my @values = $opts->{$key};
-		foreach (@values) {
-			
-		}
-	}
 	my $template = "SELECT DISTINCT sets.id FROM sets,set_entity,sets_info WHERE sets.id=set_entity.sets_id AND sets.id=sets_info.sets_id AND sets.name LIKE '%var1%'";
 
 	$search_text = escapeSQLString($search_text);
 	$template =~ s/var1/$search_text/;
 
 	# add the set info...
-	foreach (keys %$opts) {
-		my $key = $_;
-		next if ($key eq 'keyspace');
-		my @values = @{$opts->{$key}};
+	foreach my $key (keys %{$opts->{'sets_info'}}) {
+		my @values = @{$opts->{'sets_info'}->{$key}};
 		next if (scalar(@values) == 0);
 		$template .= " AND sets_info.name='".$key."' AND (";		
 		for my $i (0 .. ($#values - 1)) {

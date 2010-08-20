@@ -69,18 +69,47 @@ sub printTab
 	if ($input->param('checkedfilters[]')) {
 		@checked = $input->param('checkedfilters[]');
 	}
-	my $checkedopts = {
-		'mouse' => 0,
-		'human' => 0,
-		'entrez' => 0,
-		'go' => 0,
-		'chemdiv' => 0,
-		'boon_sga' => 0,
-	};
+
+	my $FULL_SEARCH = $TRUE;
+	# the filter options, corresponding to either DB keyspace restrictions
+	# or sets_info table restrictions: set to checked as default
+	my $checked_keyspace_source_keys = [];
+	my $checked_keyspace_organism_keys = [];
+	my $checked_info_keys = [];
+	my $checkedopts = {};
+
+	# set default: unchecked only if they've checked at least one, otherwise check all 
+	my $default = 1;
+	if (scalar(@checked) > 0) { $default = 0;}	
+	foreach (qw(human mouse entrez go chemdiv boon_sga)) {
+		$checkedopts->{$_} = $default;
+	}
+
+	# set based on the user's checks, after the submit
 	foreach (@checked) {
 		$_ =~ s/.*<>//g;
 		$checkedopts->{$_} = 1;
+		$FULL_SEARCH = $FALSE;
 	}
+	if (scalar(@checked) == 6) { $FULL_SEARCH = $TRUE; }
+
+	# set the 
+	foreach (qw(human mouse)) {
+		if ($checkedopts->{$_}) { push @$checked_keyspace_organism_keys, $_; }
+	}
+	foreach (qw(entrez)) {
+		if ($checkedopts->{$_}) { push @$checked_keyspace_source_keys, $_; }
+	}
+	foreach (qw(go chemdiv boon_sga)) {
+		if ($checkedopts->{$_}) { push @$checked_info_keys, $_; }
+	}
+
+	# this hash represents the data logically, relative to how to database stores it, and will sent to 
+	#  the database functions to restrict the search.
+	my $massaged_options_hash = {'keyspace' => {}};
+	$massaged_options_hash->{'keyspace'}->{'source'} = $checked_keyspace_source_keys;
+	$massaged_options_hash->{'keyspace'}->{'organism'} = $checked_keyspace_organism_keys;
+	$massaged_options_hash->{'sets_info'}->{'source'} = $checked_info_keys;
 
 	# Search filter/checkbox categories to display
 	# Hash reference: keys are refs to arrays of strings
@@ -123,9 +152,6 @@ MULTILINE_STR
 	MySets::displaySetsTree("search_opts", "", @opts);
 	#print @checked;
 
-	my $checkedopts;
-	my $FULL_SEARCH = $TRUE;
-
 	unless ($searchtext eq "") {
 		print "<br>";
 		chomp($searchtext);
@@ -138,7 +164,7 @@ MULTILINE_STR
 		if ($FULL_SEARCH == $TRUE) {
 			@merged = $treeBuilder->searchOnSetDescriptions($searchtext);
 		} else {
-			@merged = $treeBuilder->searchOnSetDescriptions($searchtext, $checkedopts);
+			@merged = $treeBuilder->searchOnSetDescriptions($searchtext, $massaged_options_hash);
 		}
 
 		if (validateSearchResults(@merged) > 0) {	
