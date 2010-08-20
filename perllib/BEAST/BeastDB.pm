@@ -96,29 +96,6 @@ sub new
 	return $self;
 }
 
-
-#
-# DB Connection must already be open before this function is called
-#
-sub importSetToDB($)
-{
-	my $self = shift;
-	## Set class obj
-	my $set = shift;
-
-	my $sqlCommand;
-	my $setnameinsert = "INSERT INTO ..".$set->get_name;
-
-	foreach (@{$set->get_elements}) 
-	{
-		my $elem = $_;
-
-	}
-
-	## run SQL
-	$self->runSQL($sqlCommand);
-}
-
 sub connectDB()
 {
 	my $self = shift;

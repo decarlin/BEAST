@@ -175,7 +175,7 @@ sub get_element
 	my $element_name = shift;
 
 	unless (ref($self->{'_elements'}) eq 'HASH') { return ""; }
-	unless (exists($self->{'_elements'}->{$element_name})) { return ""; }
+	unless (exists $self->{'_elements'}->{$element_name}) { return ""; }
 	return $self->{'_elements'}->{$element_name};
 }
 
@@ -501,8 +501,8 @@ sub insertDB
 {
 	my $self = shift;
 	my $db = shift;
-	# yes, we have to know this
-	my $keyspace_id = shift;
+	# hash ref to entity objects
+	my $entities = shift;
 	my $error_ref = shift;
 
 	unless (ref($db) eq 'BeastDB') {
@@ -528,7 +528,7 @@ sub insertDB
 			$$error_ref = "Failed to Insert Set";
 			return $FALSE;	
 		} else {
-			$$error_ref = "Added Set To DB";
+			$$error_ref .= "Added Set To DB";
 		}
 
 	
@@ -538,22 +538,26 @@ sub insertDB
 
 			my $meta_id = $db->insertSQL($sql);
 			unless ($meta_id =~ /\d+/) {
-				$$error_ref = "Failed to Add Metadata";
+				$$error_ref .= "Failed to Add Metadata\n";
 				return $FALSE;
 			}		
 		}
 
 		foreach my $element_name ($self->get_element_names) {
-			my $element_id;
-			unless (($element_id = $db->existsEntity($element_name, $keyspace_id)) > 0) {
-				$$error_ref = "Entity ".$element_name." doesn't exist in DB";
-				return $FALSE;
+
+			my $entity = $entities->{$element_name};
+			unless ($entity->get_id =~ /\d+/) {
+				$$error_ref .= "Entity not in DB or ID not set for obj $element_name!\n";
 			}
 
-			if ($db->existsSetEntityRel($set_internal_id, $element_id) > 0) {
-				#
+			if ($db->existsSetEntityRel($set_internal_id, $entity->get_id) > 0) {
+				$$error_ref .= "entity already in DB".$entity->get_name."\n";
 			} else {
-				$db->insertSetEntityRel($set_internal_id, $element_id, $self->get_element($element_name));
+				my $element_value = $self->get_element($element_name);
+				if ($element_value eq "") {
+					$element_value = "NULL";	
+				}
+				$db->insertSetEntityRel($set_internal_id, $entity->get_id, $element_value);
 			}
 		}
 	}

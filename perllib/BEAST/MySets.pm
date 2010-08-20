@@ -82,8 +82,7 @@ sub getDisplayHash
 
 	foreach (@element_names) {
 		my $element_name = $_;	
-		my ($retval, $element) = $set->get_element($element_name);
-		die "Can't retrieve element: $element_name! from $setname!" unless ($retval);
+		my $element = $set->get_element($element_name);
 		# element is either a set object or a string null string
 
 			
