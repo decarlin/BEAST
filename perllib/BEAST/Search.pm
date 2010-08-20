@@ -47,11 +47,21 @@ sub findParentsByTerm
 	my $term = shift;
 	my $search_opts = shift || undef;
 
-	my $num_keyspace_opts = scalar(keys %{$search_opts->{'keyspace'}});
+	# doing the restricted keyspace search is really slow because we have
+	# to join on 3 tables to look at the entities. So, this is a hack
+	# to avoid doing the keyspace if not necessary: since we know 
+	# how many options there are (by checking the 
+	my $num_keyspace_source = scalar(@{$search_opts->{'keyspace'}->{'source'}});
+	my $num_keyspace_organism = scalar(@{$search_opts->{'keyspace'}->{'organism'}});
+
+	if ($num_keyspace_source == 0) { delete $search_opts->{'keyspace'}->{'source'}; };
+	if ($num_keyspace_organism == 0) { delete $search_opts->{'keyspace'}->{'organism'}; };
+
 
 	my $beastDB = $self->{'_beast_db'};
 	my @set_ids;
-	if ($search_opts && $num_keyspace_opts > 0) {
+	# if source is restricted, or organism is 
+	if ( !($num_keyspace_source == 0 && $num_keyspace_organism == 0) && !($num_keyspace_organism == 2 && $num_keyspace_source == 1)) {
 		@set_ids = $beastDB->searchSetsByTermRestrictKeyspace($term, $search_opts);
 	} else {
 		@set_ids = $beastDB->searchSetsByTerm($search_opts, $term);
