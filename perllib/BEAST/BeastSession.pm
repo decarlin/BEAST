@@ -15,29 +15,28 @@ use JSON -convert_blessed_universally;
 
 package BeastSession;
 
-sub saveSetsToSession
+sub saveObjsToSession
 {
 	my $session = shift;
 	my $key = shift;
-	my @sets = @_;
+	my @objs = @_;
 
 	die unless (ref($session) eq 'CGI::Session');
-	die unless (ref($sets[0]) eq 'Set');
+	die unless (ref($objs[0]));
 
-	my $mysetsstr;
+	my $str;
 	my $i = 0;
-	foreach (@sets) {
-		my $set = $_;
+	foreach my $obj (@objs) {
 		if ($i == 0) {
-			$mysetsstr = $set->serialize();
+			$str = $obj->serialize();
 		} else {
-			my $setstr = $set->serialize();
-			$mysetsstr = $mysetsstr.":SEP:".$setstr;
+			my $tmp = $obj->serialize();
+			$str = $str.":SEP:".$tmp;
 		}
 		$i++;
 	}
 
-	$session->param($key, $mysetsstr);
+	$session->param($key, $str);
 }
 
 sub saveGifInfoToSession
@@ -173,35 +172,36 @@ sub mergeWithCheckbox
 # Return: [ retval(0|1), @sets ]
 #
 
-sub loadSetsFromSession($$)
+sub loadObjsFromSession($$$)
 {
 	my $session = shift;
 	my $key = shift;
+	my $obj = shift;
 
 	die unless (ref($session) eq 'CGI::Session');
 	die unless ($key =~ /^\w+$/);
 
-	my $setsstr = $session->param($key);	
-	unless ($setsstr =~ /\S+/) { return 0; }
-	my @lines = split (/:SEP:/, $setsstr);
-	my @sets;
+	my $objsstr = $session->param($key);	
+	unless ($objsstr =~ /\S+/) { return 0; }
+	my @lines = split (/:SEP:/, $objsstr);
+	my @objs;
 	foreach (@lines) {
 		my $line = $_;
 		next unless ($line =~ /_name/);
-		push @sets, Set->new($line);
+		push @objs, $obj->new($line);
 	}
 
-	unless (ref($sets[0]) eq 'Set') {
-		pop @sets;
+	unless (ref($objs[0])) {
+		pop @objs;
 	}
 
-	return @sets;
+	return @objs;
 }
 
 sub checkMySetsNull($)
 {
 	my $session = shift;
-	my @sets = loadSetsFromSession($session, 'mysets');	
+	my @sets = loadObjsFromSession($session, 'mysets', Set->new('constructor', 1,"", ""));	
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
 	}
@@ -213,7 +213,7 @@ sub loadImportSetsFromSession($)
 {
 	my $session = shift;
 
-	my @sets = loadSetsFromSession($session, 'mysets');
+	my @sets = loadObjsFromSession($session, 'mysets', Set->new('constructor', 1,"", ""));	
 	foreach (@sets) {
 		my $set = $_;
 		if ($set->get_name eq 'ImportSets') {
@@ -241,7 +241,7 @@ sub loadLeafSetsFromSession
 
 	my $uniq_leaves = {};
 	
-	my @sets = loadSetsFromSession($session, $key);
+	my @sets = loadObjsFromSession($session, $key, Set->new('constructor', 1,"", ""));	
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
 	}

@@ -23,6 +23,11 @@ sub new
 	my $class = shift;
 	# hash ref
 
+	# trick to use the new method of an existing object to instantiate
+	if (ref($class) eq 'Set') { 
+		$class = 'Set';
+	}
+
 	my $self;
 	if (@_ >= 2) {
 		my $name = shift;

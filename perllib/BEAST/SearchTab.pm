@@ -70,7 +70,6 @@ sub printTab
 		@checked = $input->param('checkedfilters[]');
 	}
 
-	my $FULL_SEARCH = $TRUE;
 	# the filter options, corresponding to either DB keyspace restrictions
 	# or sets_info table restrictions: set to checked as default
 	my $checked_keyspace_source_keys = [];
@@ -89,9 +88,7 @@ sub printTab
 	foreach (@checked) {
 		$_ =~ s/.*<>//g;
 		$checkedopts->{$_} = 1;
-		$FULL_SEARCH = $FALSE;
 	}
-	if (scalar(@checked) == 6) { $FULL_SEARCH = $TRUE; }
 
 	# set the 
 	foreach (qw(human mouse)) {
@@ -123,7 +120,7 @@ sub printTab
 	my $keyspace_source = Set->new('keyspace_source', 1, {'type' => 'meta_option'}, {'entrez' => $entrez});
 
 	my $keyspace = Set->new('keyspace', 1, {'type' => 'meta_option'}, 
-		{'keyspace_source' => $keyspace_source, 'keyspace_organism' => $keyspace_organism});
+		{'KEYspace_source' => $keyspace_source, 'keyspace_organism' => $keyspace_organism});
 
 	my $go = Set->new('go', $checkedopts->{'go'}, {'type' => 'set_option'}, "");
 	my $curated = Set->new('curated', 1, {'type' => 'meta_option'}, {'go' => $go});
@@ -161,11 +158,7 @@ MULTILINE_STR
 		my $treeBuilder = Search->new($beastDB);
 
 		my @merged;
-		if ($FULL_SEARCH == $TRUE) {
-			@merged = $treeBuilder->searchOnSetDescriptions($searchtext);
-		} else {
-			@merged = $treeBuilder->searchOnSetDescriptions($searchtext, $massaged_options_hash);
-		}
+		@merged = $treeBuilder->searchOnSetDescriptions($searchtext, $massaged_options_hash);
 
 		if (validateSearchResults(@merged) > 0) {	
 			print "<input type='button' value='Add To My Sets' onClick=\"return onAddSearchSets(this.form);\"><br>";
@@ -173,7 +166,7 @@ MULTILINE_STR
 			#my $Rsize = scalar (@results);
 			#my $Msize = scalar (@merged);
 			#print "merged into $Rsize into $Msize";
-			BeastSession::saveSetsToSession($session, 'searchsets', @merged);
+			BeastSession::saveObjsToSession($session, 'searchsets', @merged);
 		}
 		
 		$beastDB->disconnectDB();

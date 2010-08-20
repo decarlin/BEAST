@@ -185,9 +185,9 @@ sub displayMySetsFlat()
 		my @checked = $cgi->param('checkedelements[]');	
 		my $checked_hash = BeastSession::buildCheckedHash(@checked);
 		#print Data::Dumper->Dump([$checked_hash]);
-		my @mysets = BeastSession::loadSetsFromSession($session, 'mysets');
+		my @mysets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1, "", ""));
 		MySets::updateActiveElements($checked_hash, @mysets);	
-		BeastSession::saveSetsToSession($session, 'mysets', @mysets);
+		BeastSession::saveObjsToSession($session, 'mysets', @mysets);
 	}
 
 	@sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 1);
@@ -200,7 +200,7 @@ sub displayMySetsFlat()
 
 sub displayMySetsTree()
 {
-	@sets = BeastSession::loadSetsFromSession($session, 'mysets');
+	@sets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1, "", ""));
 	my $selected = BeastSession::getSelectedColumns($session);
 
 	unless (ref($sets[0]) eq 'Set') {
@@ -217,7 +217,7 @@ sub displayMySetsTree()
 		my $checked_hash = BeastSession::buildCheckedHash(@checked);
 		#print Data::Dumper->Dump([$checked_hash]);
 		MySets::updateActiveElements($checked_hash, @sets);	
-		BeastSession::saveSetsToSession($session, 'mysets', @sets);
+		BeastSession::saveObjsToSession($session, 'mysets', @sets);
 	}
 	MySets::displaySetsTree("mysets", $selected, @sets);
 	print "</form>";
@@ -227,7 +227,7 @@ sub displayMySetsTree()
 # save and merge search results to mysets
 sub getMySetsJSON()
 {
-	@sets = BeastSession::loadSetsFromSession($session, 'mysets');
+	@sets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1, "", ""));
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
 	}
@@ -248,7 +248,7 @@ sub getMySetsJSON()
 
 sub addSearchSets()
 {
-	@sets = BeastSession::loadSetsFromSession($session, 'mysets');
+	@sets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1, "", ""));
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
 	}
@@ -266,12 +266,12 @@ sub addSearchSets()
 		}
 	}
 	return unless (scalar(@sets) > 0);
-	BeastSession::saveSetsToSession($session, 'mysets', @sets);
+	BeastSession::saveObjsToSession($session, 'mysets', @sets);
 }
 
 sub addBrowseSets()
 {
-	@sets = BeastSession::loadSetsFromSession($session, 'mysets');
+	@sets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1, "", ""));
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
 	}
@@ -295,7 +295,7 @@ sub addBrowseSets()
 
 	}
 	return unless (scalar(@sets) > 0);
-	BeastSession::saveSetsToSession($session, 'mysets', @sets);
+	BeastSession::saveObjsToSession($session, 'mysets', @sets);
 }
 
 sub getEntitiesForSet
@@ -337,7 +337,7 @@ sub getEntitiesForSet
 
 sub addImportSets()
 {
-	@sets = BeastSession::loadSetsFromSession($session, 'mysets');
+	@sets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1, "", ""));
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
 	}
@@ -380,7 +380,7 @@ sub addImportSets()
 		}
 	}
 	return unless (scalar(@mergedSets) > 0);
-	BeastSession::saveSetsToSession($session, 'mysets', @mergedSets);
+	BeastSession::saveObjsToSession($session, 'mysets', @mergedSets);
 }
 
 

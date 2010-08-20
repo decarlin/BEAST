@@ -134,7 +134,7 @@ MULTI_LINE_STR
 MULTILINE_STR
 		# to do : merge with mysets
 		
-		BeastSession::saveSetsToSession($session, 'importsets', @sets);
+		BeastSession::saveObjsToSession($session, 'importsets', @sets);
 	}
 	print "</p></form>";
 

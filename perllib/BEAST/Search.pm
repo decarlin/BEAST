@@ -45,7 +45,7 @@ sub findParentsByTerm
 {
 	my $self = shift;
 	my $term = shift;
-	my $search_opts = shift || undef;
+	my $search_opts = shift;
 
 	# doing the restricted keyspace search is really slow because we have
 	# to join on 3 tables to look at the entities. So, this is a hack
@@ -260,7 +260,7 @@ sub searchOnSetDescriptions
 {
 	my $self = shift;
 	my $searchtext = shift || die;
-	my $checkedopts = shift || undef;
+	my $checkedopts = shift;
 
 	unless ($searchtext =~ /\w+/) {
 		return 0;
@@ -274,13 +274,7 @@ sub searchOnSetDescriptions
 	foreach (@searches){
 		my $search = $_;
 
-		my @top_level_nodes;
-		# either all unchecked, or all checked: do a full, categorical search
-		unless (defined $checkedopts) {
-		  @top_level_nodes = $self->findParentsByTerm($search);
-		} else {
-		  @top_level_nodes = $self->findParentsByTerm($search, $checkedopts);
-		}
+		my @top_level_nodes = $self->findParentsByTerm($search, $checkedopts);
 		#my @top_level_nodes = $self->findParentsForSetByExtID($search);
 		foreach (@top_level_nodes) {
 			my $node = $_;
