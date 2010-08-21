@@ -19,6 +19,7 @@ use BEAST::SearchTab;
 use BEAST::BrowseTab;
 use BEAST::ImportTab;
 use BEAST::ViewTab;
+use BEAST::CollectionsTab;
 use BEAST::MySets;
 use BEAST::Set;
 use BEAST::BeastSession;
@@ -41,6 +42,7 @@ our @sets;
 my $searchObj = SearchTab->new($cgi);
 my $importObj = ImportTab->new($cgi);
 my $browseObj = BrowseTab->new($cgi);
+my $collectionsObj = CollectionsTab->new($cgi);
 my $viewObj = ViewTab->new($cgi);
 	
 #print Data::Dumper->Dump([$cgi]);
@@ -56,22 +58,25 @@ my $viewObj = ViewTab->new($cgi);
 
 	my $action = $cgi->param('action');
 
+	# the following is one gigantic switch staeement on the 'action' param
+
+	# this is the one exception, for the AJAX file upload
 	if ($cgi->param('my_upload_file'))
 	{
 		my $fh = $cgi->upload('my_upload_file');
 		$importObj->printTab($session, $fh);
 	}
-	elsif ($cgi->param('addsearch'))
+	elsif ($action eq "addsearch")
 	{
 		addSearchSets();
 		displayMySets($cgi);
 	}
-	elsif ($cgi->param('addbrowse'))
+	elsif ($action eq "addbrowse")
 	{
 		addBrowseSets();
 		displayMySets($cgi);
 	}
-	elsif ($cgi->param('addimportfile'))
+	elsif ($action eq "addimportfile")
 	{
 		addImportSets();
 		displayMySets($cgi);
@@ -127,33 +132,21 @@ my $viewObj = ViewTab->new($cgi);
 	{
 		$session->clear('mysets');
 	}
-	elsif ($cgi->param('display_mysets_tree'))
+	elsif ($action eq "mysets")
 	{
-		displayMySetsTree();
-	}
-	elsif ($cgi->param('display_mysets_flat'))
-	{
-		displayMySetsFlat();
-	}
-	elsif ($cgi->param('mysets'))
-	{
+		if ($cgi->param('format') && ($cgi->param('format') eq 'json')) {
+			getMySetsJSON();		
+		}
+
 		if ($cgi->param('type') eq 'tree') {
-			if ($cgi->param('mysets') eq 'clear') {
-				my @list = ('mysets');
-				$session->clear([@list]);
-				displayMySetsTree();
-			}
-			if ($cgi->param('format') && ($cgi->param('format') eq 'json'))
-			{
-				getMySetsJSON();		
-			}
-			else
-			{
-				displayMySetsTree();
-			}
+			displayMySetsTree();
 		} elsif ($cgi->param('type') eq 'flat') {
 			displayMySetsFlat();
 		}
+	}
+	elsif ($action eq "mycollections")
+	{
+		$collectionsObj->printTab($session);
 	}
 
 #	DebugHelper::printRequestParameters($cgi);

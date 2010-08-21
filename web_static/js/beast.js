@@ -18,6 +18,8 @@ function onViewTabSelected(event, ui) {
 		onLoadMySetsTree(event, ui);
 	} else if (ui.tab.hash == '#mysets_flat') {
 		onLoadMySetsFlat(event, ui);
+	} else if (ui.tab.hash == '#mycollections') {
+		onLoadMyCollections(event, ui);
 	}
 }
 
@@ -64,7 +66,7 @@ function onLoadView() {
 
 	document.imageLock = false;
 
-	$.getJSON('/cgi-bin/BEAST/index.pl',  { mysets:"yes", format:"json" }, 
+	$.getJSON('/cgi-bin/BEAST/index.pl',  { action:"mysets", format:"json" }, 
 		function(data){
 			//alert('JSON Data view'+data._name);
 			var viewDiv = document.getElementById('view');
@@ -97,7 +99,8 @@ function onLoadView() {
 function onLoadMySetsTree(event, ui) {
 	$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
-		{display_mysets_tree:"yes"}
+		{action:'mysets',
+		 type:'tree'}
 	);
 }
 
@@ -107,7 +110,15 @@ function onLoadMySetsFlat(event, ui) {
 
 	$('#mysets_flat').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
-		{display_mysets_flat:"yes"}
+		{action:'mysets',
+		 type:'flat'}
+	);
+}
+
+function onLoadMyCollections(event, ui) {
+	$('#mycollections').empty().html('<img src="images/ajax-loader.gif" />');
+	$('#mycollections').load('/cgi-bin/BEAST/index.pl', 
+		{action:'mycollections'}
 	);
 }
 
@@ -180,14 +191,14 @@ function onAddSearchSets(form) {
 	if (selected == 0) {
 		$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 		$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
-		  {'addsearch':'yes',
+		  {'action':'addsearch',
 		   'type':'tree',
 		   'searchsets[]': selects }
 		);
  	} else if (selected == 1) {
 		$('#mysets_flat').empty().html('<img src="images/ajax-loader.gif" />');
 		$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
-		  {'addsearch':'yes',
+		  {'action':'addsearch',
 		   'type':'flat',
 		   'searchsets[]': selects }
 		);
@@ -214,14 +225,14 @@ function onAddBrowseSets(form) {
 	if (selected == 0) {
 		$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 		$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
-		  {'addbrowse':'yes',
+		  {'action':'addbrowse',
 		   'type':'tree',
 		   'browsesets[]': checkedElements }
 		);
  	} else if (selected == 1) {
 		$('#mysets_flat').empty().html('<img src="images/ajax-loader.gif" />');
 		$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
-		  {'addbrowse':'yes',
+		  {'action':'addbrowse',
 		   'type':'flat',
 		   'browsesets[]': checkedElements }
 		);
@@ -241,14 +252,14 @@ function onAddImportSets(form) {
 	if (selected == 0) {
 		$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 		$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
-		  {'addimportfile':'yes',
+		  {'action':'addimportfile',
 		   'type':'tree',
 		   'importsets[]': selects }
 		);
  	} else if (selected == 1) {
 		$('#mysets_flat').empty().html('<img src="images/ajax-loader.gif" />');
 		$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
-		  {'addimportfile':'Yes',
+		  {'action':'addimportfile',
 		   'type':'flat',
 		   'importsets[]': selects }
 		);
@@ -272,9 +283,9 @@ function onImportSets(form) {
 	}
 
 	$('#import').load('/cgi-bin/BEAST/index.pl', 
-		{'import':'yes',
-		 'importtext': importtext.value, 
-		 'importtype': importtype,
+		{ action:'import',
+		 importtext: importtext.value, 
+		 importtype: importtype,
 		 'metadata[]': selects }
 	);
 }
@@ -310,7 +321,7 @@ function onUpdateMySets(form) {
 
 	$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
-		{mysets:"yes",
+		{action:"mysets",
 		 type:"tree",
 		 'checkedelements[]': checkedElements}
 	);
@@ -324,7 +335,7 @@ function onUpdateMySetsFlat(form) {
 
 	$('#mysets_flat').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
-		{mysets:"yes",
+		{action:"mysets",
 		 type:"flat",
 		 'checkedelements[]': checkedElements}
 	);
