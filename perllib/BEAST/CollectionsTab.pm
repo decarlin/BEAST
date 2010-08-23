@@ -43,7 +43,7 @@ sub printTab
 	if (scalar(@mycollections) > 0) {
 	# collection X
 
-		my ($selectedX, $selectedY) = BeastSession::getSelectedCollections($session);
+		my ($selectedX, $selectedY) = BeastSession::getSelectedCollectionNames($session);
 		
 		print <<MULTILINE_STR;
 		<select name="collectionsX" id="collectionsX"> 

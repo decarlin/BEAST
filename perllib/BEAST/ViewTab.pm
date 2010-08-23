@@ -37,6 +37,7 @@ sub printTab
 	# hash ref to the input form data
 	my $self = shift;
 	my $session = shift || undef;
+	my $type = shift;
 
 	if (defined $session) {
 		die unless (ref($session) eq 'CGI::Session');
@@ -45,14 +46,29 @@ sub printTab
 	# sanity check first: if no sets 
 	return if (BeastSession::checkMySetsNull($session) == 0);
 	# b64 encoded string
-	my ($base64gif, $info) = getBase64Gif($session);
+	my ($base64gif, $info);
+	if ($type eq 'members') {
+		($base64gif, $info) = getSetsMembersGif($session);
+	} elsif ($type eq 'sets') {
+		($base64gif, $info) = getSetsSetsGif($session);
+	}
 
 	if ($base64gif eq "") {
 		print "Error: can't display image";
 	}
+	
+	printBase64GIF($base64gif, $info);
+}
 
+
+sub printBase64GIF
+{
+	my $base64gifSTR = shift;
+	my $infoSTR = shift;
+
+	# parse the JSON info
 	my $json = JSON->new->utf8;
-	my $jsonObj = $json->decode($info);
+	my $jsonObj = $json->decode($infoSTR);
 
 	my $width = $jsonObj->{'column_width'};
 	my $columns = $jsonObj->{'columns'};
@@ -74,22 +90,35 @@ sub printTab
 		$infoStr_rows .= ",".$rows[$i];
 	}
 
-	my $infotag_col = "<input id=\"gif_info_columns\" type=\"hidden\" value='$infoStr_cols'/>";
-	my $infotag_row = "<input id=\"gif_info_rows\" type=\"hidden\" value='$infoStr_rows'/>";
-	my $embeddedImage = "<img id=\"grid_image_div\" onClick='onImageClick(event)' onMouseMove='onImageHover(event)' src=\"data:image/gif;base64,".$base64gif."\"/>";
-	print $infotag_col;
-	print $infotag_row;
-	print $embeddedImage;
+	print "<input id=\"gif_info_columns\" type=\"hidden\" value='$infoStr_cols'/>";
+	print "<input id=\"gif_info_rows\" type=\"hidden\" value='$infoStr_rows'/>";
+	print "<img id=\"grid_image_div\" onClick='onImageClick(event)' onMouseMove='onImageHover(event)' src=\"data:image/gif;base64,".$base64gifSTR."\"/>";
 }
 
-sub getBase64Gif
+
+sub getSetsSetsGif
+{
+	my $session = shift;
+	
+	my ($setsX, $setsY) = BeastSession::loadSetsForActiveCollections($session);
+
+	my $filename = "/tmp/".$session->id;
+	my $setsXfilename = $filename.".setsX";
+	my $setsYfilename = $filename.".setsY";
+
+	my $json = "";
+
+	return runJavaImageGen($session, $json);
+}
+
+sub getSetsMembersGif
 {
 	my $session = shift;
 	
 	my @sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 0, 1);
 
 	my $filename = "/tmp/".$session->id.".txt";
-	my $info_filename = $filename.".json";
+
 	my $json = "[{\"_metadata\":{\"type\":\"info\",\"action\":\"base64gif\",\"filename\":\"$filename\"";
 	$json .= ',"width":"'.Constants::VIEW_WIDTH.'","height":"'.Constants::VIEW_HEIGHT.'"';
 	$json .= "}}]";
@@ -107,10 +136,17 @@ sub getBase64Gif
 	}
 	$json .= '}}]';
 
-	# debug
-	#my $test_json = $json;
-	#$test_json =~ s/\n/<br>/g;	
-	#print $test_json;
+	return runJavaImageGen($session, $json);
+}
+
+sub runJavaImageGen
+{
+	my $session = shift;
+	my $json = shift;
+
+	# tmp files
+	my $filename = "/tmp/".$session->id.".txt";
+	my $info_filename = $filename.".json";
 
 	my $command = Constants::JAVA_32_BIN." -jar ".Constants::HEATMAP_JAR." 1 > ".Constants::JAVA_ERROR_LOG." 2>&1";
 	open COMMAND, "|-", "$command" || die "Can't pipe to java binary!";

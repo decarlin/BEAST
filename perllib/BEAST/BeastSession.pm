@@ -172,13 +172,48 @@ sub saveSelectedCollections
 	$session->param('collectionY', $selectedY);
 }
 
-sub getSelectedCollections
+sub getSelectedCollectionNames
 {
 	my $session = shift;
 
 	return ($session->param('collectionX'), $session->param('collectionY'));
 }
 
+sub getSelectedCollections
+{
+	my $session = shift;
+	# array ref
+	my $X_name = shift;
+	my $Y_name = shift;
+	
+	my $collectionX;
+	my $collectionY;
+	
+	my @mycollections = BeastSession::loadObjsFromSession($session, 'mycollections', Collection->new('constructor',""));	
+	foreach my $collection (@mycollections) {
+		if ($X_name eq $collection->get_name) {
+			$collectionX = $collection;	
+		} elsif ($Y_name eq $collection->get_name) {
+			$collectionY = $collection;	
+		}
+	}
+
+	return ($collectionX, $collectionY);
+}
+
+sub loadSetsForActiveCollections
+{
+	my $session = shift;
+
+	my ($X, $Y) = getSelectedCollectionNames($session);
+	my ($collectionX, $collectionY) = getSelectedCollections($X, $Y);
+
+	my @setsX = loadMergeSetsFromSession($session, 'mysets', \@{$collectionX->get_set_names});
+
+	my @setsY = loadMergeSetsFromSession($session, 'mysets', \@{$collectionY->get_set_names});
+
+	return (\@setsX, \@setsY);	
+}
 
 sub mergeWithCheckbox
 {
