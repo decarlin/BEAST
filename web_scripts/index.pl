@@ -148,6 +148,11 @@ my $viewObj = ViewTab->new($cgi);
 	{
 		$collectionsObj->printTab($session);
 	}
+	elsif ($action eq "addcollection")
+	{
+		addCollection();
+		$collectionsObj->printTab($session);
+	}
 
 #	DebugHelper::printRequestParameters($cgi);
 
@@ -326,6 +331,23 @@ sub getEntitiesForSet
 	}
 
 	return @list;
+}
+
+sub addCollection()
+{
+	my @checkboxdata = $cgi->param('checkedfilters[]');
+	my $name = $cgi->param('name');
+	my @collectionSets = BeastSession::loadMergeLeafSets($session, 'mysets', \@checkboxdata);
+	my $newCollection = Collection->new($name, @collectionSets);
+
+	# add to the existing collections
+	my @collections = BeastSession::loadObjsFromSession($session, 'mycollections', Collection->new('constructor', ""));
+	unless (ref($collections[0]) eq 'Collection') {
+		pop @collections;
+	}
+	push @collections, $newCollection;
+
+	BeastSession::saveObjsToSession($session, 'mycollections', @collections);
 }
 
 sub addImportSets()

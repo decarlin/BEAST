@@ -20,11 +20,22 @@ package Collection;
 sub new
 {
 	my $class = shift;
+	if (ref($class) eq 'Collection') { 
+		$class = 'Collection';
+	}
+
 	# hash ref
-	my $constructor_mode = shift;
-	my $self = {};
-	
-	if ($constructor_mode eq 'sets') {
+	my $self;
+
+	if (@_ == 1) {
+		my $json_text = shift;
+		my $json = JSON->new->utf8;
+		$self = $json->decode($json_text);
+	} elsif (ref($_[1]) eq 'Set') {
+
+		my $name = shift;
+		$self = {'_name' => $name };
+
 		my @sets = @_;
 		$self->{'sets'} = [];
 		foreach (@sets) {
@@ -34,27 +45,30 @@ sub new
 			# we're not saving the sets here -- just pointing to the names
 			push @{$self->{'sets'}}, $set->get_name;
 	  	}
-	} elsif ($constructor_mode eq 'json') {
 
-		my $json_text = shift;
-		my $json = JSON->new->utf8;
-		$self = $json->decode($json_text);
+	} else {
 
-	} elsif ($constructor_mode eq 'names') {
+		my $name = shift;
+		$self = {'_name' => $name };
+
 		my @names = @_;
 		$self->{'sets'} = [];
 		foreach (@names) {
 			# we're not saving the sets here -- just pointing to the names
 			push @{$self->{'sets'}}, $_;
 	  	}
-	} else {
-		die "Collection::new method called with unknown mode!";
+
 	}
 
 	bless $self, $class;
 	return $self;
 }
 
+sub get_name
+{
+	my $self = shift;
+	return $self->{'_name'};
+}
 
 sub serialize
 {

@@ -141,6 +141,26 @@ sub loadMergeSetsFromSession($$$)
 
 	return @selected_sets;
 }
+#
+# Return: [ retval(0|1), @sets ]
+#
+sub loadMergeLeafSets($$$)
+{
+	my $session = shift;
+	my $key = shift;
+	my $checkbox_arr_ref = shift;
+
+	die unless (ref($checkbox_arr_ref) eq 'ARRAY');
+	die unless (ref($session) eq 'CGI::Session');
+	die unless ($key =~ /^\w+$/);
+
+	my @sets = loadLeafSetsFromSession($session, $key, 1, 0);
+
+	my $checked_hash = buildCheckedHash(@$checkbox_arr_ref);
+	my @selected_sets = mergeWithCheckbox(\@sets, $checked_hash);
+
+	return @selected_sets;
+}
 
 sub mergeWithCheckbox
 {

@@ -571,3 +571,15 @@ function highlightElement(event) {
 	}
 }
 
+function onAddCollection(form) {
+	// the div
+	// the form element is the first child of this div
+	var selects = getChecked(form);
+	var text_name = document.getElementById('add_collection_name');
+	$('#mycollections').empty().html('<img src="images/ajax-loader.gif" />');
+	$('#mycollections').load('/cgi-bin/BEAST/index.pl', 
+		{action:"addcollection",
+		 name:text_name.value,
+		 'checkedfilters[]': selects} 
+	);
+}

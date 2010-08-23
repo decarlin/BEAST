@@ -35,12 +35,32 @@ sub printTab
 	}
 
 	# get active mysets objects
-	my @mycollections = BeastSession::loadObjsFromSession($session, 'mycollections', Set->new('constructor', 1,"", ""));	
+	my @mycollections = BeastSession::loadObjsFromSession($session, 'mycollections', Collection->new('constructor',""));	
 	unless (ref($mycollections[0]) eq 'Collection') {
 		pop @mycollections;
 	}
-	return unless (scalar(@mycollections) > 0); 
 
+	if (scalar(@mycollections) > 0) {
+	# collection X
+		print <<MULTILINE_STR;
+		<select name="Collections_X" id="collections_X"> 
+MULTILINE_STR
+		foreach (@mycollections) {
+			my $name = $_->get_name;
+			print "<option value=\"$name\">$name</option>";
+		}
+		print "</select>";
+	
+		# collectio Y
+		print <<MULTILINE_STR;
+		<select name="Collections_Y" id="collections_Y"> 
+MULTILINE_STR
+		foreach (@mycollections) {
+			my $name = $_->get_name;
+			print "<option value=\"$name\">$name</option>";
+		}
+		print "</select>";
+	}
 
 	my @mysets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1,"", ""));	
 	unless (ref($mysets[0]) eq 'Set') {
@@ -49,8 +69,11 @@ sub printTab
 	return unless (scalar(@mysets) > 0); 
 	
 	print "<div><b>Add New Collection:</b></div>";
-	print "<input type='button' name='add_collection' value='Add To Collections' onClick='return onAddCollection();'>";
+	print "<form id=\"new_collection\">";
+	print "<input type='text' id='add_collection_name' value='Collection Name'>";
+	print "<input type='button' id='add_collection' value='Add To Collections' onClick='return onAddCollection(this.form);'>";
 	MySets::displaySetsTree("new_collection", "", @mysets);
+	print "</form>";
 }
 
 
