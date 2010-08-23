@@ -12,6 +12,7 @@ use htmlHelper;
 use Data::Dumper;
 use BEAST::BeastSession;
 use BEAST::Constants;
+use BEAST::MySets;
 use JSON -convert_blessed_universally;
 
 our $TRUE = 1;
@@ -52,19 +53,32 @@ sub printTab
 
 	my $json = JSON->new->utf8;
 	my $jsonObj = $json->decode($info);
+
 	my $width = $jsonObj->{'column_width'};
 	my $columns = $jsonObj->{'columns'};
 	my @columns = @$columns;
 
-	my $infoStr = $width."^";
-	$infoStr .= $columns[0];
+	my $height = $jsonObj->{'row_height'};
+	my $rows = $jsonObj->{'rows'};
+	my @rows = @$rows;
+
+	my $infoStr_cols = $width."^";
+	$infoStr_cols .= $columns[0];
 	for my $i (1 .. $#columns) {
-		$infoStr .= ",".$columns[$i];
+		$infoStr_cols .= ",".$columns[$i];
 	}
 
-	my $infotag = "<input id=\"gif_info\" type=\"hidden\" value='$infoStr'/>";
+	my $infoStr_rows = $height."^";
+	$infoStr_rows .= $rows[0];
+	for my $i (1 .. $#rows) {
+		$infoStr_rows .= ",".$rows[$i];
+	}
+
+	my $infotag_col = "<input id=\"gif_info_columns\" type=\"hidden\" value='$infoStr_cols'/>";
+	my $infotag_row = "<input id=\"gif_info_rows\" type=\"hidden\" value='$infoStr_rows'/>";
 	my $embeddedImage = "<img id=\"grid_image_div\" onClick='onImageClick(event)' onMouseMove='onImageHover(event)' src=\"data:image/gif;base64,".$base64gif."\"/>";
-	print $infotag;
+	print $infotag_col;
+	print $infotag_row;
 	print $embeddedImage;
 }
 
@@ -84,14 +98,9 @@ sub getBase64Gif
 	}
 
 	# build the list of entities -- the row column
-	my $all_elements = {};
-	foreach my $set (@sets) {
-		foreach ($set->get_element_names) {
-			$all_elements->{$_} = 1;
-		}
-	}
+	my @elements_array = MySets::sortElementsList(@sets);
+
 	$json .= "\n[{\"_metadata\":{\"type\":\"rows\"},\"_elements\":{";
-	my @elements_array = keys %$all_elements;
 	$json .='"'.$elements_array[0].'":""';
 	for my $i (1 .. (scalar(@elements_array) - 1)) {
 		$json .= ',"'.$elements_array[$i].'":""';	

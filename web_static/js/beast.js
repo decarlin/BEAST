@@ -538,7 +538,7 @@ function highlightElement(event) {
 	//	}
 	//);
 
-	var colData = document.getElementById('gif_info').value;
+	var colData = document.getElementById('gif_info_columns').value;
 	var data = colData.split('^');
 	
 	var column_width = data[0];

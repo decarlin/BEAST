@@ -111,4 +111,23 @@ sub getDisplayHash
 	return $displayData;
 }
 
+sub sortElementsList
+{
+	my @sets = @_;
+
+	my $all_elements = {};
+	foreach my $set (@sets) {
+		foreach ($set->get_element_names) {
+			if (exists $all_elements->{$_}) {
+				$all_elements->{$_}++;
+			} else {
+				$all_elements->{$_} = 1;
+			}
+		}
+	}
+
+	return sort { $all_elements->{$a} <=> $all_elements->{$b} } keys %$all_elements;
+}
+
+
 1;

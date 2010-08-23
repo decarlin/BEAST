@@ -84,14 +84,24 @@ public class SetEntityGrid {
         jObj.put("row_height", CELL_HEIGHT);
         
         String columnNames[] = new String[this.sets.size()];
-        Iterator iter = this.sets.iterator();
+        Iterator<Set> colIter = this.sets.iterator();
         int i = 0;
-        while (iter.hasNext()) {            
-            columnNames[i++] = ((Set)iter.next()).getName();
+        while (colIter.hasNext()) {            
+            columnNames[i++] = colIter.next().getName();
         }
         
         jObj.put("columns", columnNames);
         
+        
+        String rowNames[] = new String[this.entities.size()];
+        Iterator<Entity> rowIter = this.entities.iterator();
+        i = 0;
+        while (rowIter.hasNext()) {            
+            rowNames[i++] = rowIter.next().getValue();
+        }
+        
+        jObj.put("rows", rowNames); 
+
         try {
             File infoFile = new File(INFO_FILE);
             infoFile.createNewFile();
@@ -99,7 +109,7 @@ public class SetEntityGrid {
             fw.write(jObj.toString());
             fw.close();
         } catch (Exception e) {
-            System.out.print(e.getStackTrace());
+            e.printStackTrace();
         }       
     }
                          
@@ -128,8 +138,7 @@ public class SetEntityGrid {
             createInfoFile();
             
         } catch (Exception e) {
-            
-            System.out.print("error!");
+            e.printStackTrace();
         }        
     }
     
