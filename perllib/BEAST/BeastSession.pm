@@ -162,6 +162,24 @@ sub loadMergeLeafSets($$$)
 	return @selected_sets;
 }
 
+sub saveSelectedCollections
+{
+	my $session = shift;
+	my $selectedX = shift;
+	my $selectedY = shift;
+
+	$session->param('collectionX', $selectedX);
+	$session->param('collectionY', $selectedY);
+}
+
+sub getSelectedCollections
+{
+	my $session = shift;
+
+	return ($session->param('collectionX'), $session->param('collectionY'));
+}
+
+
 sub mergeWithCheckbox
 {
 	my $sets_ref = shift;

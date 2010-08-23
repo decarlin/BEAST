@@ -42,24 +42,32 @@ sub printTab
 
 	if (scalar(@mycollections) > 0) {
 	# collection X
+
+		my ($selectedX, $selectedY) = BeastSession::getSelectedCollections($session);
+		
 		print <<MULTILINE_STR;
-		<select name="Collections_X" id="collections_X"> 
+		<select name="collectionsX" id="collectionsX"> 
 MULTILINE_STR
 		foreach (@mycollections) {
 			my $name = $_->get_name;
-			print "<option value=\"$name\">$name</option>";
+			my $selected = "";
+			if ($name eq $selectedX) { $selected = "selected"; }
+			print "<option value=\"$name\" $selected>$name</option>";
 		}
 		print "</select>";
 	
 		# collectio Y
 		print <<MULTILINE_STR;
-		<select name="Collections_Y" id="collections_Y"> 
+		<select name="collectionsY" id="collectionsY"> 
 MULTILINE_STR
 		foreach (@mycollections) {
 			my $name = $_->get_name;
-			print "<option value=\"$name\">$name</option>";
+			my $selected = "";
+			if ($name eq $selectedY) { $selected = "selected"; }
+			print "<option value=\"$name\" $selected>$name</option>";
 		}
 		print "</select>";
+		print "<input type='button' id='update_selected_collections' value='Update Selected' onClick='return onUpdateSelectedCollections();'><br>";
 	}
 
 	my @mysets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1,"", ""));	

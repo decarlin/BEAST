@@ -571,6 +571,31 @@ function highlightElement(event) {
 	}
 }
 
+function getSelectedOption(select) {
+
+	for (var i=0; i < select.options.length; i++) {
+		if (select.options[i].selected) {
+			return select.options[i];
+		}
+	}
+
+}
+
+function onUpdateSelectedCollections() {
+
+	var collectionX = document.getElementById('collectionsX');
+	var collectionY = document.getElementById('collectionsY');
+	
+	var optionX = getSelectedOption(collectionX);
+	var optionY = getSelectedOption(collectionY);
+	
+	$.get('/cgi-bin/BEAST/index.pl', 
+		{action:"updatecollections",
+		 collectionX:optionX.value,
+		 collectionY:optionY.value}
+	);
+}
+
 function onAddCollection(form) {
 	// the div
 	// the form element is the first child of this div

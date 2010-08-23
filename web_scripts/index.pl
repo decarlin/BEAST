@@ -131,6 +131,7 @@ my $viewObj = ViewTab->new($cgi);
 	elsif ($action eq "clear")
 	{
 		$session->clear('mysets');
+		$session->clear('mycollections');
 	}
 	elsif ($action eq "mysets")
 	{
@@ -153,6 +154,11 @@ my $viewObj = ViewTab->new($cgi);
 		addCollection();
 		$collectionsObj->printTab($session);
 	}
+	elsif ($action eq "updatecollections")
+	{
+		updateActiveCollections();
+	} 
+	# on new load
 
 #	DebugHelper::printRequestParameters($cgi);
 
@@ -331,6 +337,11 @@ sub getEntitiesForSet
 	}
 
 	return @list;
+}
+
+sub updateActiveCollections()
+{
+	BeastSession::saveSelectedCollections($session, $cgi->param('collectionX'), $cgi->param('collectionY'));
 }
 
 sub addCollection()
