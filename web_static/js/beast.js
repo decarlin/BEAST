@@ -518,7 +518,8 @@ function onSetClick(id, depth, ts)
 
 function onImageClick(event) {
 	document.imageLock = true;
-	highlightElement(event);
+	var selectedColumnDiv = highlightElement(event);
+	highlightRowElement(event, selectedColumnDiv);
 }
 
 function onImageHover(event) {
@@ -526,6 +527,21 @@ function onImageHover(event) {
 		return;
 	}
 	highlightElement(event);
+}
+
+function highlightRowElement(event, selectedColumnDiv) {
+        pos_x = event.offsetX?(event.offsetX):event.pageX-document.getElementById("grid_image_div").offsetLeft;
+        pos_y = event.offsetY?(event.offsetY):event.pageY-document.getElementById("pointer_div").offsetTop;
+
+	var rowData = document.getElementById('gif_info_rows').value;
+	var data = rowData.split('^');
+	
+	var row_height = data[0];
+	var rows = data[1].split(',');
+
+	var rowIndex = Math.floor(pos_y / row_height);
+	var elementName = rows[rowIndex];
+	alert(elementName);
 }
 
 function highlightElement(event) {
@@ -549,6 +565,7 @@ function highlightElement(event) {
 	var scrollSpan = scrollDiv.scrollHeight - scrollDiv.offsetHeight;
 	var scrollIncrement = scrollSpan / columns.length;
 
+	var selectedColumnDiv;
 	// column math...
 	var colIndex = Math.floor(pos_x / column_width);
 	try
@@ -558,6 +575,7 @@ function highlightElement(event) {
 		{
 			var div_flat = document.getElementById("mysets_flat"+"<>"+columns[i]);
 			if (i == colIndex) {
+				selectedColumnDiv = div_flat;	
 				div_flat.style.backgroundColor = "yellow";
 				scrollDiv.scrollTop = Math.floor(scrollIncrement * i);
 			} else {
@@ -569,6 +587,7 @@ function highlightElement(event) {
 	{
 		//
 	}
+	return selectedColumnDiv;
 }
 
 function getSelectedOption(select) {
