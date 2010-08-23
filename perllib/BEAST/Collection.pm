@@ -73,14 +73,7 @@ sub get_name
 sub get_set_names
 {
 	my $self = shift;
-
-	my @names;
-
-	foreach my $set (@{$self->{'sets'}}) {
-		push @names, $set->get_name;
-	}
-
-	return @names;
+	return @{$self->{'sets'}};
 }
 
 sub serialize

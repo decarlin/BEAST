@@ -53,8 +53,8 @@ sub printTab
 		($base64gif, $info) = getSetsSetsGif($session);
 	}
 
-	if ($base64gif eq "") {
-		print "Error: can't display image";
+	if ($base64gif eq "" || $info eq "") {
+		return;
 	}
 	
 	printBase64GIF($base64gif, $info);
@@ -99,16 +99,31 @@ sub printBase64GIF
 sub getSetsSetsGif
 {
 	my $session = shift;
-	
+
+	# return array references, or empty strings if not loaded
 	my ($setsX, $setsY) = BeastSession::loadSetsForActiveCollections($session);
+
+	# null check
+	if ($setsX eq "" || $setsY eq "") {
+		return "";
+	}
 
 	my $filename = "/tmp/".$session->id;
 	my $setsXfilename = $filename.".setsX";
 	my $setsYfilename = $filename.".setsY";
 
+	print "setsX:<br>";
+	foreach my $set (@$setsX)  {
+		print $set->serialize()."<br>";
+	}
+	print "setsY:<br>";
+	foreach my $set (@$setsY)  {
+		print $set->serialize()."<br>";
+	}
+
 	my $json = "";
 
-	return runJavaImageGen($session, $json);
+	#return runJavaImageGen($session, $json);
 }
 
 sub getSetsMembersGif

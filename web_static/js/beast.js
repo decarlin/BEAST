@@ -3,6 +3,8 @@ var checked = false;
 function onOpsTabSelected(event, ui) {
 	if (ui.tab.hash == "#search") {
 		onLoadSearch();
+	} else if (ui.tab.hash == '#sets_view') {
+		onLoadHeatmapSetsView();
 	} else if (ui.tab.hash == '#members_view') {
 		onLoadHeatmapMembersView();
 	} else if (ui.tab.hash == '#import') {
@@ -47,6 +49,17 @@ function onLoadSearch() {
 	$('#search').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#search').load('/cgi-bin/BEAST/index.pl', 
 		{action:"search"}
+	);
+}
+
+function onLoadHeatmapSetsView() {
+
+	document.imageLock = false;
+
+	$('#sets_view').empty().html('<img src="images/ajax-loader.gif" />');
+	$('#sets_view').load('/cgi-bin/BEAST/index.pl', 
+		{action:"heatmap",
+		 type:"sets"}
 	);
 }
 

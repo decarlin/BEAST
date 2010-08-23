@@ -144,17 +144,18 @@ sub loadMergeSetsFromSession($$$)
 #
 # Return: [ retval(0|1), @sets ]
 #
-sub loadMergeLeafSets($$$)
+sub loadMergeLeafSets
 {
 	my $session = shift;
 	my $key = shift;
 	my $checkbox_arr_ref = shift;
+	my $load_elements = shift || 0;
 
 	die unless (ref($checkbox_arr_ref) eq 'ARRAY');
 	die unless (ref($session) eq 'CGI::Session');
 	die unless ($key =~ /^\w+$/);
 
-	my @sets = loadLeafSetsFromSession($session, $key, 1, 0);
+	my @sets = loadLeafSetsFromSession($session, $key, 1, $load_elements);
 
 	my $checked_hash = buildCheckedHash(@$checkbox_arr_ref);
 	my @selected_sets = mergeWithCheckbox(\@sets, $checked_hash);
@@ -206,11 +207,19 @@ sub loadSetsForActiveCollections
 	my $session = shift;
 
 	my ($X, $Y) = getSelectedCollectionNames($session);
-	my ($collectionX, $collectionY) = getSelectedCollections($X, $Y);
 
-	my @setsX = loadMergeSetsFromSession($session, 'mysets', \@{$collectionX->get_set_names});
+	if (  (!$X || $X eq "") || (!$Y || $Y eq "")) {
+		return "";
+	}
 
-	my @setsY = loadMergeSetsFromSession($session, 'mysets', \@{$collectionY->get_set_names});
+	my ($collectionX, $collectionY) = getSelectedCollections($session, $X, $Y);
+
+	my @collectionX_setNames = $collectionX->get_set_names;
+	my @collectionY_setNames = $collectionY->get_set_names;
+
+	my @setsX = loadMergeLeafSets($session, 'mysets', \@collectionX_setNames, 1);
+
+	my @setsY = loadMergeLeafSets($session, 'mysets', \@collectionY_setNames, 1);
 
 	return (\@setsX, \@setsY);	
 }
