@@ -68,6 +68,7 @@ MULTILINE_STR
 		}
 		print "</select>";
 		print "<input type='button' id='update_selected_collections' value='Update Selected' onClick='return onUpdateSelectedCollections();'><br>";
+		print "<div>&nbsp;</div>";
 	}
 
 	my @mysets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1,"", ""));	

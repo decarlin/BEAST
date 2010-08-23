@@ -42,37 +42,9 @@ public class SetEntityGrid {
     private ArrayList<Entity> entities = null;
     private HashMap<String,String> set_entity_mappings = null;
     
-    public SetEntityGrid(ArrayList<Set> newsets) {
-        
-        this.sets = new ArrayList<Set>();
-        this.entities = new ArrayList<Entity>();
-        
-        Iterator<Set> setsIter = newsets.iterator();
-        while (setsIter.hasNext()) {
-            
-            Set set = setsIter.next();
-            // add to the sets list
-            sets.add(set);
-            
-            // add the entities for this set that aren't already here
-            ArrayList<Entity> ents = set.getEntities();
-            Iterator<Entity> iter = ents.iterator();
-            while (iter.hasNext()) {
-                Entity newEnt = iter.next();
-                if (!this.entities.contains((Entity)newEnt)) {
-                    this.entities.add((Entity)newEnt);
-                } else {
-                    // increment the number of occurances of this entity
-                    int index = this.entities.indexOf((Entity)newEnt);
-                    this.entities.get(index).incrementNumOccurances();
-                }
-            }           
-        }
-        
-        // sort entities by the number of occurances (reverse to get top ents on top)
-        EntityComparator ec = new EntityComparator();
-        Collections.sort(this.entities, ec);
-        Collections.reverse(this.entities);
+    public SetEntityGrid(ArrayList<Set> newsets, ArrayList<Entity> entities) {
+        this.sets = newsets;
+        this.entities = entities;
     }
     
     public void setBackground(Color c) {
@@ -154,7 +126,7 @@ public class SetEntityGrid {
             g2.dispose();
             
             createInfoFile();
-
+            
         } catch (Exception e) {
             
             System.out.print("error!");
@@ -265,7 +237,10 @@ public class SetEntityGrid {
         // read from standard inputs 
         
         
+        // columns
         ArrayList<Set> sets = new ArrayList<Set>();
+        // rows
+        ArrayList<Entity> entities = new ArrayList<Entity>();
         
         BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
         String line;
@@ -305,6 +280,14 @@ public class SetEntityGrid {
                             }
                             foundInfo = true;
                             break;
+                    case 3:
+                            // this is the row list
+                            JSONObject elements = jsonObj.getJSONObject("_elements");
+                            Iterator<String> keys = elements.keys();
+                            while (keys.hasNext()) {
+                                entities.add(new Entity(keys.next()));                               
+                            }
+                            
                         
                 }
                 
@@ -318,7 +301,7 @@ public class SetEntityGrid {
             throw new Exception("No metadata/info found for set of JSON strings!");        
         }
         
-        SetEntityGrid heatmap = new SetEntityGrid(sets);
+        SetEntityGrid heatmap = new SetEntityGrid(sets, entities);
         heatmap.buildGrid();
         
         if (ACTION.compareTo("gif") == 0) {

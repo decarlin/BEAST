@@ -83,6 +83,21 @@ sub getBase64Gif
 		$json = $json."\n"."[".$set->serialize()."]";
 	}
 
+	# build the list of entities -- the row column
+	my $all_elements = {};
+	foreach my $set (@sets) {
+		foreach ($set->get_element_names) {
+			$all_elements->{$_} = 1;
+		}
+	}
+	$json .= "\n[{\"_metadata\":{\"type\":\"rows\"},\"_elements\":{";
+	my @elements_array = keys %$all_elements;
+	$json .='"'.$elements_array[0].'":""';
+	for my $i (1 .. (scalar(@elements_array) - 1)) {
+		$json .= ',"'.$elements_array[$i].'":""';	
+	}
+	$json .= '}}]';
+
 	# debug
 	#my $test_json = $json;
 	#$test_json =~ s/\n/<br>/g;	
