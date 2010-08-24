@@ -26,6 +26,7 @@ sub runSQL($$);
 sub getSetIdFromExternalId($);
 sub getSetNameExtIdFromID($);
 sub getEntityNameFromID($);
+sub getEntityIDFromExternalID($);
 sub getMetaIdFromExternalId($);
 sub getMetaNameExtIDFromID($);
 sub insertSQL($$);
@@ -157,6 +158,17 @@ sub getSetNameExtIdFromID($)
 
 	my (@data) = $results->fetchrow_array();
 	return ($data[0], $data[1]);
+}
+
+sub getEntityIDFromExternalID($)
+{
+	my $self = shift;
+	my $ex_id = shift;
+
+	my $results = $self->runSQL("SELECT id FROM entity WHERE entity_key='".$ex_id."'");	
+
+	my (@data) = $results->fetchrow_array();
+	return $data[0];
 }
 
 sub getEntityNameFromID($)

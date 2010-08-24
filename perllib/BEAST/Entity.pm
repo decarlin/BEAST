@@ -82,7 +82,7 @@ sub insertDB
 		$$err_str = "entity already exists: ".$self->get_name;
 	} else {
 		$internal_id = $db->insertEntity($self->get_name, $self->get_desc, $self->get_ex_id, $self->get_keyspace);
-		$$err_str = "added entity: ".$self->get_name;
+		$$err_str = "added entity: ".$self->get_ex_id;
 	}
 
 	return $internal_id;

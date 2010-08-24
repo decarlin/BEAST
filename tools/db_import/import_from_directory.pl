@@ -111,7 +111,7 @@ foreach my $line (<ELS>) {
 
 	# save for the sets
 	$entity->set_id($internal_id);
-	$entities->{$name} = $entity;
+	#$entities->{$name} = $entity;
 }
 close (ELS);
 
@@ -120,7 +120,8 @@ print "ADDING SETS TO DB ";
 print "\n -------------------------- \n";
 my $sets_hash = {};
 foreach my $set (@sets) {
-	$set->insertDB($importer, $entities, \$err_str);
+	#$set->insertDB($importer, $entities, \$err_str);
+	$set->insertDB($importer, "", \$err_str);
 	$sets_hash->{$set->get_name} = $set;
 	print $err_str."\n";
 }

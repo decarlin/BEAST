@@ -577,19 +577,28 @@ sub insertDB
 
 		foreach my $element_name ($self->get_element_names) {
 
-			my $entity = $entities->{$element_name};
-			unless ($entity->get_id =~ /\d+/) {
-				$$error_ref .= "Entity not in DB or ID not set for obj $element_name!\n";
+			# the entities hash is optional: otherwise we'll have to 
+			# query the DB for the entity ID
+			my $entity_id;
+			if ( !($entities eq "") && ref($entities) eq 'HASH') {
+				$entity_id = $entities->{$element_name}->get_id;
+			} else {
+				$entity_id = $db->getEntityIDFromExternalID($element_name);	
 			}
 
-			if ($db->existsSetEntityRel($set_internal_id, $entity->get_id) > 0) {
-				$$error_ref .= "entity already in DB".$entity->get_name."\n";
+			unless ($entity_id =~ /\d+/) {
+				$$error_ref .= "Entity not in DB or ID not set for obj $element_name!\n";
+				return;
+			}
+
+			if ($db->existsSetEntityRel($set_internal_id, $entity_id) > 0) {
+				$$error_ref .= "entity already in DB".$element_name."\n";
 			} else {
 				my $element_value = $self->get_element($element_name);
 				if ($element_value eq "") {
 					$element_value = "NULL";	
 				}
-				$db->insertSetEntityRel($set_internal_id, $entity->get_id, $element_value);
+				$db->insertSetEntityRel($set_internal_id, $entity_id, $element_value);
 			}
 		}
 	}
