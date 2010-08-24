@@ -96,6 +96,13 @@ sub get_name
 	return $self->{'_name'};
 }
 
+sub get_type
+{
+	my $self = shift;
+	# should be either meta or set
+	return $self->get_metadata_value('type');
+}
+
 sub get_id
 {
 	my $self = shift;
@@ -505,9 +512,34 @@ sub insertDB
 	my $entities = shift;
 	my $error_ref = shift;
 
+	my $type = $self->get_type;
+
 	unless (ref($db) eq 'BeastDB') {
 		$$error_ref = "Bad BeastDB Handle";
 		return $FALSE;
+	}
+
+
+	if ($type eq 'meta') {
+		
+		my $meta_id;
+		unless ( ($meta_id = $db->existsMeta($self->get_ex_id)) > 0) {
+			$meta_id = $db->insertMeta($self->get_ex_id, $self->get_metadata_value('name'));
+			unless ($meta_id =~ /\d+/) {
+				$$error_ref = "Can't insert Meta";
+				return $FALSE;
+			}
+			$$error_ref = "Added Meta ".$self->get_name." to DB";
+		} else {
+			$$error_ref = "Meta ".$self->get_name." already exists";
+		}
+
+		$self->set_metadata_value('id', $meta_id);
+		return $TRUE;
+	}
+
+	unless ($type eq 'set') {
+		$$error_ref = "Not type 'set' or 'meta'";
 	}
 
 	my $source = $self->get_metadata_value('source');
@@ -525,10 +557,10 @@ sub insertDB
 	} else {
 		$set_internal_id = $db->insertSet($self->get_name, $self->get_ex_id);
 		unless ($set_internal_id =~ /\d+/) { 
-			$$error_ref = "Failed to Insert Set";
+			$$error_ref = "Failed to Insert Set ".$self->get_name;
 			return $FALSE;	
 		} else {
-			$$error_ref .= "Added Set To DB";
+			$$error_ref .= "Added Set ".$self->get_name." To DB";
 		}
 
 	

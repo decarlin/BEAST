@@ -31,6 +31,7 @@ sub getMetaNameExtIDFromID($);
 sub insertSQL($$);
 sub escapeSQLString;
 sub insertSet($$);
+sub insertKeyspace($$$);
 sub insertMeta($$);
 sub insertEntity($$$$);
 sub insertSetEntityRel($$$);
@@ -47,6 +48,7 @@ sub getParentsForMeta($$);
 sub existsMeta($$);
 sub existsSet($$);
 sub existsEntity($$);
+sub existsKeyspace($$);
 sub findRoots();
 sub getRoots();
 sub getChildren($);
@@ -228,6 +230,23 @@ sub escapeSQLString
 ##
 
 # return the id created
+sub insertKeyspace($$$)
+{
+	my $self = shift;
+	my ($organism, $source, $desc) = @_;
+	
+	my $template = "INSERT INTO keyspace (organism, source, description) VALUES (var1, var2, var3);";
+
+	$desc = escapeSQLString($desc);
+
+	$template =~ s/var1/'$organism'/;
+	$template =~ s/var2/'$source'/;
+	$template =~ s/var3/'$desc'/;
+
+	return $self->insertSQL($template);	
+}
+
+# return the id created
 sub insertSet($$)
 {
 	my $self = shift;
@@ -310,8 +329,6 @@ sub insertMetaMetaRel($$)
 	my $self = shift;
 	my ($parent, $meta_child) = @_;
 
-	die if (scalar(@_) > 2);
-
 	my $template = "INSERT INTO meta_sets (sets_meta_id, sets_id, meta_meta_id) VALUES (var1, NULL, var2);";
 	
 	$template =~ s/var1/'$parent'/;
@@ -324,8 +341,6 @@ sub insertSetMetaRel($$)
 	my $self = shift;
 	my ($parent, $set_child) = @_;
 
-	die if (scalar(@_) > 2);
-
 	my $template = "INSERT INTO meta_sets (sets_meta_id, sets_id, meta_meta_id) VALUES (var1, var2, NULL);";
 	
 	$template =~ s/var1/'$parent'/;
@@ -337,8 +352,6 @@ sub existsMetaMetaRel($$)
 {
 	my $self = shift;
 	my ($parent, $meta_child) = @_;
-
-	die if (scalar(@_) > 2);
 
 	my $query = "SELECT * FROM meta_sets WHERE sets_meta_id=var1 AND meta_meta_id=var3";
 
@@ -598,6 +611,25 @@ sub existsSet($$)
 	}
 }
 
+
+sub existsKeyspace($$)
+{
+	my $self = shift;
+	my ($organism, $source) = @_;
+
+	my $template = "SELECT id FROM keyspace WHERE organism='var1' AND source='var2'";
+
+	$template =~ s/var1/$organism/;
+	$template =~ s/var2/$source/;
+
+	my $results = $self->runSQL($template);
+	my (@data) = $results->fetchrow_array();
+	if ($#data == -1) {
+		return $FALSE;
+	} else {
+		return $data[0];
+	}
+}
 
 sub existsEntity($$)
 {
