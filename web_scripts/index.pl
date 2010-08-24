@@ -128,6 +128,8 @@ my $viewObj = ViewTab->new($cgi);
 	{
 		$session->clear('mysets');
 		$session->clear('mycollections');
+		$session->clear('collectionX');
+		$session->clear('collectionY');
 	}
 	elsif ($action eq "mysets")
 	{
