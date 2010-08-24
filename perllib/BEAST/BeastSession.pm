@@ -155,7 +155,8 @@ sub loadMergeLeafSets
 	die unless (ref($session) eq 'CGI::Session');
 	die unless ($key =~ /^\w+$/);
 
-	my @sets = loadLeafSetsFromSession($session, $key, 1, $load_elements);
+	my $element_opts = {'external_id' => 1};
+	my @sets = loadLeafSetsFromSession($session, $key, 1, $load_elements, $element_opts);
 
 	my $checked_hash = buildCheckedHash(@$checkbox_arr_ref);
 	my @selected_sets = mergeWithCheckbox(\@sets, $checked_hash);
@@ -191,6 +192,10 @@ sub getSelectedCollections
 	my $collectionY;
 	
 	my @mycollections = BeastSession::loadObjsFromSession($session, 'mycollections', Collection->new('constructor',""));	
+	unless (ref($mycollections[0]) eq 'Collection') {
+		return "";
+	}
+
 	foreach my $collection (@mycollections) {
 		if ($X_name eq $collection->get_name) {
 			$collectionX = $collection;	
@@ -207,12 +212,15 @@ sub loadSetsForActiveCollections
 	my $session = shift;
 
 	my ($X, $Y) = getSelectedCollectionNames($session);
-
 	if (  (!$X || $X eq "") || (!$Y || $Y eq "")) {
 		return "";
 	}
 
 	my ($collectionX, $collectionY) = getSelectedCollections($session, $X, $Y);
+	if (  (!$collectionX || $collectionX eq "") || (!$collectionY || $collectionY eq "")) {
+		return "";
+	}
+
 
 	my @collectionX_setNames = $collectionX->get_set_names;
 	my @collectionY_setNames = $collectionY->get_set_names;
@@ -314,6 +322,7 @@ sub loadLeafSetsFromSession
 	my $keep_inactive = shift;
 	# 1 yes, 0 no
 	my $include_elements = shift;
+	my $entity_opts = shift || undef;
 
 	## 
 	##  We do have to get the entities from the DB at this point
@@ -343,14 +352,33 @@ sub loadLeafSetsFromSession
 			next if (($keep_inactive == 0) && ($leaf->is_active == 0));
 
 			if ($include_elements == 1) {
+
+				my $threshold = 0.05;
+				if (defined $entity_opts && exists $entity_opts->{'threshold'}) {
+					$threshold = $entity_opts->{'threshold'};	
+				}
+
+				my $add_ext_id = undef;
+				if (defined $entity_opts && exists $entity_opts->{'external_id'}) {
+					$add_ext_id = 1;	
+				}
+
 				my $elements_for_this_set = $beastDB->getEntitiesForSet($leaf->get_id);
-				foreach (keys %$elements_for_this_set) {
-					my $el = $_;
-					if ($elements_for_this_set->{$el} =~ /-?\d+\.?\d+?/) {
+				foreach my $el_name (keys %$elements_for_this_set) {
+
+					my $element = $elements_for_this_set->{$el_name};
+					if (defined $add_ext_id) {
+						$leaf->set_element(uc($el_name),$element->{'external_id'});
+						next;
+					}
+
+					if ($element->{'member_value'} =~ /-?\d+\.?\d+?/) {
 						# the element is the membership value -1 to 1, or NULL
-						$leaf->set_element(uc($el),$elements_for_this_set->{$el});
+						if (abs($element->{'member_value'}) > $threshold) {
+							$leaf->set_element(uc($el_name),$element->{'member_value'});
+						}
 					} else {
-						$leaf->set_element(uc($el),"");
+						$leaf->set_element(uc($el_name),"");
 					}
 				}
 			}

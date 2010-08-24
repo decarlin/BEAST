@@ -164,10 +164,10 @@ sub getEntityNameFromID($)
 
 	die unless ($id =~ /\d+/);	
 
-	my $results = $self->runSQL("SELECT name FROM entity WHERE id='".$id."'");	
+	my $results = $self->runSQL("SELECT name,entity_key FROM entity WHERE id='".$id."'");	
 
 	my (@data) = $results->fetchrow_array();
-	return $data[0];
+	return ($data[0], $data[1]);
 }
 
 #
@@ -434,9 +434,9 @@ sub getEntitiesForSet($$)
 	my $names_values = {};
 	foreach (keys %$ids_values) {
 		my $id = $_;
-		my $name = $self->getEntityNameFromID($id);
+		my ($name, $external_id) = $self->getEntityNameFromID($id);
 		my $member_value = $ids_values->{$id};
-		$names_values->{uc($name)} = $member_value;
+		$names_values->{uc($name)} = { 'member_value' => $member_value, 'external_id' => $external_id };
 	}
 	return $names_values;
 }

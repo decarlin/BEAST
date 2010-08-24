@@ -565,6 +565,28 @@ sub insertDB
 	$self->set_metadata_value('id', $set_internal_id);
 }
 
+# simple tab delineated string
+sub toString
+{
+	my $self = shift;
+
+	my $str = $self->get_name;
+
+	my @names = $self->get_element_names;	
+	
+	$str .= "\t".$self->get_element($names[0]);
+	foreach my $i (1 .. (scalar(@names) - 1) ) {
+		my $element = $self->get_element($names[$i]);
+		if (ref($element) eq 'Set') {
+			$str .= "\t".$element->get_name;
+		} else {
+			$str .= "\t".$element;
+		}
+	}
+
+	return $str;	
+}
+
 sub parseSetLines
 {
 	my @lines = @_;

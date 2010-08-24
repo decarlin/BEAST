@@ -114,11 +114,11 @@ sub getSetsSetsGif
 
 	print "setsX:<br>";
 	foreach my $set (@$setsX)  {
-		print $set->serialize()."<br>";
+		print $set->toString()."<br>";
 	}
 	print "setsY:<br>";
 	foreach my $set (@$setsY)  {
-		print $set->serialize()."<br>";
+		print $set->toString()."<br>";
 	}
 
 	my $json = "";

@@ -325,8 +325,8 @@ sub getEntitiesForSet
 
 	my @list;
 	foreach (keys %$entities) {
-		if ($entities->{$_}) {
-			push @list, "$_:".$entities->{$_};
+		if ($entities->{$_}->{'member_value'} =~ /\d?\.\d+/) {
+			push @list, "$_:".$entities->{$_}->{'member_value'};
 		} else {
 			push @list, $_;	
 		}
