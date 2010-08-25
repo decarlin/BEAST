@@ -138,6 +138,20 @@ sub pare_inactive_leaves
 	}
 }
 
+sub get_source
+{
+	my $self = shift;
+	return $self->get_metadata_value('source');
+}
+
+sub set_source
+{
+	my $self = shift;
+	my $source = shift;
+
+	$self->get_metadata_value('source') = $source;
+}
+
 sub is_active
 {
 	my $self = shift;

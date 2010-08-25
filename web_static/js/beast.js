@@ -554,7 +554,7 @@ function highlightRowElement(event, selectedColumnDiv) {
 
 	var rowIndex = Math.floor(pos_y / row_height);
 	var elementName = rows[rowIndex];
-	alert(elementName);
+	alert('Gene: '+elementName);
 }
 
 function highlightElement(event) {

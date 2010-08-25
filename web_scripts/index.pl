@@ -349,6 +349,14 @@ sub addCollection()
 	my @collectionSets = BeastSession::loadMergeLeafSets($session, 'mysets', \@checkboxdata);
 	my $newCollection = Collection->new($name, @collectionSets);
 
+	# assuming homosets, get the source for any set to determine the 
+	# source and keyspace
+	# likewise get the keyspace for 
+	#my $source = $collectionSets[0]->get_source;
+	#my $organism = $collectionSets[0]->get_keyspace_organism;
+	#$newCollection->set_source($source);
+	#$newCollection->set_organism($organism);
+
 	# add to the existing collections
 	my @collections = BeastSession::loadObjsFromSession($session, 'mycollections', Collection->new('constructor', ""));
 	unless (ref($collections[0]) eq 'Collection') {

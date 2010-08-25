@@ -363,13 +363,23 @@ sub loadLeafSetsFromSession
 					$add_ext_id = 1;	
 				}
 
+				my $i = 0;
 				my $elements_for_this_set = $beastDB->getEntitiesForSet($leaf->get_id);
 				foreach my $el_name (keys %$elements_for_this_set) {
 
+					# hashref with member_value, external_id
 					my $element = $elements_for_this_set->{$el_name};
 					if (defined $add_ext_id) {
 						$leaf->set_element(uc($el_name),$element->{'external_id'});
 						next;
+					}
+
+					# get the keyspace organism for the first entity, and use that
+					# for the set metadata -- assuming homosets here
+					if ($i == 0) {
+						my $organism = $beastDB->getKeyspaceOrganism($element->{'id'});
+						$i++;
+						$leaf->set_metadata_value('organism', $organism);
 					}
 
 					if ($element->{'member_value'} =~ /-?\d+\.?\d+?/) {

@@ -128,7 +128,15 @@ sub getSetFromID($)
 	# create the set object, and assign it to a 'elements' hash reference, 
 	# which each meta parent will point to 
 	my ($set_name, $set_ext_id) = $beastDB->getSetNameExtIdFromID($set_id);
-	my $set_metadata = { 'type' => 'set', 'name' => "$set_name", 'id' => $set_id };
+	
+	my $source = $beastDB->getSetSource($set_id);
+
+	my $set_metadata = { 	
+		'type' => 'set', 
+		'name' => "$set_name", 
+		'id' => $set_id, 
+		'source' => $source
+	};
 	# find set elements
 	my $set_elements = {};
 

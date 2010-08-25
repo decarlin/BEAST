@@ -24,8 +24,10 @@ sub connectDB();
 sub disconnectDB();
 sub runSQL($$);
 sub getSetIdFromExternalId($);
+sub getSetSource($);
 sub getSetNameExtIdFromID($);
 sub getEntityNameFromID($);
+sub getKeyspaceOrganism($);
 sub getEntityIDFromExternalID($);
 sub getMetaIdFromExternalId($);
 sub getMetaNameExtIDFromID($);
@@ -399,6 +401,24 @@ sub existsSetMetaRel($$)
 	}
 }
 
+sub getKeyspaceOrganism($)
+{
+	my $self = shift;
+	my $entity_id = shift;
+
+	my $template = "SELECT organism FROM entity,keyspace WHERE entity.keyspace_id=keyspace.id AND entity.id='var1';";
+	
+	$template =~ s/var1/$entity_id/;
+
+	my $results = $self->runSQL($template);	
+	my (@data) = $results->fetchrow_array();
+	if ($#data == -1) {
+		return $FALSE;
+	} else {
+		return $TRUE;
+	}
+}
+
 sub existsSetEntityRel($$)
 {
 	my $self = shift;
@@ -461,7 +481,7 @@ sub getEntitiesForSet($$)
 		my $id = $_;
 		my ($name, $external_id) = $self->getEntityNameFromID($id);
 		my $member_value = $ids_values->{$id};
-		$names_values->{uc($name)} = { 'member_value' => $member_value, 'external_id' => $external_id };
+		$names_values->{uc($name)} = { 'id' => $id, 'member_value' => $member_value, 'external_id' => $external_id };
 	}
 	return $names_values;
 }
@@ -536,6 +556,24 @@ sub searchSetsByTermRestrictKeyspace($$$)
 	}
 
 	return @data;
+}
+
+sub getSetSource($)
+{
+	my $self = shift;
+	my $set_id = shift;
+	
+	my $template = "SELECT value FROM sets_info WHERE sets_info.sets_id='var1';";
+
+	$template =~ s/var1/$set_id/;
+
+	my $results = $self->runSQL($template);
+	my (@data) = $results->fetchrow_array();
+	if ($#data == -1) {
+		return $FALSE;
+	} else {
+		return $data[0];
+	}
 }
 
 # restrict to non-empty sets that have real entities attached

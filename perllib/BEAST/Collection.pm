@@ -76,6 +76,21 @@ sub get_set_names
 	return @{$self->{'sets'}};
 }
 
+# assuming homosets, the source sets_info of the sets
+sub get_source
+{
+	my $self = shift;
+	return $self->{'source'};
+}
+
+sub set_source
+{
+	my $self = shift;
+	my $source = shift;
+
+	$self->{'source'} = $source;
+}
+
 sub serialize
 {
 	my $self = shift;

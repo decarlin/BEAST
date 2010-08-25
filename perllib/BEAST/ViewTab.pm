@@ -12,6 +12,7 @@ use htmlHelper;
 use Data::Dumper;
 use BEAST::BeastSession;
 use BEAST::Constants;
+use BEAST::SetsOverlap;
 use BEAST::MySets;
 use JSON -convert_blessed_universally;
 
@@ -112,16 +113,37 @@ sub getSetsSetsGif
 	my $setsXfilename = $filename.".setsX";
 	my $setsYfilename = $filename.".setsY";
 
-	print "setsX:<br>";
+	unless (open(SETSX, ">$setsXfilename"))  { 
+		print "can't open tmp file!\n"; 
+		return; 
+	}
 	foreach my $set (@$setsX)  {
-		print $set->toString()."<br>";
+		print SETSX $set->toString()."\n";
 	}
-	print "setsY:<br>";
+	close (SETSX);
+	
+	unless (open(SETSY, ">$setsYfilename")) { 
+		print "can't open tmp file!\n"; 
+		return; 
+	}
 	foreach my $set (@$setsY)  {
-		print $set->toString()."<br>";
+		print SETSY $set->toString()."\n";
 	}
+	close (SETSY);
+	
+	# needs to be set for sets_overlap.pl to work
 
-	my $json = "";
+	my $sets_overlap_prog = SetsOverlap->new({
+		'gold_file' => $setsXfilename,
+		'test_file' => $setsYfilename,
+		'gold_universe_file' => "/go/human/universe.lst",
+		'test_universe_file' => "/go/human/universe.lst",
+		'tmp_base_file' => $filename
+	});
+	
+	$sets_overlap_prog->run;
+	$sets_overlap_prog->print_raw_output;
+	$sets_overlap_prog->clean;
 
 	#return runJavaImageGen($session, $json);
 }

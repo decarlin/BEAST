@@ -24,8 +24,11 @@ our $VERSION    = 1.0;
 
 use constant TEMP_DIR => "/projects/sysbio/map/Papers/MetaTrans/perl/Data";
 use constant JAVA_32_BIN => "/projects/sysbio/apps/i386/jre/jre1.6.0_21/bin/java";
+use constant PERL_32_BIN => "/usr/bin/perl";
+use constant PERL_LIB_DIR => "/projects/sysbio/lab_apps/perl";
 use constant JAVA_64_BIN => "/projects/sysbio/apps/x86_64/jre/jre1.6.0_21/bin/java";
 use constant HEATMAP_JAR => "/projects/sysbio/map/Projects/BEAST/javalib/heatmap.jar";
+use constant SETS_OVERLAP => "/projects/sysbio/lab_apps/perl/Tools/sets_overlap.pl";
 use constant JAVA_ERROR_LOG => "/tmp/beast_java_errlog.txt";
 use constant WEB_STATIC_DIR => "/projects/sysbio/map/Projects/BEAST/web_static";
 use constant WEB_SCRIPT_DIR => "/projects/sysbio/map/Projects/BEAST/web_scripts";
