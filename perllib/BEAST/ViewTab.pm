@@ -142,7 +142,7 @@ sub getSetsSetsGif
 	});
 	
 	$sets_overlap_prog->run;
-	$sets_overlap_prog->print_raw_output;
+	print $sets_overlap_prog->parse_output_to_json;
 	$sets_overlap_prog->clean;
 
 	#return runJavaImageGen($session, $json);

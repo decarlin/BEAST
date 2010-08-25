@@ -80,6 +80,61 @@ sub run
 	return 1;		
 }
 
+sub parse_output_to_json
+{
+	my $self = shift;
+
+	my @test_sets;
+	my $state = 'begin';
+
+	my $current_test_set;	
+	my $highest_score = 0;
+
+	foreach my $line (@{$self->{'output'}}) {
+
+		# in any state
+		if ($line =~ /^>(\S+)$/) {
+			my $test_set_name = $1;
+
+			# end of last set
+			if ($state eq 'gold_sets') {
+				my $ref = $current_test_set;
+				push @test_sets, $ref;
+			}
+	
+			$current_test_set = Set->new($test_set_name, 1, { 'type' => 'hypergeometric'}, {}) ; 	
+			$state = 'gold_sets';
+			next;
+		}
+	
+		if ($state eq 'gold_sets') {
+			my @comps = split(/,/,$line);
+			#print $line."<br>";
+			# normalize the log10 of the p value
+			if (-$comps[1] > $highest_score) {
+				$highest_score = -$comps[1];
+			}
+			$current_test_set->set_element($comps[0], -$comps[1]);
+		}
+	}
+	push @test_sets, $current_test_set;
+
+
+	#print Data::Dumper->Dump([@test_sets]);	
+
+	my $json_str = "";
+	# normalize all the set scores
+	foreach my $set (@test_sets) {
+		foreach my $name ($set->get_element_names) {
+			my $score = $set->get_element($name);
+			$set->set_element($name, $score / $highest_score);
+		}
+		$json_str .= $set->serialize()."\n";	
+	}
+
+	return $json_str;
+}
+
 sub print_raw_output
 {
 	my $self = shift;
