@@ -112,6 +112,7 @@ sub getSetsSetsGif
 	my $filename = "/tmp/".$session->id;
 	my $setsXfilename = $filename.".setsX";
 	my $setsYfilename = $filename.".setsY";
+	my @rows;
 
 	unless (open(SETSX, ">$setsXfilename"))  { 
 		print "can't open tmp file!\n"; 
@@ -128,6 +129,7 @@ sub getSetsSetsGif
 	}
 	foreach my $set (@$setsY)  {
 		print SETSY $set->toString()."\n";
+		push @rows, $set->get_name;
 	}
 	close (SETSY);
 	
@@ -142,10 +144,28 @@ sub getSetsSetsGif
 	});
 	
 	$sets_overlap_prog->run;
-	print $sets_overlap_prog->parse_output_to_json;
+	my $test_sets_json = $sets_overlap_prog->parse_output_to_json;
 	$sets_overlap_prog->clean;
 
-	#return runJavaImageGen($session, $json);
+	my $json = getJSONMetadata($session);
+	my $row_json = getJSONRowdata(@rows);
+	$json = $json."\n".$row_json;
+	$json .= "\n".$test_sets_json;
+
+	return runJavaImageGen($session, $json);
+}
+
+sub getJSONMetadata
+{
+	my $session = shift;
+
+	my $filename = "/tmp/".$session->id.".txt";
+
+	my $json = "[{\"_metadata\":{\"type\":\"info\",\"action\":\"base64gif\",\"filename\":\"$filename\"";
+	$json .= ',"width":"'.Constants::VIEW_WIDTH.'","height":"'.Constants::VIEW_HEIGHT.'"';
+	$json .= "}}]";
+
+	return $json;
 }
 
 sub getSetsMembersGif
@@ -154,11 +174,9 @@ sub getSetsMembersGif
 	
 	my @sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 0, 1);
 
-	my $filename = "/tmp/".$session->id.".txt";
+	my $json = getJSONMetadata($session);
 
-	my $json = "[{\"_metadata\":{\"type\":\"info\",\"action\":\"base64gif\",\"filename\":\"$filename\"";
-	$json .= ',"width":"'.Constants::VIEW_WIDTH.'","height":"'.Constants::VIEW_HEIGHT.'"';
-	$json .= "}}]";
+
 	foreach my $set (@sets) {
 		$json = $json."\n"."[".$set->serialize()."]";
 	}
@@ -166,14 +184,24 @@ sub getSetsMembersGif
 	# build the list of entities -- the row column
 	my @elements_array = MySets::sortElementsList(@sets);
 
-	$json .= "\n[{\"_metadata\":{\"type\":\"rows\"},\"_elements\":{";
-	$json .='"'.$elements_array[0].'":""';
-	for my $i (1 .. (scalar(@elements_array) - 1)) {
-		$json .= ',"'.$elements_array[$i].'":""';	
+	my $row_json = getJSONRowdata(@elements_array);
+	$json = $json."\n".$row_json;
+
+	return runJavaImageGen($session, $json);
+}
+
+sub getJSONRowdata
+{
+	my @elements = @_;
+
+	my $json = "[{\"_metadata\":{\"type\":\"rows\"},\"_elements\":{";
+	$json .='"'.$elements[0].'":""';
+	for my $i (1 .. (scalar(@elements) - 1)) {
+		$json .= ',"'.$elements[$i].'":""';	
 	}
 	$json .= '}}]';
 
-	return runJavaImageGen($session, $json);
+	return $json;
 }
 
 sub runJavaImageGen
@@ -212,14 +240,14 @@ sub runJavaImageGen
 			unlink($info_filename);
 			BeastSession::saveGifInfoToSession($session, $info);
 		} else {
-			print "Error: couldn't create temp info file";
+			print "Error: couldn't create temp info file $info_filename";
 			my $errlog = Constants::JAVA_ERROR_LOG;
 			print `cat $errlog`;
 		}
 
 		return ($base64gif, $info);
 	} else {
-		print "Error: couldn't create temp file";
+		print "Error: couldn't create temp file $filename";
 		my $errlog = Constants::JAVA_ERROR_LOG;
 		print `cat $errlog`;
 	}

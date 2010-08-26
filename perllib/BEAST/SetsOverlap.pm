@@ -11,6 +11,7 @@ use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 our $TRUE = 1;
 our $FALSE = 0;
 
+use Math::BigFloat;
 use BEAST::Constants;
 
 # Wrapper for sets_overlap.pl
@@ -90,6 +91,8 @@ sub parse_output_to_json
 	my $current_test_set;	
 	my $highest_score = 0;
 
+	Math::BigFloat->accuracy(5);
+
 	foreach my $line (@{$self->{'output'}}) {
 
 		# in any state
@@ -101,8 +104,8 @@ sub parse_output_to_json
 				my $ref = $current_test_set;
 				push @test_sets, $ref;
 			}
-	
-			$current_test_set = Set->new($test_set_name, 1, { 'type' => 'hypergeometric'}, {}) ; 	
+
+			$current_test_set = Set->new($test_set_name, 1, { 'type' => 'set'}, {}) ; 	
 			$state = 'gold_sets';
 			next;
 		}
@@ -114,6 +117,7 @@ sub parse_output_to_json
 			if (-$comps[1] > $highest_score) {
 				$highest_score = -$comps[1];
 			}
+
 			$current_test_set->set_element($comps[0], -$comps[1]);
 		}
 	}
@@ -127,9 +131,14 @@ sub parse_output_to_json
 	foreach my $set (@test_sets) {
 		foreach my $name ($set->get_element_names) {
 			my $score = $set->get_element($name);
-			$set->set_element($name, $score / $highest_score);
+			my $normalized_score = $score / $highest_score;
+
+			# JSON double's can't deal with high precision: chop of the mantissa
+			my $float = Math::BigFloat->new($normalized_score);
+
+			$set->set_element($name, $float->bstr());
 		}
-		$json_str .= $set->serialize()."\n";	
+		$json_str .= "[".$set->serialize()."]\n";	
 	}
 
 	return $json_str;
