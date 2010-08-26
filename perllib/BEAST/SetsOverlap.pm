@@ -18,6 +18,7 @@ use BEAST::Constants;
 sub new
 {
 	my $class = shift;
+	my $err_str = shift;
 	my $self = shift;
 
 #	my $self = {
@@ -32,7 +33,16 @@ sub new
 	$self->{'perl_bin'} = Constants::PERL_32_BIN;
 	$self->{'sets_overlap'} = Constants::SETS_OVERLAP;
 	$self->{'universe_file_topdir'} = Constants::WEB_STATIC_DIR."/universe_files";
+	$self->{'normalization_constant'} = Constants::HEATMAP_NORM_CONSTANT;
 	
+	unless (-f Constants::WEB_STATIC_DIR."/universe_files".$self->{'gold_universe_file'}) {
+		$$err_str = "No Gold Universe File!"; 
+		return undef;
+	}
+	unless (-f Constants::WEB_STATIC_DIR."/universe_files".$self->{'test_universe_file'}) {
+		$$err_str = "No Test Universe File!"; 
+		return undef;
+	}
 
 	bless $self, $class;
 	return $self;
@@ -127,11 +137,24 @@ sub parse_output_to_json
 	#print Data::Dumper->Dump([@test_sets]);	
 
 	my $json_str = "";
+
+	my $norm_factor;
+	if ($self->{'normalization_constant'} < $highest_score) {
+		$norm_factor = $self->{'normalization_constant'};
+	} else {
+		$norm_factor = $highest_score;
+	}
+	
 	# normalize all the set scores
 	foreach my $set (@test_sets) {
 		foreach my $name ($set->get_element_names) {
 			my $score = $set->get_element($name);
-			my $normalized_score = $score / $highest_score;
+			my $normalized_score = $score / $norm_factor;
+			if ($score > $norm_factor) {
+				$normalized_score = 1;
+			} else {
+				$normalized_score = $score / $norm_factor;
+			}
 
 			# JSON double's can't deal with high precision: chop of the mantissa
 			my $float = Math::BigFloat->new($normalized_score);

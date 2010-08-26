@@ -113,6 +113,11 @@ sub getSetsSetsGif
 	my $setsYfilename = $filename.".setsY";
 	my @rows;
 
+	my $setXOrganism = $setsX->[0]->get_metadata_value('organism');
+	my $setXSource = $setsX->[0]->get_source;
+	my $setYOrganism = $setsY->[0]->get_metadata_value('organism');
+	my $setYSource = $setsY->[0]->get_source;
+
 	unless (open(SETSX, ">$setsXfilename"))  { 
 		print "can't open tmp file!\n"; 
 		return; 
@@ -134,16 +139,24 @@ sub getSetsSetsGif
 	
 	# needs to be set for sets_overlap.pl to work
 
-	my $sets_overlap_prog = SetsOverlap->new({
+	my $err_str;
+	my $sets_overlap_prog = SetsOverlap->new(\$err_str, {
 		'gold_file' => $setsXfilename,
 		'test_file' => $setsYfilename,
-		'gold_universe_file' => "/go/human/universe.lst",
-		'test_universe_file' => "/go/human/universe.lst",
+		'gold_universe_file' => "/".$setXSource."/".$setXOrganism."/universe.lst",
+		'test_universe_file' => "/".$setYSource."/".$setYOrganism."/universe.lst",
 		'tmp_base_file' => $filename
 	});
+
+	unless (defined $sets_overlap_prog) {
+		print $err_str."\n";
+		return;
+	}
+
 	
 	$sets_overlap_prog->run;
 	my $test_sets_json = $sets_overlap_prog->parse_output_to_json;
+#	$sets_overlap_prog->print_raw_output;
 	$sets_overlap_prog->clean;
 
 	my $json = getJSONMetadata($session);
@@ -151,7 +164,6 @@ sub getSetsSetsGif
 	$json = $json."\n".$row_json;
 	$json .= "\n".$test_sets_json;
 
-	print $json;
 	return runJavaImageGen($session, $json);
 }
 

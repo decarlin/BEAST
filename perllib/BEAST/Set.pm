@@ -149,7 +149,7 @@ sub set_source
 	my $self = shift;
 	my $source = shift;
 
-	$self->get_metadata_value('source') = $source;
+	$self->set_metadata_value('source', $source);
 }
 
 sub is_active

@@ -24,7 +24,7 @@ sub connectDB();
 sub disconnectDB();
 sub runSQL($$);
 sub getSetIdFromExternalId($);
-sub getSetSource($);
+sub getSetsInfoForSet($$);
 sub getSetNameExtIdFromID($);
 sub getEntityNameFromID($);
 sub getKeyspaceOrganism($);
@@ -415,7 +415,7 @@ sub getKeyspaceOrganism($)
 	if ($#data == -1) {
 		return $FALSE;
 	} else {
-		return $TRUE;
+		return $data[0];
 	}
 }
 
@@ -558,14 +558,16 @@ sub searchSetsByTermRestrictKeyspace($$$)
 	return @data;
 }
 
-sub getSetSource($)
+sub getSetsInfoForSet($$)
 {
 	my $self = shift;
 	my $set_id = shift;
+	my $name = shift;
 	
-	my $template = "SELECT value FROM sets_info WHERE sets_info.sets_id='var1';";
+	my $template = "SELECT value FROM sets_info WHERE sets_info.sets_id='var1' AND sets_info.name='var2';";
 
 	$template =~ s/var1/$set_id/;
+	$template =~ s/var2/$name/;
 
 	my $results = $self->runSQL($template);
 	my (@data) = $results->fetchrow_array();

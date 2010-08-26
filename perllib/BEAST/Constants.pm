@@ -32,6 +32,7 @@ use constant SETS_OVERLAP => "/projects/sysbio/lab_apps/perl/Tools/sets_overlap.
 use constant JAVA_ERROR_LOG => "/tmp/beast_java_errlog.txt";
 use constant WEB_STATIC_DIR => "/projects/sysbio/map/Projects/BEAST/web_static";
 use constant WEB_SCRIPT_DIR => "/projects/sysbio/map/Projects/BEAST/web_scripts";
+use constant HEATMAP_NORM_CONSTANT => 20;
 use constant VIEW_WIDTH => "750";
 use constant VIEW_HEIGHT => "580";
 use constant DEBUG => 1;

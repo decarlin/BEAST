@@ -129,7 +129,7 @@ sub getSetFromID($)
 	# which each meta parent will point to 
 	my ($set_name, $set_ext_id) = $beastDB->getSetNameExtIdFromID($set_id);
 	
-	my $source = $beastDB->getSetSource($set_id);
+	my $source = $beastDB->getSetsInfoForSet($set_id, 'source');
 
 	my $set_metadata = { 	
 		'type' => 'set', 

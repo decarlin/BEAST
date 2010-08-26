@@ -376,10 +376,6 @@ sub loadLeafSetsFromSession
 
 					# hashref with member_value, external_id
 					my $element = $elements_for_this_set->{$el_name};
-					if (defined $add_ext_id) {
-						$leaf->set_element(uc($el_name),$element->{'external_id'});
-						next;
-					}
 
 					# get the keyspace organism for the first entity, and use that
 					# for the set metadata -- assuming homosets here
@@ -389,7 +385,9 @@ sub loadLeafSetsFromSession
 						$leaf->set_metadata_value('organism', $organism);
 					}
 
-					if ($element->{'member_value'} =~ /-?\d+\.?\d+?/) {
+					if (defined $add_ext_id) {
+						$leaf->set_element(uc($el_name),$element->{'external_id'});
+					} elsif ($element->{'member_value'} =~ /-?\d+\.?\d+?/) {
 						# the element is the membership value -1 to 1, or NULL
 						if (abs($element->{'member_value'}) > $threshold) {
 							$leaf->set_element(uc($el_name),$element->{'member_value'});
@@ -399,6 +397,11 @@ sub loadLeafSetsFromSession
 					}
 				}
 			}
+
+			# get the sets_info source
+			my $source = $beastDB->getSetsInfoForSet($leaf->get_id, 'source');
+			$leaf->set_source($source);
+
 			$uniq_leaves->{$name} = $leaf;
 		}
 	}
