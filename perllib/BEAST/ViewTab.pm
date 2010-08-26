@@ -104,7 +104,6 @@ sub getSetsSetsGif
 	# return array references, or empty strings if not loaded
 	my ($setsX, $setsY) = BeastSession::loadSetsForActiveCollections($session);
 
-	# null check
 	if ($setsX eq "" || $setsY eq "") {
 		return "";
 	}
@@ -152,6 +151,7 @@ sub getSetsSetsGif
 	$json = $json."\n".$row_json;
 	$json .= "\n".$test_sets_json;
 
+	print $json;
 	return runJavaImageGen($session, $json);
 }
 

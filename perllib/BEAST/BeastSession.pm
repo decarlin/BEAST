@@ -217,17 +217,24 @@ sub loadSetsForActiveCollections
 	}
 
 	my ($collectionX, $collectionY) = getSelectedCollections($session, $X, $Y);
+	if ($X eq $Y) {
+		$collectionY = $collectionX;
+	}
+
 	if (  (!$collectionX || $collectionX eq "") || (!$collectionY || $collectionY eq "")) {
 		return "";
 	}
-
-
 	my @collectionX_setNames = $collectionX->get_set_names;
 	my @collectionY_setNames = $collectionY->get_set_names;
 
 	my @setsX = loadMergeLeafSets($session, 'mysets', \@collectionX_setNames, 1);
 
-	my @setsY = loadMergeLeafSets($session, 'mysets', \@collectionY_setNames, 1);
+	my @setsY;
+	if ($X eq $Y) {
+		@setsY = @setsX;
+	} else {
+		@setsY = loadMergeLeafSets($session, 'mysets', \@collectionY_setNames, 1);
+	}
 
 	return (\@setsX, \@setsY);	
 }
