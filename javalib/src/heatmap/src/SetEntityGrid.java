@@ -80,6 +80,7 @@ public class SetEntityGrid {
     public void createInfoFile() throws Exception {
         
         JSONObject jObj = new JSONObject();
+	//System.err.println("height"+CELL_HEIGHT+"width"+CELL_WIDTH);
         jObj.put("column_width", CELL_WIDTH);
         jObj.put("row_height", CELL_HEIGHT);
         
@@ -167,6 +168,7 @@ public class SetEntityGrid {
         int numRows = this.entities.size();
         CELL_WIDTH = (double)(GRID_WIDTH - ROW_BORDER) / (double)numColumns;
         CELL_HEIGHT = (double)(GRID_HEIGHT - COLUMN_BORDER)/ (double)numRows;        
+	//System.err.println("numRows"+numRows+"!!");
         
         Iterator<Set> setsIter = this.sets.iterator();
                
@@ -257,12 +259,15 @@ public class SetEntityGrid {
         JSONClassifier classifier = new JSONClassifier();
         
         boolean foundInfo = false;
+        boolean foundRows = false;
         while ((line = in.readLine()) != null && line.length() != 0) {
             try { 
                 JSONArray arr1 = new JSONArray(line);
                 JSONObject jsonObj = arr1.getJSONObject(0);
                 int jsonType = classifier.classify(jsonObj);
-                
+               
+  	        System.err.println("parsing line"+jsonObj.toString()+"classified as "+jsonType+"<br>");
+	
                 switch (jsonType) {
             
                     case 1: 
@@ -291,12 +296,16 @@ public class SetEntityGrid {
                             break;
                     case 3:
                             // this is the row list
+			    System.err.println("parsing row list"+jsonObj.toString()+"<br>");
                             JSONObject elements = jsonObj.getJSONObject("_elements");
                             Iterator<String> keys = elements.keys();
                             while (keys.hasNext()) {
-                                entities.add(new Entity(keys.next()));                               
+				String key = keys.next();
+				System.err.println("key:"+key+"<br>");
+                                entities.add(new Entity(key));                               
                             }
-                            
+			    foundRows = true;
+                            break; 
                         
                 }
                 
@@ -308,6 +317,9 @@ public class SetEntityGrid {
             
         if (foundInfo == false) {
             throw new Exception("No metadata/info found for set of JSON strings!");        
+        }
+        if (foundRows == false) {
+            throw new Exception("No row data found for set of JSON strings!");        
         }
         
         SetEntityGrid heatmap = new SetEntityGrid(sets, entities);
