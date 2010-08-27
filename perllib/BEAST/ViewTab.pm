@@ -58,7 +58,7 @@ sub printTab
 		return;
 	}
 	
-	printBase64GIF($base64gif, $info);
+	printBase64GIF($base64gif, $info, $type);
 }
 
 
@@ -66,6 +66,7 @@ sub printBase64GIF
 {
 	my $base64gifSTR = shift;
 	my $infoSTR = shift;
+	my $type = shift;
 
 	# parse the JSON info
 	my $json = JSON->new->utf8;
@@ -91,9 +92,9 @@ sub printBase64GIF
 		$infoStr_rows .= ",".$rows[$i];
 	}
 
-	print "<input id=\"gif_info_columns\" type=\"hidden\" value='$infoStr_cols'/>";
-	print "<input id=\"gif_info_rows\" type=\"hidden\" value='$infoStr_rows'/>";
-	print "<img id=\"grid_image_div\" onClick='onImageClick(event)' onMouseMove='onImageHover(event)' src=\"data:image/gif;base64,".$base64gifSTR."\"/>";
+	print "<input id=\"$type\_gif_info_columns\" type=\"hidden\" value='$infoStr_cols'/>";
+	print "<input id=\"$type\_gif_info_rows\" type=\"hidden\" value='$infoStr_rows'/>";
+	print "<img id=\"$type\_grid_image_div\" onClick='onImageClick(event, \"$type\")' onMouseMove='onImageHover(event, \"$type\")' src=\"data:image/gif;base64,".$base64gifSTR."\"/>";
 }
 
 

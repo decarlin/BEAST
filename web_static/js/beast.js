@@ -529,24 +529,24 @@ function onSetClick(id, depth, ts)
 	}
 }
 
-function onImageClick(event) {
+function onImageClick(event, type) {
 	document.imageLock = true;
-	var selectedColumnDiv = highlightElement(event);
-	highlightRowElement(event, selectedColumnDiv);
+	var selectedColumnDiv = highlightElement(event, type);
+	highlightRowElement(event, selectedColumnDiv, type);
 }
 
-function onImageHover(event) {
+function onImageHover(event, type) {
 	if (document.imageLock) {
 		return;
 	}
-	highlightElement(event);
+	highlightElement(event, type);
 }
 
-function highlightRowElement(event, selectedColumnDiv) {
-        pos_x = event.offsetX?(event.offsetX):event.pageX-document.getElementById("grid_image_div").offsetLeft;
+function highlightRowElement(event, selectedColumnDiv, type) {
+        pos_x = event.offsetX?(event.offsetX):event.pageX-document.getElementById(type+"_grid_image_div").offsetLeft;
         pos_y = event.offsetY?(event.offsetY):event.pageY-document.getElementById("pointer_div").offsetTop;
 
-	var rowData = document.getElementById('gif_info_rows').value;
+	var rowData = document.getElementById(type+"_gif_info_rows").value;
 	var data = rowData.split('^');
 	
 	var row_height = data[0];
@@ -557,8 +557,8 @@ function highlightRowElement(event, selectedColumnDiv) {
 	alert('Gene: '+elementName);
 }
 
-function highlightElement(event) {
-        pos_x = event.offsetX?(event.offsetX):event.pageX-document.getElementById("grid_image_div").offsetLeft;
+function highlightElement(event, type) {
+        pos_x = event.offsetX?(event.offsetX):event.pageX-document.getElementById(type+"_grid_image_div").offsetLeft;
         pos_y = event.offsetY?(event.offsetY):event.pageY-document.getElementById("pointer_div").offsetTop;
 	//$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
 	//	{action:"column_highlight",
@@ -567,7 +567,7 @@ function highlightElement(event) {
 	//	}
 	//);
 
-	var colData = document.getElementById('gif_info_columns').value;
+	var colData = document.getElementById(type+"_gif_info_columns").value;
 	var data = colData.split('^');
 	
 	var column_width = data[0];
