@@ -23,6 +23,16 @@ GetOptions("chemdata_file=s" => \$chemdata_file);
 
 die &usage() unless (-f $chemdata_file);
 
+
+open (ORF_TO_GENE, "./orf_to_genes.tab") || die "orf to genes!";
+my $orf_to_gene_map = {};
+while (my $line = <ORF_TO_GENE>) {
+	chomp ($line);
+	my ($orf, $gene) = split (/\t/, $line);
+	$orf_to_gene_map->{$orf} = $gene;
+}
+close (ORF_TO_GENE);
+
 # 1 -> ...
 my $columns = []; 
 my $lineno = 1;
@@ -46,7 +56,11 @@ while (my $line = <CHD>) {
 	my @components = split(/\t/, $line);
 	my $yeast_gene = $components[0];
 	for my $i (1 .. (scalar(@$columns) - 1)) {
-			push @{$columns->[$i]->{'genes'}}, { 'gene' => $yeast_gene, 'value' => $components[$i] };
+			my $gene_name = $orf_to_gene_map->{$yeast_gene};
+			unless ($gene_name =~ /\S+/) {
+				$gene_name = $yeast_gene;
+			}
+			push @{$columns->[$i]->{'genes'}}, { 'gene' => $gene_name, 'value' => $components[$i] };
 	}	
 
 	$lineno++;
@@ -55,11 +69,13 @@ close (CHD);
 
 #my $hash = $columns->[2];
 #print "for chemical:".$hash->{'name'}."\n";
-#foreach ( @{$hash->{'genes'}}) {
+##foreach ( @{$hash->{'genes'}}) {
 #	my $hash = $_;
 #	print $hash->{'gene'}.":".$hash->{'value'};
 #	print "\n";
 #}
+#
+#exit;
 
 my $importer = BeastDB->new('dev');
 $importer->connectDB();
@@ -82,7 +98,7 @@ for my $i (1 .. (scalar(@$columns) - 1)) {
 		my $gene = $_;
 		my $gene_name = $gene->{'gene'};
 		my $membership_value = $gene->{'value'};
-		$loader->addEntityToSet($gene_name, $set_id, '3', $membership_value);
+		$loader->addEntityToSet($gene_name, $set_id, 3, $membership_value);
 	}	
 }
 

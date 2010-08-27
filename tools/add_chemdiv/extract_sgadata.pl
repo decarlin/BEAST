@@ -51,20 +51,20 @@ while (my $line = <SGA>) {
 
 	#print $queryGENE."\t".$queryGENE."\t".$arrayGENE."\t".$arrayGENE."\t".$interactionSCORE."\t".$standardDEV."\t".$float_pVAL."\n";	
 
-	$queryORF = uc($queryORF);
-	$arrayORF = uc($arrayORF);
+	$queryGENE = uc($queryGENE);
+	$arrayGENE = uc($arrayGENE);
 	# map query_gene_name to 
-	unless ($sga_interactions->{$queryORF}) {
-		$sga_interactions->{$queryORF} = { $queryORF => $interactionSCORE };
+	unless ($sga_interactions->{$queryGENE}) {
+		$sga_interactions->{$queryGENE} = { $queryGENE => $interactionSCORE };
 	} else {
-		$sga_interactions->{$queryORF}->{$queryORF} = $interactionSCORE;
+		$sga_interactions->{$queryGENE}->{$queryGENE} = $interactionSCORE;
 	}
 
 	# now map the other
-	unless ($sga_interactions->{$arrayORF}) {
-		$sga_interactions->{$arrayORF} = { $queryORF => $interactionSCORE };
+	unless ($sga_interactions->{$arrayGENE}) {
+		$sga_interactions->{$arrayGENE} = { $queryGENE => $interactionSCORE };
 	} else {
-		$sga_interactions->{$arrayORF}->{$queryORF} = $interactionSCORE;
+		$sga_interactions->{$arrayGENE}->{$queryGENE} = $interactionSCORE;
 	}
 }
 close (SGA);
@@ -115,7 +115,7 @@ foreach (keys %$sga_interactions) {
 	if ($set_id > 0) {
 		print "set already exists in DB!: $gene\n";
 	} else {
-		$set_id = $importer->insertSet($gene, $gene);
+		$set_id = $importer->insertSet("Query Gene: $gene Syn Lethal Neighbors", $gene);
 		unless ($set_id =~ /\d+/) { 
 			print "failed to add set $gene, quitting!\n";
 			exit 1;	
@@ -125,6 +125,12 @@ foreach (keys %$sga_interactions) {
 		my $meta_id = $importer->insertSQL("INSERT INTO sets_info (sets_id, name, value) VALUES ('".$set_id."', 'source', 'boon_sga');");
 		unless ($meta_id =~ /\d+/) {
 			print "failed to add info for $gene\n";
+		}		
+
+		# here we map the set to the entity id, since this syn lethal set represents a real entity in the database
+		if (($gene_id = $importer->existsEntity($gene, $keyspace)) > 0) {
+			print "inserting entity info element for set: $gene\n";
+			my $meta_id = $importer->insertSQL("INSERT INTO sets_info (sets_id, name, value) VALUES ('".$set_id."', 'entity', '$gene_id');");
 		}		
 	}
 
