@@ -55,8 +55,9 @@ MULTILINE_STR
 			print "<option value=\"$name\" $selected>$name</option>";
 		}
 		print "</select>";
-	
-		# collectio Y
+		print "&nbsp;&nbsp; - Gold Collection (Rows)<br>";
+
+	# collection Y
 		print <<MULTILINE_STR;
 		<select name="collectionsY" id="collectionsY"> 
 MULTILINE_STR
@@ -67,6 +68,7 @@ MULTILINE_STR
 			print "<option value=\"$name\" $selected>$name</option>";
 		}
 		print "</select>";
+		print "&nbsp;&nbsp; - Test Collection (Columns)<br><div>&nbsp;</div>";
 		print "<input type='button' id='update_selected_collections' value='Update Selected' onClick='return onUpdateSelectedCollections();'><br>";
 		print "<div>&nbsp;</div>";
 	}
