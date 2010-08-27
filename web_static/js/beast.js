@@ -584,13 +584,16 @@ function highlightElement(event, type) {
 	try
 	{
 		var scrollHeight = 0;
+		var first_div = document.getElementById("mysets_flat"+"<>"+columns[0]);
+		var scrollZero = first_div.offsetTop;
 		for (var i=0; i < columns.length; i++)
 		{
 			var div_flat = document.getElementById("mysets_flat"+"<>"+columns[i]);
 			if (i == colIndex) {
 				selectedColumnDiv = div_flat;	
 				div_flat.style.backgroundColor = "yellow";
-				scrollDiv.scrollTop = Math.floor(scrollIncrement * i);
+				//scrollDiv.scrollTop = Math.floor(scrollIncrement * i);
+				scrollDiv.scrollTop = Math.floor(div_flat.offsetTop - scrollZero);
 			} else {
 				div_flat.style.backgroundColor = "white";
 			}
