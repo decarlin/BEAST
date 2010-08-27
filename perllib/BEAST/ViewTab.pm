@@ -47,18 +47,18 @@ sub printTab
 	# sanity check first: if no sets 
 	return if (BeastSession::checkMySetsNull($session) == 0);
 	# b64 encoded string
-	my ($base64gif, $info);
+	my ($base64gif, $info, $rows);
 	if ($type eq 'members') {
-		($base64gif, $info) = getSetsMembersGif($session);
+		($base64gif, $info, $rows) = getSetsMembersGif($session);
 	} elsif ($type eq 'sets') {
-		($base64gif, $info) = getSetsSetsGif($session);
+		($base64gif, $info, $rows) = getSetsSetsGif($session);
 	}
 
 	if ($base64gif eq "" || $info eq "") {
 		return;
 	}
 	
-	printBase64GIF($base64gif, $info, $type);
+	printBase64GIF($base64gif, $info, $type, $rows);
 }
 
 
@@ -67,6 +67,7 @@ sub printBase64GIF
 	my $base64gifSTR = shift;
 	my $infoSTR = shift;
 	my $type = shift;
+	my $rows = shift;
 
 	# parse the JSON info
 	my $json = JSON->new->utf8;
@@ -77,8 +78,8 @@ sub printBase64GIF
 	my @columns = @$columns;
 
 	my $height = $jsonObj->{'row_height'};
-	my $rows = $jsonObj->{'rows'};
-	my @rows = @$rows;
+	#my $rows = $jsonObj->{'rows'};
+	#my @rows = @$rows;
 
 	my $infoStr_cols = $width."^";
 	$infoStr_cols .= $columns[0];
@@ -87,9 +88,9 @@ sub printBase64GIF
 	}
 
 	my $infoStr_rows = $height."^";
-	$infoStr_rows .= $rows[0];
-	for my $i (1 .. $#rows) {
-		$infoStr_rows .= ",".$rows[$i];
+	$infoStr_rows .= $rows->[0];
+	for my $i (1 .. (scalar(@$rows) - 1)){
+		$infoStr_rows .= ",".$rows->[$i];
 	}
 
 	print "<input id=\"$type\_gif_info_columns\" type=\"hidden\" value='$infoStr_cols'/>";
@@ -165,7 +166,8 @@ sub getSetsSetsGif
 	$json .= "\n".$test_sets_json;
 
 	#print $json;
-	return runJavaImageGen($session, $json);
+	my ($gif, $info) = runJavaImageGen($session, $json);
+	return ($gif, $info, \@rows);
 }
 
 sub getJSONMetadata
@@ -200,7 +202,8 @@ sub getSetsMembersGif
 	my $row_json = getJSONRowdata(@elements_array);
 	$json = $json."\n".$row_json;
 
-	return runJavaImageGen($session, $json);
+	my ($gif, $info) = runJavaImageGen($session, $json);
+	return ($gif, $info, \@elements_array);
 }
 
 sub getJSONRowdata
