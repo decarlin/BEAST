@@ -111,7 +111,7 @@ sub getSetsSetsGif
 	my $filename = "/tmp/".$session->id;
 	my $setsXfilename = $filename.".setsX";
 	my $setsYfilename = $filename.".setsY";
-	my @rows;
+	my @rows; # the gold stanard (X) file
 
 	my $setXOrganism = $setsX->[0]->get_metadata_value('organism');
 	my $setXSource = $setsX->[0]->get_source;
@@ -124,6 +124,7 @@ sub getSetsSetsGif
 	}
 	foreach my $set (@$setsX)  {
 		print SETSX $set->toString()."\n";
+		push @rows, $set->get_name;
 	}
 	close (SETSX);
 	
@@ -131,13 +132,11 @@ sub getSetsSetsGif
 		print "can't open tmp file!\n"; 
 		return; 
 	}
+	# columns: the test set
 	foreach my $set (@$setsY)  {
 		print SETSY $set->toString()."\n";
-		push @rows, $set->get_name;
 	}
 	close (SETSY);
-	
-	# needs to be set for sets_overlap.pl to work
 
 	my $err_str;
 	my $sets_overlap_prog = SetsOverlap->new(\$err_str, {
@@ -164,6 +163,7 @@ sub getSetsSetsGif
 	$json = $json."\n".$row_json;
 	$json .= "\n".$test_sets_json;
 
+	#print $json;
 	return runJavaImageGen($session, $json);
 }
 
