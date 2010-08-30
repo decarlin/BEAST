@@ -50,6 +50,7 @@ sub searchSetsByTerm($);
 sub getParentsForMeta($$);
 sub existsMeta($$);
 sub existsSet($$);
+sub existsSetByID($$);
 sub existsEntity($$);
 sub existsKeyspace($$);
 sub findRoots();
@@ -234,7 +235,17 @@ sub escapeSQLString
 {
 	my $string = shift;
 
+	# first unescape anything -- otherwise we get 2 slashes, which negates
+	# the one we're adding
+	$string =~ s/\\'/'/g; 
+	$string =~ s/\\=/=/g; 
+	$string =~ s/\\,/,/g; 
+
+
+
 	$string =~ s/'/\\'/g; 
+	$string =~ s/=/\\=/g; 
+	$string =~ s/,/\\,/g; 
 
 	return $string;
 }
@@ -653,6 +664,24 @@ sub existsSet($$)
 	my $template = "SELECT id FROM sets WHERE external_id='var1';";
 
 	$template =~ s/var1/$ex_id/;
+
+	my $results = $self->runSQL($template);
+	my (@data) = $results->fetchrow_array();
+	if ($#data == -1) {
+		return $FALSE;
+	} else {
+		return $data[0];
+	}
+}
+
+sub existsSetByID($$)
+{
+	my $self = shift;
+	my ($id) = @_;
+
+	my $template = "SELECT id FROM sets WHERE id='var1';";
+
+	$template =~ s/var1/$id/;
 
 	my $results = $self->runSQL($template);
 	my (@data) = $results->fetchrow_array();
