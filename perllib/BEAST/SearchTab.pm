@@ -80,7 +80,7 @@ sub printTab
 	# set default: unchecked only if they've checked at least one, otherwise check all 
 	my $default = 1;
 	if (scalar(@checked) > 0) { $default = 0;}	
-	foreach (qw(human mouse entrez go chemdiv boon_sga)) {
+	foreach (qw(human mouse yeast entrez go chemdiv boon_sga)) {
 		$checkedopts->{$_} = $default;
 	}
 
@@ -91,7 +91,7 @@ sub printTab
 	}
 
 	# set the 
-	foreach (qw(human mouse)) {
+	foreach (qw(human mouse yeast)) {
 		if ($checkedopts->{$_}) { push @$checked_keyspace_organism_keys, $_; }
 	}
 	foreach (qw(entrez)) {
@@ -114,7 +114,8 @@ sub printTab
 	# build the searchopts as a tree
 	my $mouse = Set->new('mouse', $checkedopts->{'mouse'}, {'type' => 'set_option'}, "");
 	my $human = Set->new('human', $checkedopts->{'human'}, {'type' => 'set_option'}, "");
-	my $keyspace_organism = Set->new('keyspace_organism', 1,{'type' => 'meta_option'}, {'mouse' => $mouse, 'human' => $human});
+	my $yeast = Set->new('yeast', $checkedopts->{'yeast'}, {'type' => 'set_option'}, "");
+	my $keyspace_organism = Set->new('keyspace_organism', 1,{'type' => 'meta_option'}, {'mouse' => $mouse, 'human' => $human, 'yeast' => $yeast});
 
 	my $entrez = Set->new('entrez', $checkedopts->{'entrez'},{'type' => 'set_option'}, "");
 	my $keyspace_source = Set->new('keyspace_source', 1, {'type' => 'meta_option'}, {'entrez' => $entrez});
