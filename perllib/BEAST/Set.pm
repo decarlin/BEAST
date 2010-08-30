@@ -644,22 +644,26 @@ sub toString
 
 sub parseSetLines
 {
+	my $errstr = shift;
 	my @lines = @_;
 
 	my @sets;
 
+	my $count = 1;
 	for my $line (@lines) 
 	{
 		chomp($line);
 
 		#fail 1
 		unless ($line =~ /\S+\t\S+/) {
+			$$errstr = "$count Can't parse line: $line\n no tabs \n";
 			return 0;
 		}
 
 		my @components = split(/\t/, $line);
 
 		unless ($line =~ /\^/) {
+			$$errstr = "$count Can't parse line: $line\n no '^' (carat)\n";
 			return 0;
 		}
 
@@ -668,6 +672,7 @@ sub parseSetLines
 		($name, @meta_components) = split(/\^/, $components[0]);
 		
 		if ($name =~ /=/) {
+			$$errstr = "$count Can't parse line: $line\n name has equals sign \n";
 			return 0;
 		}
 
@@ -676,6 +681,7 @@ sub parseSetLines
 			if ($_ =~ /(.*)=(.*)/) {
 				  $metadata->{$1} = $2;
 			} else {
+				$$errstr = "$count Can't parse line: $line\n metadata has no equals sign \n";
 				return 0;
 			} 
 		}
@@ -695,6 +701,7 @@ sub parseSetLines
 		$set->set_metadata_value('type', 'set');
 		$set->set_metadata_value('id', 'local:'.$name);
 		push @sets, $set;
+		$count++;
 	}
 
 	return @sets;
