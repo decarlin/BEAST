@@ -554,7 +554,17 @@ function highlightRowElement(event, selectedColumnDiv, type) {
 
 	var rowIndex = Math.floor(pos_y / row_height);
 	var elementName = rows[rowIndex];
-	alert('Row Entity: '+elementName);
+
+	if (document.rowHighlight != null) {
+		var row_div = document.getElementById(document.rowHighlight);
+		row_div.style.backgroundColor = "white";
+	}
+
+	var row_div = document.getElementById("mysets_flat"+"<>"+elementName);
+	row_div.style.backgroundColor = "lightblue";
+
+	document.rowHighlight = "mysets_flat"+"<>"+elementName;
+	//alert('Row Entity: '+elementName);
 }
 
 function highlightElement(event, type) {
