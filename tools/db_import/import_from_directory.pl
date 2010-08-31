@@ -22,7 +22,10 @@ use BEAST::Loader;
 use BEAST::Entity;
 
 my $import_directory = '';
-GetOptions("import_dir=s" => \$import_directory);
+my $small_ent_mode = '';
+GetOptions(
+	"import_dir=s" => \$import_directory,
+	"small_ent_mode+" => \$small_ent_mode);
 
 die &usage() unless (-d $import_directory);
 
@@ -35,8 +38,8 @@ my $meta_sets_mappings_file = $import_directory."/meta_sets_mappings.tab";
 
 die &usage('no sets file') unless (-f $sets_file);
 die &usage('no elements file') unless (-f $elements_file);
-die &usage('no meta file') unless (-f $meta_file);
-die &usage('no meta mappings file') unless (-f $meta_mappings_file);
+#die &usage('no meta file') unless (-f $meta_file);
+#die &usage('no meta mappings file') unless (-f $meta_mappings_file);
 die &usage('no meta sets mappings file') unless (-f $meta_sets_mappings_file);
 
 my $keyspaces = {};
@@ -48,21 +51,29 @@ my $entities = {};
 
 open (SETS_FH, $sets_file) || die;
 my @lines = <SETS_FH>;
-my @sets = Set::parseSetLines(@lines);
+my $errstr = '';
+my @sets = Set::parseSetLines(\$errstr, @lines);
 my $sets_hash = {};
 close (SETS_FH);
 if ($sets[0] == 0) {
 	pop @sets;
+	print $errstr."\n";
 	die "Failed to parse set lines!\n";
 }
 
-open (META, $meta_file) || die;
-my @meta_lines = <META>;
-close (META);
+my @meta_lines;
+if (-f $meta_file) {
+	open (META, $meta_file) || die;
+	my @meta_lines = <META>;
+	close (META);
+}
 
-open (META_MAP, $meta_mappings_file) || die;
-my @meta_mapping_lines = <META_MAP>;
-close (META_MAP);
+my @meta_mapping_lines;
+if (-f $meta_mappings_file) {
+	open (META_MAP, $meta_mappings_file) || die;
+	my @meta_mapping_lines = <META_MAP>;
+	close (META_MAP);
+}
 
 open (META_SETS, $meta_sets_mappings_file) || die;
 my @meta_sets_mapping_lines = <META_SETS>;
@@ -71,7 +82,7 @@ close (META_SETS);
 
 
 # open DBH
-my $importer = BeastDB->new('test');
+my $importer = BeastDB->new('dev');
 $importer->connectDB();
 
 # build keyspaces map
@@ -96,11 +107,11 @@ foreach my $line (@keyspace_lines) {
 print "\n -------------------------- \n";
 print "ADDING ENTITIES TO DB ";
 print "\n -------------------------- \n";
-my $err_str;
 open (ELS, $elements_file) || die;
 foreach my $line (<ELS>) {
 	chomp $line;
 
+	my $err_str;
 	my ($name, $desc, $ex_id, $keyspace) = split (/\t/, $line);
 
 	# $keyspace should be source^organism
@@ -111,7 +122,9 @@ foreach my $line (<ELS>) {
 
 	# save for the sets
 	$entity->set_id($internal_id);
-	#$entities->{$name} = $entity;
+	if ($small_ent_mode) {
+		$entities->{$name} = $entity;
+	}
 }
 close (ELS);
 
@@ -120,8 +133,12 @@ print "ADDING SETS TO DB ";
 print "\n -------------------------- \n";
 my $sets_hash = {};
 foreach my $set (@sets) {
-	#$set->insertDB($importer, $entities, \$err_str);
-	$set->insertDB($importer, "", \$err_str);
+	my $err_str;
+	if ($small_ent_mode) {
+		$set->insertDB($importer, $entities, \$err_str);
+	} else {
+		$set->insertDB($importer, "", \$err_str);
+	}
 	$sets_hash->{$set->get_name} = $set;
 	print $err_str."\n";
 }
@@ -132,6 +149,8 @@ print "\n -------------------------- \n";
 my $meta_hash = {};
 foreach my $line (@meta_lines) {
 	chomp $line;
+
+	my $err_str;
 
 	my ($external_id, $name) = split(/\t/, $line);		
 	my $metadata = { 'type' => 'meta', 'name' => $name, 'ex_id' => $external_id };
@@ -173,7 +192,7 @@ foreach my $line (@meta_sets_mapping_lines) {
 	my $set = $sets_hash->{$set_child_name};
 	my $meta = $meta_hash->{$meta_parent_name};
 
-	$importer->insertSetMetaRel($meta->get_id, $set->get_id);;
+	$importer->insertSetMetaRel($meta->get_id, $set->get_id);
 	print "added meta $meta_parent_name to set $set_child_name relation\n";
 }
 
