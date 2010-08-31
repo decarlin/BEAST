@@ -644,7 +644,7 @@ sub toString
 		if (ref($element) eq 'Set') {
 			$str .= "\t".$element->get_name;
 		} else {
-			$str .= "\t".$element;
+			$str .= "\t".$names[$i];
 		}
 	}
 

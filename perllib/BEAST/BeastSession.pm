@@ -164,6 +164,25 @@ sub loadMergeLeafSets
 	return @selected_sets;
 }
 
+sub loadMergeLeafSetsValues
+{
+	my $session = shift;
+	my $key = shift;
+	my $checkbox_arr_ref = shift;
+	my $load_elements = shift || 0;
+
+	die unless (ref($checkbox_arr_ref) eq 'ARRAY');
+	die unless (ref($session) eq 'CGI::Session');
+	die unless ($key =~ /^\w+$/);
+
+	my @sets = loadLeafSetsFromSession($session, $key, 1, $load_elements, undef);
+
+	my $checked_hash = buildCheckedHash(@$checkbox_arr_ref);
+	my @selected_sets = mergeWithCheckbox(\@sets, $checked_hash);
+
+	return @selected_sets;
+}
+
 sub saveSelectedCollections
 {
 	my $session = shift;
@@ -227,13 +246,13 @@ sub loadSetsForActiveCollections
 	my @collectionX_setNames = $collectionX->get_set_names;
 	my @collectionY_setNames = $collectionY->get_set_names;
 
-	my @setsX = loadMergeLeafSets($session, 'mysets', \@collectionX_setNames, 1);
+	my @setsX = loadMergeLeafSetsValues($session, 'mysets', \@collectionX_setNames, 1);
 
 	my @setsY;
 	if ($X eq $Y) {
 		@setsY = @setsX;
 	} else {
-		@setsY = loadMergeLeafSets($session, 'mysets', \@collectionY_setNames, 1);
+		@setsY = loadMergeLeafSetsValues($session, 'mysets', \@collectionY_setNames, 1);
 	}
 
 	return (\@setsX, \@setsY);	
@@ -385,13 +404,14 @@ sub loadLeafSetsFromSession
 						$leaf->set_metadata_value('organism', $organism);
 					}
 
+					#print Data::Dumper->Dump([$element]);
 					if (defined $add_ext_id) {
 						$leaf->set_element(uc($el_name),$element->{'external_id'});
-					} elsif ($element->{'member_value'} =~ /-?\d+\.?\d+?/) {
+					} elsif ($element->{'member_value'} =~ /.*\d+.*/) {
 						# the element is the membership value -1 to 1, or NULL
-						if (abs($element->{'member_value'}) > $threshold) {
-							$leaf->set_element(uc($el_name),$element->{'member_value'});
-						}
+						if ($element->{'member_value'} > 0) {
+							$leaf->set_element(uc($el_name),"");
+						} 
 					} else {
 						$leaf->set_element(uc($el_name),"");
 					}

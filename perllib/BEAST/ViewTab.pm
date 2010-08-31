@@ -110,6 +110,7 @@ sub getSetsSetsGif
 		return "";
 	}
 
+	#print Data::Dumper->Dump([$setsY->[0]]);
 	my $filename = "/tmp/".$session->id;
 	my $setsXfilename = $filename.".setsX";
 	my $setsYfilename = $filename.".setsY";
@@ -129,7 +130,7 @@ sub getSetsSetsGif
 		push @rows, $set->get_name;
 	}
 	close (SETSX);
-	
+
 	unless (open(SETSY, ">$setsYfilename")) { 
 		print "can't open tmp file!\n"; 
 		return; 
@@ -139,6 +140,8 @@ sub getSetsSetsGif
 		print SETSY $set->toString()."\n";
 	}
 	close (SETSY);
+	
+	#print Data::Dumper->Dump([$setsY->[0]]);
 
 	my $err_str;
 	my $sets_overlap_prog = SetsOverlap->new(\$err_str, {
