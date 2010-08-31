@@ -624,7 +624,8 @@ function onUpdateSelectedCollections() {
 	var optionX = getSelectedOption(collectionX);
 	var optionY = getSelectedOption(collectionY);
 	
-	$.get('/cgi-bin/BEAST/index.pl', 
+	$('#mycollections').empty().html('<img src="images/ajax-loader.gif" />');
+	$('#mycollections').load('/cgi-bin/BEAST/index.pl', 
 		{action:"updatecollections",
 		 collectionX:optionX.value,
 		 collectionY:optionY.value}

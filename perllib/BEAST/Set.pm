@@ -562,7 +562,7 @@ sub insertDB
 		return $FALSE;
 	}
 
-	my $set_internal_id = $db->existsSet($self->get_name);
+	my $set_internal_id = $db->existsSet($self->get_ex_id);
 
 
 	if ($set_internal_id > 0) {
@@ -595,14 +595,23 @@ sub insertDB
 			# query the DB for the entity ID
 			my $entity_id;
 			if ( !($entities eq "") && ref($entities) eq 'HASH') {
-				$entity_id = $entities->{$element_name}->get_id;
+				if (exists $entities->{$element_name}) {
+					$entity_id = $entities->{$element_name}->get_id;
+				} else {
+					# fallback plan
+					$entity_id = $db->getEntityIDFromExternalID($element_name);	
+					$$error_ref .= 
+				"Entity not Elements Hash Ref not set for obj $element_name, set:".$self->get_name." !\n";
+					print $$error_ref;
+					next;
+				}
 			} else {
 				$entity_id = $db->getEntityIDFromExternalID($element_name);	
 			}
 
 			unless ($entity_id =~ /\d+/) {
 				$$error_ref .= "Entity not in DB or ID not set for obj $element_name!\n";
-				return;
+				next;
 			}
 
 			if ($db->existsSetEntityRel($set_internal_id, $entity_id) > 0) {
@@ -689,6 +698,10 @@ sub parseSetLines
 		my $elements = {};
 		for my $i (1 .. $#components) 
 		{
+			if ($components[$i] =~ /.*\s+.*/) {
+				die "can't parse: $line!\n";
+			}
+
 			if ($components[$i] =~ /(\S+)\^(-?[\d\.]+)/) {
 				$elements->{$1} = $2;
 			} else {
@@ -699,7 +712,7 @@ sub parseSetLines
 		my $set = Set->new($name, "1", $metadata, $elements);
 		# set meta type to 'set' 
 		$set->set_metadata_value('type', 'set');
-		$set->set_metadata_value('id', 'local:'.$name);
+		#$set->set_metadata_value('id', 'local:'.$name);
 		push @sets, $set;
 		$count++;
 	}

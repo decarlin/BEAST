@@ -104,6 +104,8 @@ foreach my $line (@keyspace_lines) {
 	$keyspaces->{$source."^".$organism} = $keyspace_id;
 }
 
+sub add_elements
+{
 print "\n -------------------------- \n";
 print "ADDING ENTITIES TO DB ";
 print "\n -------------------------- \n";
@@ -128,10 +130,13 @@ foreach my $line (<ELS>) {
 }
 close (ELS);
 
+}
+
+sub add_sets
+{
 print "\n -------------------------- \n";
 print "ADDING SETS TO DB ";
 print "\n -------------------------- \n";
-my $sets_hash = {};
 foreach my $set (@sets) {
 	my $err_str;
 	if ($small_ent_mode) {
@@ -139,14 +144,17 @@ foreach my $set (@sets) {
 	} else {
 		$set->insertDB($importer, "", \$err_str);
 	}
-	$sets_hash->{$set->get_name} = $set;
 	print $err_str."\n";
 }
+}
+
+my $meta_hash = {};
+sub add_metas
+{
 
 print "\n -------------------------- \n";
 print "ADDING METAS TO DB ";
 print "\n -------------------------- \n";
-my $meta_hash = {};
 foreach my $line (@meta_lines) {
 	chomp $line;
 
@@ -159,6 +167,10 @@ foreach my $line (@meta_lines) {
 	$meta_hash->{$meta->get_ex_id} = $meta;
 	print $err_str."\n";
 }
+}
+
+sub add_meta_mappings
+{
 
 print "\n -------------------------- \n";
 print "ADDING META MAPPINGS TO DB";
@@ -182,20 +194,37 @@ foreach my $line (@meta_mapping_lines) {
 
 }
 
+}
+
+sub add_meta_set_mappings
+{
+
 print "\n -------------------------- \n";
 print "ADDING META SET MAPPINGS TO DB ";
 print "\n -------------------------- \n";
 foreach my $line (@meta_sets_mapping_lines) {
 	chomp $line;
 
-	my ($meta_parent_name, $set_child_name) = split(/\t/, $line);		
-	my $set = $sets_hash->{$set_child_name};
-	my $meta = $meta_hash->{$meta_parent_name};
+	my ($meta_parent_ex_id, $set_child_ex_id) = split(/\t/, $line);		
+	my $set_id = $importer->existsSet($set_child_ex_id);
+	my $meta_id = $importer->existsMeta($meta_parent_ex_id);
 
-	$importer->insertSetMetaRel($meta->get_id, $set->get_id);
-	print "added meta $meta_parent_name to set $set_child_name relation\n";
+	if ($set_id > 0 && $meta_id > 0) {	
+	$importer->insertSetMetaRel($meta_id, $set_id);
+	print "added meta $meta_parent_ex_id to set $set_child_ex_id relation\n";
+	} else {
+		print "can't add meta: $meta_parent_ex_id\n";	
+	}
+	
 }
 
+}
+
+#&add_elements
+#&add_sets
+#&add_metas
+##&add_meta_mappings
+&add_meta_set_mappings;
 print "DONE! \n\n";
 # close DB
 $importer->disconnectDB();

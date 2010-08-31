@@ -155,6 +155,7 @@ my $viewObj = ViewTab->new($cgi);
 	elsif ($action eq "updatecollections")
 	{
 		updateActiveCollections();
+		$collectionsObj->printTab($session);
 	} 
 	# on new load
 

@@ -53,19 +53,19 @@ while (my $line = <SGA>) {
 
 	$queryGENE = uc($queryGENE);
 	$arrayGENE = uc($arrayGENE);
-	# map query_gene_name to 
+	# add the query gene- array gene interactions
 	unless ($sga_interactions->{$queryGENE}) {
-		$sga_interactions->{$queryGENE} = { $queryGENE => $interactionSCORE };
+		$sga_interactions->{$queryGENE} = { $arrayGENE => $interactionSCORE };
 	} else {
-		$sga_interactions->{$queryGENE}->{$queryGENE} = $interactionSCORE;
+		$sga_interactions->{$queryGENE}->{$arrayGENE} = $interactionSCORE;
 	}
 
 	# now map the other
-	unless ($sga_interactions->{$arrayGENE}) {
-		$sga_interactions->{$arrayGENE} = { $queryGENE => $interactionSCORE };
-	} else {
-		$sga_interactions->{$arrayGENE}->{$queryGENE} = $interactionSCORE;
-	}
+	#unless ($sga_interactions->{$arrayGENE}) {
+	#	$sga_interactions->{$arrayGENE} = { $queryGENE => $interactionSCORE };
+	#} else {
+	#	$sga_interactions->{$arrayGENE}->{$queryGENE} = $interactionSCORE;
+	#}
 }
 close (SGA);
 
@@ -101,13 +101,23 @@ my $keyspace = 3;
 #} else {
 #	print "Meta already exists! id:$meta_id\n";
 #}
+#foreach (keys %$sga_interactions) {
+#
+#	my $gene = $_;
+#
+#	print "Query Gene: $gene\n";
+#	foreach (keys %{$sga_interactions->{$gene}}) {
+#		print "\t$_\n";
+#	}
+##}
+#
+#exit;
+#
 
-foreach (keys %$sga_interactions) {
-
-	my $gene = $_;
+foreach my $gene (keys %$sga_interactions) {
 
 	# add the set
-	#my $set_id = $importer->existsSet($gene);
+	my $set_id = $importer->existsSet($gene);
 	#print "adding set: $set_id\n";
 	#$importer->insertSetMetaRel(202895, $set_id);
 	#next;
@@ -128,9 +138,11 @@ foreach (keys %$sga_interactions) {
 		}		
 
 		# here we map the set to the entity id, since this syn lethal set represents a real entity in the database
+		my $gene_id;
 		if (($gene_id = $importer->existsEntity($gene, $keyspace)) > 0) {
 			print "inserting entity info element for set: $gene\n";
 			my $meta_id = $importer->insertSQL("INSERT INTO sets_info (sets_id, name, value) VALUES ('".$set_id."', 'entity', '$gene_id');");
+			$importer->insertSQL("INSERT INTO sets_info (sets_id, name, value) VALUES ('".$set_id."', 'type', 'query_gene');");
 		}		
 	}
 

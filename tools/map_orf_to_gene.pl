@@ -27,9 +27,15 @@ close (ORF_TO_GENE);
 
 while (<>) {
 	chomp ($_);
-	if (exists $orf_to_gene_map->{$_}) {
-		print $orf_to_gene_map->{$_}."\n";
-	} else {
-		print $_."\n";
+	my @parts = split(/\t/, $_);
+	my $new_line;
+	foreach my $part (@parts) {
+		if (exists $orf_to_gene_map->{$part}) {
+			$new_line .= $orf_to_gene_map->{$part}."\t";
+		} else {
+			$new_line .= $part."\t";
+		}
 	}
+	print $new_line."\n";
+	
 }

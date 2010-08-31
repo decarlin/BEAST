@@ -71,6 +71,17 @@ sub get_keyspace
 	return $self->{'_keyspace'};
 }
 
+sub escapeSQLString
+{
+	my $string = shift;
+
+	$string =~ s/'/\\'/g; 
+	$string =~ s/=/\\=/g; 
+	$string =~ s/,/\\,/g; 
+
+	return $string;
+}
+
 sub insertDB
 {
 	my $self = shift;
@@ -81,7 +92,8 @@ sub insertDB
 	if (($internal_id = $db->existsEntity($self->get_ex_id, $self->get_keyspace)) > 0) {
 		$$err_str = "entity already exists: ".$self->get_name;
 	} else {
-		$internal_id = $db->insertEntity($self->get_name, $self->get_desc, $self->get_ex_id, $self->get_keyspace);
+		my $desc = escapeSQLString($self->get_desc);
+		$internal_id = $db->insertEntity($self->get_name, $desc, $self->get_ex_id, $self->get_keyspace);
 		$$err_str = "added entity: ".$self->get_ex_id;
 	}
 

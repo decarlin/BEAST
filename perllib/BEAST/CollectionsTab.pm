@@ -71,6 +71,12 @@ MULTILINE_STR
 		print "&nbsp;&nbsp; - Test Collection (Columns)<br><div>&nbsp;</div>";
 		print "<input type='button' id='update_selected_collections' value='Update Selected' onClick='return onUpdateSelectedCollections();'><br>";
 		print "<div>&nbsp;</div>";
+
+		if ($selectedX) {
+
+
+		}
+
 	}
 
 	my @mysets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1,"", ""));	
@@ -85,6 +91,7 @@ MULTILINE_STR
 	print "<input type='button' id='add_collection' value='Add To Collections' onClick='return onAddCollection(this.form);'>";
 	MySets::displaySetsTree("new_collection", "", @mysets);
 	print "</form>";
+			
 }
 
 

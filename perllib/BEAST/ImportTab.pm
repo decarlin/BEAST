@@ -56,10 +56,12 @@ sub printTab
 		{
 			$importtext = $input->param('importtext');
 			my @lines = split(/\n/, $importtext);
-			@sets = Set::parseSetLines(@lines);	
+			my $errstr;
+			@sets = Set::parseSetLines(\$errstr, @lines);	
 			if ($sets[0] == 0) {
 				pop @sets;
 				print "Failed to parse set lines!\n";
+				print $errstr;
 				return;
 			}
 		}
@@ -70,10 +72,12 @@ sub printTab
 		while (my $line = <$fh>) {
 		  push @lines, $line;	
 		}
-		@sets = Set::parseSetLines(@lines);
+		my $errstr;
+		@sets = Set::parseSetLines(\$errstr, @lines);
 		if ($sets[0] == 0) {
 			pop @sets;
 			print "Failed to parse set lines!\n";
+			print $errstr;
 			return;
 		}
 	}
