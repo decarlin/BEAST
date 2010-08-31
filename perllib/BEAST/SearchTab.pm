@@ -140,9 +140,9 @@ sub printTab
 	## Create Form element and the rest...
 	print <<MULTILINE_STR;
 	<form id="searchcategories">
-	<b> Filter: </b><input type='text' name="searchtext" value="$searchtext" size="25">
+	<b> Filter: </b><input type='text' name="searchtext" value="$searchtext" onkeydown="if (event.keyCode == 13) document.getElementById('searchSetsButton').click()" size="25">
 	<!-- Send selected filter categories to display pannel via ajax -->
-	<input type='button' name='activetab' value='filter' onClick="return onSearchSets();">
+	<input type='button' name='activetab' id='searchSetsButton' value='filter' onClick="return onSearchSets();">
 	<div>&nbsp;</div>
 MULTILINE_STR
 

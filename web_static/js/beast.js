@@ -557,7 +557,9 @@ function highlightRowElement(event, selectedColumnDiv, type) {
 
 	if (document.rowHighlight != null) {
 		var row_div = document.getElementById(document.rowHighlight);
-		row_div.style.backgroundColor = "white";
+		if (row_div != null) {
+			row_div.style.backgroundColor = "white";
+		}
 	}
 
 	var row_div = document.getElementById("mysets_flat"+"<>"+elementName);
