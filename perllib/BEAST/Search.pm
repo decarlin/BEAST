@@ -61,7 +61,7 @@ sub findParentsByTerm
 	my $beastDB = $self->{'_beast_db'};
 	my @set_ids;
 	# if source is restricted, or organism is 
-	if ( !($num_keyspace_source == 0 && $num_keyspace_organism == 0) && !($num_keyspace_organism == 2 && $num_keyspace_source == 1)) {
+	if ( !($num_keyspace_source == 0 && $num_keyspace_organism == 0) && !($num_keyspace_organism == 3 && $num_keyspace_source == 1)) {
 		@set_ids = $beastDB->searchSetsByTermRestrictKeyspace($term, $search_opts);
 	} else {
 		@set_ids = $beastDB->searchSetsByTerm($search_opts, $term);

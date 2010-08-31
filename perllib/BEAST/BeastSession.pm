@@ -270,15 +270,15 @@ sub mergeWithCheckbox
 	#  merge with checkbox data
 	# fixme: we somehow have to only move the checked subset
 	my @sets = @$sets_ref;
-	foreach (@sets) {
-		my $set = $_;
-		my $name = $set->get_name;
-		if (exists $checked_hash->{$name}) {
+	foreach my $set (@sets) {
+		#my $set = $_;
+		#my $name = $set->get_name;
+		#if (exists $checked_hash->{$name}) {
 			$set->mergeCheckbox_Simple($checked_hash);
 			if ($set->pare_inactive_leaves > 0) {
 				push @selected_sets, $set;
 			}
-		}
+		#}
 	}
 
 	return @selected_sets;
