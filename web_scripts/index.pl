@@ -261,6 +261,7 @@ sub addSearchSets()
 	if ($cgi->param('searchsets[]')) {
 		my @checkboxdata = $cgi->param('searchsets[]');
 		my @searchSets = BeastSession::loadMergeSetsFromSession($session, 'searchsets', \@checkboxdata);
+		#print Data::Dumper->Dump([@searchSets]);
 		if (scalar(@sets) == 0) {
 			@sets = @searchSets;
 		} else {

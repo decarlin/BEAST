@@ -67,13 +67,25 @@ sub printTab
 		}
 	} 
 
+	my $opts = {};
+	my $source = $input->param('source');
+	my $organism = $input->param('organism');
+	$opts->{'source'} = $source;
+	$opts->{'organism'} = $organism;
+
+	# hack: delete this later
+	$opts->{'source'} = "chemdiv";
+	$opts->{'organism'} = "yeast";
+
+	#print $source.$organism."here!!";
+
 	if (defined $fh) {
 		my @lines;
 		while (my $line = <$fh>) {
 		  push @lines, $line;	
 		}
 		my $errstr;
-		@sets = Set::parseSetLines(\$errstr, @lines);
+		@sets = Set::parseSetLines(\$errstr, $opts,  @lines);
 		if ($sets[0] == 0) {
 			pop @sets;
 			print "Failed to parse set lines!\n";
@@ -128,6 +140,12 @@ MULTI_LINE_STR
 			<input type='hidden' name='MAX_FILE_SIZE" value='200'/>
 			<input type='button'  id="file_upload_button" class="button" value='Upload File'/>
 			<input type='button' value='Upload' onClick="return onImportSets(this.form);"/><br/>
+			<select name="importSource" id="importSource"> 
+				<option value='chemdiv'>chemdiv</option>
+			</select>
+			<select name="importOrganism" id="importOrganism"> 
+				<option value='yeast'>yeast</option>
+			</select>
 	<p>Sets:</p>
 	<p>
 MULTI_LINE_STR
@@ -165,7 +183,7 @@ print <<MULTI_LINE_STR;
 			// If you want to allow uploading only 1 file at time,
 			// you can disable upload button
 			this.disable();
-			
+
 			// Uploding -> Uploading. -> Uploading...
 			interval = window.setInterval(function(){
 				var text = button.text();

@@ -421,7 +421,11 @@
                 // We use visibility instead of display to fix problem with Safari 4
                 // The problem is that the value of input doesn't change if it 
                 // has display none when user selects a file           
-                input.parentNode.style.visibility = 'hidden';
+		try {
+                	input.parentNode.style.visibility = 'hidden'; 
+		} catch  (error) {
+			//
+		}
 
             });   
                         

@@ -654,9 +654,19 @@ sub toString
 sub parseSetLines
 {
 	my $errstr = shift;
+	my $opts = shift;
 	my @lines = @_;
 
 	my @sets;
+
+	my $organism;
+	my $source;
+	if (ref($opts) eq 'HASH') {
+		$organism = $opts->{'organism'};
+		$source = $opts->{'source'};
+	} else {
+		@lines = ($opts, @lines);
+	}
 
 	my $count = 1;
 	for my $line (@lines) 
@@ -712,7 +722,12 @@ sub parseSetLines
 		my $set = Set->new($name, "1", $metadata, $elements);
 		# set meta type to 'set' 
 		$set->set_metadata_value('type', 'set');
-		#$set->set_metadata_value('id', 'local:'.$name);
+		if ($source) {
+			$set->set_source($source);
+		}
+		if ($organism) {
+			$set->set_metadata_value('organism', $organism);
+		}
 		push @sets, $set;
 		$count++;
 	}

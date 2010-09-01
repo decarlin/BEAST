@@ -36,11 +36,11 @@ sub new
 	$self->{'normalization_constant'} = Constants::HEATMAP_NORM_CONSTANT;
 	
 	unless (-f Constants::WEB_STATIC_DIR."/universe_files".$self->{'gold_universe_file'}) {
-		$$err_str = "No Gold Universe File!"; 
+		$$err_str = "No Gold Universe File:".$self->{'gold_universe_file'}; 
 		return undef;
 	}
 	unless (-f Constants::WEB_STATIC_DIR."/universe_files".$self->{'test_universe_file'}) {
-		$$err_str = "No Test Universe File!"; 
+		$$err_str = "No Test Universe File:".$self->{'test_universe_file'}; 
 		return undef;
 	}
 

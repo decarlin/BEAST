@@ -379,11 +379,6 @@ sub loadLeafSetsFromSession
 
 			if ($include_elements == 1) {
 
-				my $threshold = 0.05;
-				if (defined $entity_opts && exists $entity_opts->{'threshold'}) {
-					$threshold = $entity_opts->{'threshold'};	
-				}
-
 				my $add_ext_id = undef;
 				if (defined $entity_opts && exists $entity_opts->{'external_id'}) {
 					$add_ext_id = 1;	
@@ -407,11 +402,6 @@ sub loadLeafSetsFromSession
 					#print Data::Dumper->Dump([$element]);
 					if (defined $add_ext_id) {
 						$leaf->set_element(uc($el_name),$element->{'external_id'});
-					} elsif ($element->{'member_value'} =~ /.*\d+.*/) {
-						# the element is the membership value -1 to 1, or NULL
-						if ($element->{'member_value'} > 0) {
-							$leaf->set_element(uc($el_name),"");
-						} 
 					} else {
 						$leaf->set_element(uc($el_name),"");
 					}
@@ -419,8 +409,10 @@ sub loadLeafSetsFromSession
 			}
 
 			# get the sets_info source
-			my $source = $beastDB->getSetsInfoForSet($leaf->get_id, 'source');
-			$leaf->set_source($source);
+			if (!$leaf->get_source) {
+				my $source = $beastDB->getSetsInfoForSet($leaf->get_id, 'source');
+				$leaf->set_source($source);
+			}
 
 			$uniq_leaves->{$name} = $leaf;
 		}

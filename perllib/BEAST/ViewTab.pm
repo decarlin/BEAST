@@ -99,12 +99,33 @@ sub printBase64GIF
 }
 
 
+sub filterNegativesAndThreshold
+{
+	my $ref = shift;
+
+	my $threshold = Constants::SET_MEMBER_THRESHOLD;
+	foreach my $set (@$ref) {
+		foreach my $name ($set->get_element_names) {
+			my $element = $set->get_element($name);	
+			if ($element =~ /.*\d+.*/) {
+
+				if ($element < $threshold) {
+					$set->delete_element($name);	
+				}
+			} 
+		}
+	}
+}
+
 sub getSetsSetsGif
 {
 	my $session = shift;
 
 	# return array references, or empty strings if not loaded
 	my ($setsX, $setsY) = BeastSession::loadSetsForActiveCollections($session);
+
+	filterNegativesAndThreshold($setsX);
+	filterNegativesAndThreshold($setsY);
 
 	if ($setsX eq "" || $setsY eq "") {
 		return "";
