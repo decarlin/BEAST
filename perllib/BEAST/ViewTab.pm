@@ -16,6 +16,8 @@ use BEAST::SetsOverlap;
 use BEAST::MySets;
 use JSON -convert_blessed_universally;
 
+use lib Constants::PERL_LIB_DIR;
+
 our $TRUE = 1;
 our $FALSE = 0;
 
@@ -98,7 +100,7 @@ sub printBase64GIF
 	print "<img id=\"$type\_grid_image_div\" onClick='onImageClick(event, \"$type\")' onMouseMove='onImageHover(event, \"$type\")' src=\"data:image/gif;base64,".$base64gifSTR."\"/>";
 }
 
-
+# depricated: faster to do this in the SQL statement
 sub filterNegativesAndThreshold
 {
 	my $ref = shift;
@@ -124,14 +126,12 @@ sub getSetsSetsGif
 	# return array references, or empty strings if not loaded
 	my ($setsX, $setsY) = BeastSession::loadSetsForActiveCollections($session);
 
-	filterNegativesAndThreshold($setsX);
+	# hopefully only the test set will be local (don't need this for the DB sets)
 	filterNegativesAndThreshold($setsY);
-
 	if ($setsX eq "" || $setsY eq "") {
 		return "";
 	}
 
-	#print Data::Dumper->Dump([$setsY->[0]]);
 	my $filename = "/tmp/".$session->id;
 	my $setsXfilename = $filename.".setsX";
 	my $setsYfilename = $filename.".setsY";
@@ -215,10 +215,10 @@ sub getSetsMembersGif
 
 	my $json = getJSONMetadata($session);
 
-
 	foreach my $set (@sets) {
 		$json = $json."\n"."[".$set->serialize()."]";
 	}
+
 
 	# build the list of entities -- the row column
 	my @elements_array = MySets::sortElementsList(@sets);

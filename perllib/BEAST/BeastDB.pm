@@ -27,6 +27,7 @@ sub getSetIdFromExternalId($);
 sub getSetsInfoForSet($$);
 sub getSetNameExtIdFromID($);
 sub getEntityNameFromID($);
+sub getEntityNameValuesForSet($$);
 sub getKeyspaceOrganism($);
 sub getEntityIDFromExternalID($);
 sub getMetaIdFromExternalId($);
@@ -412,6 +413,22 @@ sub existsSetMetaRel($$)
 	}
 }
 
+sub getKeyspaceOrganismEntExId($)
+{
+	my $self = shift;
+	my $ex_id = shift;
+
+	my $template = "SELECT organism FROM entity,keyspace WHERE entity.keyspace_id=keyspace.id AND entity.entity_key='$ex_id';";
+	
+	my $results = $self->runSQL($template);	
+	my (@data) = $results->fetchrow_array();
+	if ($#data == -1) {
+		return $FALSE;
+	} else {
+		return $data[0];
+	}
+}
+
 sub getKeyspaceOrganism($)
 {
 	my $self = shift;
@@ -468,32 +485,55 @@ sub getParentsForSet($$)
 	return @data;
 }
 
-sub getEntitiesForSet($$)
+sub getOrganismSourceForSet($)
 {
 	my $self = shift;
 	my $set_id = shift;
 
-	my $template = "SELECT entity_id,member_value FROM set_entity WHERE sets_id='var1';";
-
-	$template =~ s/var1/$set_id/;
+	my $template = "SELECT DISTINCT keyspace.organism,keyspace.source FROM keyspace,entity,set_entity";
+	$template .= " WHERE set_entity.entity_id=entity.id";
+	$template .= " AND entity.keyspace_id=keyspace.id";
+	$template .= " AND set_entity.sets_id='$set_id'";
 
 	my $results = $self->runSQL($template);
 	my $rows_ref = $results->fetchall_arrayref();
-	my $ids_values = {};
+	my $names_values = {};
+	if (ref($rows_ref) eq 'ARRAY') {
+		return ($rows_ref->[0]->[0], $rows_ref->[0]->[1]);
+	} else {
+		return $FALSE;
+	}	
+
+}
+
+sub getEntityNameValuesForSet($$)
+{
+	my $self = shift;
+	my $set_id = shift;
+	my $threshold = shift;
+
+	my $template = "SELECT entity.name,set_entity.member_value FROM set_entity,entity ";
+	$template .= " WHERE entity.id=set_entity.entity_id AND set_entity.sets_id='$set_id'";
+
+	if ($threshold) {
+		$template .= " AND (member_value >= $threshold OR member_value is NULL)";	
+	} 
+
+
+	my $results = $self->runSQL($template);
+	my $rows_ref = $results->fetchall_arrayref();
+	my $names_values = {};
 	if (ref($rows_ref) eq 'ARRAY') {
 		foreach (@$rows_ref) {
-			my ($id, $value) = ($_->[0], $_->[1]);
-			$ids_values->{$id} = $value;
+			my ($name, $value) = ($_->[0], $_->[1]);
+			if (!$value || $value !~ /.*\d+.*/) {
+				$names_values->{$name} = "";
+			} else {
+				$names_values->{$name} = $value;
+			}
 		}
 	}
 
-	my $names_values = {};
-	foreach (keys %$ids_values) {
-		my $id = $_;
-		my ($name, $external_id) = $self->getEntityNameFromID($id);
-		my $member_value = $ids_values->{$id};
-		$names_values->{uc($name)} = { 'id' => $id, 'member_value' => $member_value, 'external_id' => $external_id };
-	}
 	return $names_values;
 }
 

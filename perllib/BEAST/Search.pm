@@ -140,11 +140,6 @@ sub getSetFromID($)
 	# find set elements
 	my $set_elements = {};
 
-	# this makes the browser way, way slow -- we need to do lazy adds when entities need to be viewed
-	#my @elements_for_this_set = $beastDB->getEntitiesForSet($set_id);
-	#foreach (@elements_for_this_set) {
-	#	$set_elements->{$_} = "";
-	#}
 
 	my $set = Set->new($set_ext_id, 1, $set_metadata, $set_elements);
 
@@ -175,12 +170,6 @@ sub findParentsForSet($)
 	my $set_metadata = { 'type' => 'set', 'name' => "$set_name", 'id' => $set_id };
 	# find set elements
 	my $set_elements = {};
-
-	# this makes the browser way, way slow -- we need to do lazy adds when entities need to be viewed
-	#my @elements_for_this_set = $beastDB->getEntitiesForSet($set_id);
-	#foreach (@elements_for_this_set) {
-	#	$set_elements->{$_} = "";
-	#}
 
 	my $set = Set->new($set_ext_id, 1, $set_metadata, $set_elements);
 	my $metadata_element = { "$set_ext_id" => $set };

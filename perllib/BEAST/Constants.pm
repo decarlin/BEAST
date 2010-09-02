@@ -23,7 +23,7 @@ our $VERSION    = 1.0;
 
 
 use constant TEMP_DIR => "/projects/sysbio/map/Papers/MetaTrans/perl/Data";
-use constant JAVA_32_BIN => "/projects/sysbio/apps/i386/jre/jre1.6.0_21/bin/java";
+use constant JAVA_32_BIN => "/projects/sysbio/apps/i386/jre/jre1.6.0_21/bin/java -Xms64m -Xms512m ";
 use constant PERL_32_BIN => "/usr/bin/perl";
 use constant PERL_LIB_DIR => "/projects/sysbio/lab_apps/perl";
 use constant JAVA_64_BIN => "/projects/sysbio/apps/x86_64/jre/jre1.6.0_21/bin/java";

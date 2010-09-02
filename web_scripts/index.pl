@@ -323,14 +323,14 @@ sub getEntitiesForSet
 		my $beastDB = BeastDB->new;
 		$beastDB->connectDB();
 
-		$entities = $beastDB->getEntitiesForSet($id);
+		$entities = $beastDB->getEntityNameValuesForSet($id);
 		$beastDB->disconnectDB();
 	}
 
 	my @list;
 	foreach (keys %$entities) {
-		if ($entities->{$_}->{'member_value'} =~ /\d?\.\d+/) {
-			push @list, "$_:".$entities->{$_}->{'member_value'};
+		if ($entities->{$_} =~ /\d?\.\d+/) {
+			push @list, "$_:".$entities->{$_};
 		} else {
 			push @list, $_;	
 		}
