@@ -68,7 +68,6 @@ sub printTab
 		}
 		my $errstr;
 		@sets = Set::parseSetLines(\$errstr,  @lines);
-			print Data::Dumper->Dump([@sets]);
 		if ($sets[0] == 0) {
 			pop @sets;
 			print "Failed to parse set lines!\n";
@@ -109,7 +108,7 @@ MULTI_LINE_STR
 			<input type='button' value='Add To My Sets' onClick="return onAddImportSets(this.form);"/><br>
 MULTILINE_STR
 		# to do : merge with mysets
-		
+	
 		BeastSession::saveObjsToSession($session, 'importsets', @sets);
 	}
 	print "</p></form>";

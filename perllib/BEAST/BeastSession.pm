@@ -377,7 +377,10 @@ sub loadLeafSetsFromSession
 			# skip inactive elements, if directed to do so
 			next if (($keep_inactive == 0) && ($leaf->is_active == 0));
 
-			if ($include_elements == 1) {
+			# now, get the Elements and add them, from the DB if they 
+			# aren't already here.
+			# If this is a user-uploaded set, however, they should already be attached
+			if ($include_elements == 1 && ($leaf->get_element_names eq "" || scalar($leaf->get_element_names) == 0) ) {
 
 				my $add_ext_id = undef;
 				if (defined $entity_opts && exists $entity_opts->{'external_id'}) {
