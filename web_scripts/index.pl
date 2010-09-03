@@ -52,6 +52,8 @@ my $viewObj = ViewTab->new($cgi);
 
 	# debug
 
+	#print `cat /proc/meminfo`;
+	#print `cat /proc/cpuinfo`;
 	#run some query, get the set of categories	
 	#@my $sql = 
 	#$results = runSQL($sql, $dbh);

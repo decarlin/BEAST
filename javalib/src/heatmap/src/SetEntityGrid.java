@@ -25,13 +25,13 @@ public class SetEntityGrid {
     private static Color background;
     private static Grid grid;
     
-    private static String FILENAME;
+    private static String FILENAME = "heatmap.gif";
     private static String INFO_FILE;
-    private static String ACTION;
+    private static String ACTION = "gif";
     private static Rectangle2D.Double SUB_GRID;
     
-    private static int GRID_HEIGHT;
-    private static int GRID_WIDTH;
+    private static int GRID_HEIGHT = 400;
+    private static int GRID_WIDTH = 400;
     private final static int ROW_BORDER = 0;
     private final static int COLUMN_BORDER = 0;
     
@@ -68,7 +68,7 @@ public class SetEntityGrid {
             ImageIO.write(image, "gif", file);
             g2.dispose();
             
-            createInfoFile();
+            //createInfoFile();
             
         } catch (Exception e) {
             
@@ -80,7 +80,6 @@ public class SetEntityGrid {
     public void createInfoFile() throws Exception {
         
         JSONObject jObj = new JSONObject();
-	//System.err.println("height"+CELL_HEIGHT+"width"+CELL_WIDTH);
         jObj.put("column_width", CELL_WIDTH);
         jObj.put("row_height", CELL_HEIGHT);
         
@@ -101,8 +100,8 @@ public class SetEntityGrid {
             rowNames[i++] = rowIter.next().getValue();
         }
         
-        jObj.put("rows", rowNames); 
-
+        jObj.put("rows", rowNames);
+        
         try {
             File infoFile = new File(INFO_FILE);
             infoFile.createNewFile();
@@ -110,7 +109,7 @@ public class SetEntityGrid {
             fw.write(jObj.toString());
             fw.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.print(e.getStackTrace());
         }       
     }
                          
@@ -139,6 +138,7 @@ public class SetEntityGrid {
             createInfoFile();
             
         } catch (Exception e) {
+            
             e.printStackTrace();
         }        
     }
@@ -168,7 +168,6 @@ public class SetEntityGrid {
         int numRows = this.entities.size();
         CELL_WIDTH = (double)(GRID_WIDTH - ROW_BORDER) / (double)numColumns;
         CELL_HEIGHT = (double)(GRID_HEIGHT - COLUMN_BORDER)/ (double)numRows;        
-	//System.err.println("numRows"+numRows+"!!");
         
         Iterator<Set> setsIter = this.sets.iterator();
                
@@ -244,9 +243,18 @@ public class SetEntityGrid {
         heatmap.buildGrid();
         heatmap.makeGif();
         
+        
+        String lines[] = new String[5];
+        lines[0] = "ROWS    X   Y   Z";
+        lines[1] = "METADATA    WIDTH^400   HEIGHT^400  OUTPUT^base64gif  FILENAME^heatmap.gif";
+        lines[2] = "SET1    Y^0.456   Z^0.342";
+        lines[3] = "SET2    X^0.98   Z^-0.343545";
+        lines[4] = "SET3    Y^0.12124   X^-0.112";
+
+        
         */
         // read from standard inputs 
-        
+       
         
         // columns
         ArrayList<Set> sets = new ArrayList<Set>();
@@ -258,16 +266,85 @@ public class SetEntityGrid {
        
         JSONClassifier classifier = new JSONClassifier();
         
+        boolean tabDelimInput = false;
         boolean foundInfo = false;
-        boolean foundRows = false;
+        //for (int j=0; j < lines.length; j++) {
         while ((line = in.readLine()) != null && line.length() != 0) {
+            
+          //line = lines[j];
+          
+          if (tabDelimInput || line.matches("^[^\\}\\{]+$")) {
+              
+              tabDelimInput = true;
+              
+                // Case 1 -- The tab delinated format
+              String parts[] = line.split("\t");
+              String name = parts[0];
+              String elements[] = new String[parts.length - 1];
+              
+              for (int i=1; i < parts.length; i++) {
+                  elements[i - 1] = parts[i];               
+              }
+              
+              if (name.compareTo("ROWS") == 0) {
+                  
+                  for (int i=0; i < elements.length; i++) {
+                      entities.add(new Entity(elements[i]));
+                  }
+                  
+              } else if (name.compareTo("METADATA") == 0) {
+                  
+                  foundInfo = true;
+                  
+                  for (int i=0; i < elements.length; i++) {
+                      String key_value[] = elements[i].split("\\^");
+                      if (key_value[0].compareTo("WIDTH") == 0) {
+                          
+                         GRID_WIDTH = new Integer(key_value[1]);
+                          
+                      } else if (key_value[0].compareTo("HEIGHT") == 0) {
+                       
+                          GRID_HEIGHT = new Integer(key_value[1]);
+                          
+                      } else if (key_value[0].compareTo("OUTPUT") == 0) {
+                          if (key_value[1].compareTo("gif") == 0) {
+                              ACTION = "gif";
+                          } else if (key_value[1].compareTo("base64gif") == 0) {
+                              ACTION = "base64gif";
+                          } else {
+                              Exception e = new Exception("undefined output type!");
+                              e.printStackTrace();
+                              throw e;                         
+                          }
+                      } else if (key_value[0].compareTo("FILENAME") == 0) {
+                          FILENAME = key_value[1];
+                      }
+                      		
+                  }
+              } else {
+                  // set line
+          
+                  HashMap<String, String> element_values = new HashMap<String, String>();
+                  for (int i=0; i < elements.length; i++) {
+                      String key_value[] = elements[i].split("\\^");
+                      String membership_value;
+                      if (key_value.length == 1) {
+                          membership_value = "1";
+                      } else {
+                          membership_value = key_value[1];
+                      }
+                      element_values.put(key_value[0], membership_value);
+                  }
+                  sets.add(new Set(name, element_values));
+              }
+                
+          } else {
+                
             try { 
                 JSONArray arr1 = new JSONArray(line);
                 JSONObject jsonObj = arr1.getJSONObject(0);
                 int jsonType = classifier.classify(jsonObj);
-               
-  	        System.err.println("parsing line"+jsonObj.toString()+"classified as "+jsonType+"<br>");
-	
+                
                 switch (jsonType) {
             
                     case 1: 
@@ -296,16 +373,13 @@ public class SetEntityGrid {
                             break;
                     case 3:
                             // this is the row list
-			    System.err.println("parsing row list"+jsonObj.toString()+"<br>");
                             JSONObject elements = jsonObj.getJSONObject("_elements");
                             Iterator<String> keys = elements.keys();
-                            while (keys.hasNext()) {
-				String key = keys.next();
-				System.err.println("key:"+key+"<br>");
-                                entities.add(new Entity(key));                               
+                            while (keys.hasNext()) {          
+                                String element = keys.next();
+                                entities.add(new Entity(element));                               
                             }
-			    foundRows = true;
-                            break; 
+                            
                         
                 }
                 
@@ -313,13 +387,11 @@ public class SetEntityGrid {
                 System.out.println("Can't parse line:" + line);
                 e.printStackTrace();
             }
+          }
         }
             
         if (foundInfo == false) {
             throw new Exception("No metadata/info found for set of JSON strings!");        
-        }
-        if (foundRows == false) {
-            throw new Exception("No row data found for set of JSON strings!");        
         }
         
         SetEntityGrid heatmap = new SetEntityGrid(sets, entities);

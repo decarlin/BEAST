@@ -72,4 +72,5 @@ public class Cell {
         //g2.setColor(Color.GRAY);
         g2.draw(this.rect);
     }
+
 }

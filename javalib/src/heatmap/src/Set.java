@@ -2,7 +2,10 @@ import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -17,14 +20,31 @@ public class Set {
     private HashMap<String, String> meta;
     private HashMap<String, double[]> set_entity_map;
     
-    public Set(String ids[]) {
+    public Set(String name, HashMap<String, String> entity_values) {
         
+        this.name = name;
         this.entities = new ArrayList<Entity>();
+        this.set_entity_map = new HashMap<String, double[]>();
         
-        for (int i = 0; i < ids.length; i++) {
-            Entity ent = new Entity(ids[i]);
-            this.entities.add(ent);
-        }
+        java.util.Set<String> names =  entity_values.keySet();
+       
+        Iterator<String> keys = names.iterator();
+        
+        while (keys.hasNext()) {
+            String entName = keys.next();  
+            this.entities.add(new Entity(entName));
+            
+
+            if ("".equals(entity_values.get(entName))) {
+                continue;
+            }
+            
+            // get the membership value
+            double[] membership_value = new double[1];
+            membership_value[0] = new Double(entity_values.get(entName));
+            this.set_entity_map.put(entName, membership_value);
+        }      
+        
     }
     
     public Set(JSONObject jsonObj) throws Exception {
@@ -42,6 +62,7 @@ public class Set {
             String entName = keys.next();  
             this.entities.add(new Entity(entName));
             
+
             if (elements.isNull(entName) || "".equals(elements.get(entName))) {
                 continue;
             }
