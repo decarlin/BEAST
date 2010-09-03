@@ -215,6 +215,13 @@ function onAddSearchSets(form) {
 		   'type':'flat',
 		   'searchsets[]': selects }
 		);
+	} else {
+		$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
+		$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
+		  {'action':'addsearch',
+		   'type':'tree',
+		   'searchsets[]': selects }
+		);
 	}
 }
 
