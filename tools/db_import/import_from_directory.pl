@@ -9,7 +9,7 @@ sub usage
 	my $msg = shift;
 	print <<EOF;
 ##
-## Usage:  perl $0 --import_dir=dirpath
+## Usage:  perl $0 --import_dir=dirpath --small_ent_mode
 ##
 EOF
 	print $msg."\n";	
@@ -37,15 +37,18 @@ my $meta_mappings_file = $import_directory."/meta_mappings.tab";
 my $meta_sets_mappings_file = $import_directory."/meta_sets_mappings.tab";
 
 die &usage('no sets file') unless (-f $sets_file);
-die &usage('no elements file') unless (-f $elements_file);
+#die &usage('no elements file') unless (-f $elements_file);
 #die &usage('no meta file') unless (-f $meta_file);
 #die &usage('no meta mappings file') unless (-f $meta_mappings_file);
-die &usage('no meta sets mappings file') unless (-f $meta_sets_mappings_file);
+#die &usage('no meta sets mappings file') unless (-f $meta_sets_mappings_file);
 
 my $keyspaces = {};
-open (KEYSPACE, $keyspaces_file) || die;
-my @keyspace_lines = <KEYSPACE>;
-close (KEYSPACE);
+my @keyspace_lines;
+if (-f $keyspaces_file) {
+	open (KEYSPACE, $keyspaces_file) || die;
+	@keyspace_lines = <KEYSPACE>;
+	close (KEYSPACE);
+}
 
 my $entities = {};
 
@@ -64,20 +67,23 @@ if ($sets[0] == 0) {
 my @meta_lines;
 if (-f $meta_file) {
 	open (META, $meta_file) || die;
-	my @meta_lines = <META>;
+	@meta_lines = <META>;
 	close (META);
 }
 
 my @meta_mapping_lines;
 if (-f $meta_mappings_file) {
 	open (META_MAP, $meta_mappings_file) || die;
-	my @meta_mapping_lines = <META_MAP>;
+	@meta_mapping_lines = <META_MAP>;
 	close (META_MAP);
 }
 
-open (META_SETS, $meta_sets_mappings_file) || die;
-my @meta_sets_mapping_lines = <META_SETS>;
-close (META_SETS);
+my @meta_sets_mapping_lines;
+if (-f $meta_sets_mappings_file) {
+	open (META_SETS, $meta_sets_mappings_file) || die;
+	@meta_sets_mapping_lines = <META_SETS>;
+	close (META_SETS);
+}
 
 
 
@@ -220,11 +226,11 @@ foreach my $line (@meta_sets_mapping_lines) {
 
 }
 
-#&add_elements
-#&add_sets
-#&add_metas
-##&add_meta_mappings
-&add_meta_set_mappings;
+#&add_elements;
+&add_sets;
+#&add_metas;
+##&add_meta_mappings;
+#&add_meta_set_mappings;
 print "DONE! \n\n";
 # close DB
 $importer->disconnectDB();

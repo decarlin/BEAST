@@ -579,6 +579,9 @@ sub insertDB
 
 	
 		foreach my $meta ($self->get_metadata_names) {
+
+			next if ($meta =~ /id|ex_id/);
+
 			my $sql = "INSERT INTO sets_info (sets_id, name, value) VALUES ('";
 			$sql .= "$set_internal_id"."', '"."$meta"."', '".$self->get_metadata_value($meta)."');";
 
@@ -609,7 +612,7 @@ sub insertDB
 				$entity_id = $db->getEntityIDFromExternalID($element_name);	
 			}
 
-			unless ($entity_id =~ /\d+/) {
+			unless ($entity_id && $entity_id =~ /\d+/) {
 				$$error_ref .= "Entity not in DB or ID not set for obj $element_name!\n";
 				next;
 			}

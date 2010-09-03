@@ -284,6 +284,7 @@ sub insertSet($$)
 	my $template = "INSERT INTO sets (name, external_id) VALUES (var1, var2);";
 
 	$name = escapeSQLString($name);
+	$external_id = escapeSQLString($external_id);
 
 	$template =~ s/var1/'$name'/;
 	$template =~ s/var2/'$external_id'/;
@@ -702,6 +703,8 @@ sub existsSet($$)
 	my ($ex_id) = @_;
 
 	my $template = "SELECT id FROM sets WHERE external_id='var1';";
+
+	$ex_id = escapeSQLString($ex_id);
 
 	$template =~ s/var1/$ex_id/;
 
