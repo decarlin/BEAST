@@ -392,8 +392,10 @@ sub loadLeafSetsFromSession
 					$elements = $beastDB->getEntityNameValuesForSet($leaf->get_id, Constants::SET_MEMBER_THRESHOLD);
 				}
 				my @keys = keys %$elements;
-				my ($organism, $keysp_source) = $beastDB->getKeyspaceOrganismEntExId($keys[0]);
-				$leaf->set_metadata_value('organism', $organism);
+				if (!$leaf->get_metadata_value('organism')) {
+					my ($organism, $keysp_source) = $beastDB->getKeyspaceOrganismEntExId($keys[0]);
+					$leaf->set_metadata_value('organism', $organism);
+				}
 				$leaf->{'_elements'} = $elements;
 			}
 

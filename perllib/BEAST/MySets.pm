@@ -104,7 +104,8 @@ sub getDisplayHash
 
 		} else {
 			# element is either 0 or 1 depending on whether it's active
-			$displayData->{$element_name} = $element;
+			# do not add elements to the display -- slows things down
+			#$displayData->{$element_name} = $element;
 		}
 	}
 

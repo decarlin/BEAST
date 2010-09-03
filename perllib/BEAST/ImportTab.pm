@@ -43,12 +43,6 @@ sub printTab
 	# Hash reference: keys are refs to arrays of strings
 	my $input = $self->{'_input'};
 
-	my $metadata = 
-	{
-		'db_origin' => [ 'kegg', 'wikipathways', 'reactone' ],
-		'genespace' => [ 'entrez' ],
-	};
-
 	my $importtext = "";
 	if ($input->param('importtype') eq 'text') 
 	{
@@ -67,25 +61,14 @@ sub printTab
 		}
 	} 
 
-	my $opts = {};
-	my $source = $input->param('source');
-	my $organism = $input->param('organism');
-	$opts->{'source'} = $source;
-	$opts->{'organism'} = $organism;
-
-	# hack: delete this later
-	$opts->{'source'} = "chemdiv";
-	$opts->{'organism'} = "yeast";
-
-	#print $source.$organism."here!!";
-
 	if (defined $fh) {
 		my @lines;
 		while (my $line = <$fh>) {
 		  push @lines, $line;	
 		}
 		my $errstr;
-		@sets = Set::parseSetLines(\$errstr, $opts,  @lines);
+		@sets = Set::parseSetLines(\$errstr,  @lines);
+			print Data::Dumper->Dump([@sets]);
 		if ($sets[0] == 0) {
 			pop @sets;
 			print "Failed to parse set lines!\n";
@@ -103,32 +86,6 @@ sub printTab
 			<input type='radio' name='importType' checked='checked' value='text' onclick='chooseTextImport(this.form)'/> Enter sets to import<br/>
 MULTI_LINE_STR
 
-	my $formMetadata = {};
-	my @formMetadata = $input->param('metadata[]');
-	foreach (@formMetadata)
-	{
-		my ($key, $value) = split(/:/, $_);
-		$formMetadata->{$key} = $value;
-	}
-
-	foreach (keys %$metadata) 
-	{
-		my $type = $_;
-		my $key = "metadata_".$type;
-		print "<b>$type&nbsp&nbsp</b><select name='$key'>";
-		foreach (@{$metadata->{$type}})
-		{
-			if ($formMetadata->{$key} eq $_)
-			{
-				print "<option value='$_' selected>$_</option>";
-			}
-			else
-			{
-				print "<option value='$_'>$_</option>";
-			}
-		}
-		print "</select><br>";
-	}
 
 	print <<MULTI_LINE_STR;
 		</p>
@@ -137,15 +94,12 @@ MULTI_LINE_STR
 				<input type='radio' name='importType' value='file' onclick='chooseFileImport(this.form)'>
 				Or import from a local file:
 			</p>
+MULTI_LINE_STR
+
+	print <<MULTI_LINE_STR;
 			<input type='hidden' name='MAX_FILE_SIZE" value='200'/>
 			<input type='button'  id="file_upload_button" class="button" value='Upload File'/>
 			<input type='button' value='Upload' onClick="return onImportSets(this.form);"/><br/>
-			<select name="importSource" id="importSource"> 
-				<option value='chemdiv'>chemdiv</option>
-			</select>
-			<select name="importOrganism" id="importOrganism"> 
-				<option value='yeast'>yeast</option>
-			</select>
 	<p>Sets:</p>
 	<p>
 MULTI_LINE_STR

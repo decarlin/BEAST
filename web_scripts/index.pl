@@ -313,6 +313,7 @@ sub getEntitiesForSet
 
 	if ($id =~ /^local:(.*)/) {
 		my $name = $1;	
+
 		my @importSets = BeastSession::loadImportSetsFromSession($session);
 		foreach (@importSets) {
 			my $set = $_;

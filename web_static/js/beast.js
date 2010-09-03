@@ -513,7 +513,7 @@ function onSetClick(id, depth, ts)
 		else
 		{
 			//Load children...  do this through the index.pl router.  pass the parent_id and the depth of the child
-			$("#"+id+"_"+ts+"_content").load('/cgi-bin/BEAST/index.pl', 
+			$("#"+div_element.id).load('/cgi-bin/BEAST/index.pl', 
 				{action:"get_set_elements", 
 				 db_id:id, 
 				 depth:depth
