@@ -9,7 +9,7 @@ sub usage
 	my $msg = shift;
 	print <<EOF;
 ##
-## Usage:  perl $0 --import_dir=dirpath --small_ent_mode
+## Usage:  perl $0 --import_dir=dirpath --small_ent_mode --not_really
 ##
 EOF
 	print $msg."\n";	
@@ -23,8 +23,10 @@ use BEAST::Entity;
 
 my $import_directory = '';
 my $small_ent_mode = '';
+my $not_really;
 GetOptions(
 	"import_dir=s" => \$import_directory,
+	"not_really+" => \$not_really,
 	"small_ent_mode+" => \$small_ent_mode);
 
 die &usage() unless (-d $import_directory);
@@ -36,11 +38,12 @@ my $meta_file = $import_directory."/metas.tab";
 my $meta_mappings_file = $import_directory."/meta_mappings.tab";
 my $meta_sets_mappings_file = $import_directory."/meta_sets_mappings.tab";
 
-#die &usage('no sets file') unless (-f $sets_file);
-#die &usage('no elements file') unless (-f $elements_file);
-#die &usage('no meta file') unless (-f $meta_file);
-#die &usage('no meta mappings file') unless (-f $meta_mappings_file);
-#die &usage('no meta sets mappings file') unless (-f $meta_sets_mappings_file);
+die &usage('no keyspace file') unless (-f $keyspaces_file);
+die &usage('no sets file') unless (-f $sets_file);
+die &usage('no elements file') unless (-f $elements_file);
+die &usage('no meta file') unless (-f $meta_file);
+die &usage('no meta mappings file') unless (-f $meta_mappings_file);
+die &usage('no meta sets mappings file') unless (-f $meta_sets_mappings_file);
 
 my $keyspaces = {};
 my @keyspace_lines;
@@ -91,9 +94,13 @@ if (-f $meta_sets_mappings_file) {
 
 
 # open DBH
-my $importer = BeastDB->new('dev');
+my $importer;
+if ($not_really) {
+	$importer = BeastDB->new();
+} else {
+	$importer = BeastDB->new('dev');
+}
 $importer->connectDB();
-
 # build keyspaces map
 print "\n -------------------------- \n";
 print "ADDING KEYSPACES TO DB ";
@@ -230,10 +237,10 @@ foreach my $line (@meta_sets_mapping_lines) {
 }
 
 &add_elements;
-#&add_sets;
-#&add_metas;
-##&add_meta_mappings;
-#&add_meta_set_mappings;
+&add_metas;
+&add_meta_mappings;
+&add_sets;
+&add_meta_set_mappings;
 print "DONE! \n\n";
 # close DB
 $importer->disconnectDB();
