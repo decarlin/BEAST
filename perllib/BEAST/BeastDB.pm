@@ -10,6 +10,7 @@ use DBI;
 
 use Data::Dumper;
 use BEAST::Set;
+use BEAST::Entity;
 
 package BeastDB;
 
@@ -420,7 +421,7 @@ sub getKeyspaceOrganismEntExId($)
 	my $ex_id = shift;
 
 	my $template = "SELECT organism FROM entity,keyspace WHERE entity.keyspace_id=keyspace.id AND entity.entity_key='$ex_id';";
-	
+
 	my $results = $self->runSQL($template);	
 	my (@data) = $results->fetchrow_array();
 	if ($#data == -1) {
@@ -505,6 +506,41 @@ sub getOrganismSourceForSet($)
 		return $FALSE;
 	}	
 
+}
+
+sub getEntitiesForSet($$)
+{
+	my $self = shift;
+	my $set_id = shift;
+	my $threshold = shift;
+
+	my $template = "SELECT entity.id,entity.name,entity.entity_key,entity.keyspace_id,set_entity.member_value ";
+	$template .= " FROM set_entity,entity ";
+	$template .= " WHERE entity.id=set_entity.entity_id AND set_entity.sets_id='$set_id'";
+
+	if ($threshold) {
+		$template .= " AND (member_value >= $threshold OR member_value is NULL)";	
+	} 
+
+
+	# Entities -> {
+	#	'entity_key' => Entity.pm
+	my $entities = {};
+
+
+	my $results = $self->runSQL($template);
+	my $rows_ref = $results->fetchall_arrayref();
+	if (ref($rows_ref) eq 'ARRAY') {
+		foreach (@$rows_ref) {
+			# name, desc, 
+			my $entity = Entity->new($_->[1], "", $_->[2], $_->[3]);
+			$entity->set_id($_->[0]);
+			$entity->set_membership_value($_->[4]);
+			$entities->{$entity->get_name} = $entity;
+		}
+	}
+
+	return $entities;
 }
 
 sub getEntityNameValuesForSet($$)

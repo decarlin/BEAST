@@ -153,7 +153,7 @@ my $mysetsObj = MySets->new($cgi);
 	elsif ($action eq "addcollection")
 	{
 		addCollection();
-		$collectionsObj->printTab($session);
+		$mysetsObj->printTabTree($session);
 	}
 	elsif ($action eq "updatecollections")
 	{

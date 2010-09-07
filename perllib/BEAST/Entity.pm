@@ -48,6 +48,23 @@ sub get_id
 	return $self->{'_id'};
 }
 
+sub set_membership_value
+{
+	my $self = shift;
+	my $value = shift;
+
+	$self->{'_membership_value'} = $value;
+}
+
+sub get_membership_value
+{
+	my $self = shift;
+
+	return $self->{'_membership_value'};
+}
+
+
+
 sub get_name
 {
 	my $self = shift;

@@ -10,6 +10,7 @@ use DBI;
 use Data::Dumper;
 use BEAST::Set;
 use BEAST::Constants;
+use BEAST::Entity;
 
 use JSON -convert_blessed_universally;
 
@@ -388,15 +389,26 @@ sub loadLeafSetsFromSession
 				}
 
 				my $i = 0;
+				my $entities = $beastDB->getEntitiesForSet($leaf->get_id, Constants::SET_MEMBER_THRESHOLD);
+
 				my $elements;
+				# either by membership value or external ID
 				if (defined $add_ext_id) {
-					$elements = $beastDB->getEntityNameExIdForSet($leaf->get_id, Constants::SET_MEMBER_THRESHOLD);
-				} else {
-					$elements = $beastDB->getEntityNameValuesForSet($leaf->get_id, Constants::SET_MEMBER_THRESHOLD);
+					foreach my $name (keys %$entities) {
+						my $ent = $entities->{$name};		
+						$elements->{$name} = $ent->get_ex_id;
+					}
+				} else { 
+					foreach my $name (keys %$entities) {
+						my $ent = $entities->{$name};		
+						$elements->{$name} = $ent->get_membership_value;
+					}
 				}
-				my @keys = keys %$elements;
+
+				my @keys = keys %$entities;
 				if (!$leaf->get_metadata_value('organism')) {
-					my ($organism, $keysp_source) = $beastDB->getKeyspaceOrganismEntExId($keys[0]);
+					my $ent = $entities->{$keys[0]};
+					my ($organism, $keysp_source) = $beastDB->getKeyspaceOrganismEntExId($ent->get_ex_id);
 					$leaf->set_metadata_value('organism', $organism);
 				}
 				$leaf->{'_elements'} = $elements;

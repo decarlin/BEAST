@@ -79,18 +79,18 @@ MULTILINE_STR
 
 	}
 
-	my @mysets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1,"", ""));	
-	unless (ref($mysets[0]) eq 'Set') {
-		pop @mysets;
-	}
-	return unless (scalar(@mysets) > 0); 
-	
-	print "<div><b>Add New Collection:</b></div>";
-	print "<form id=\"new_collection\">";
-	print "<input type='text' id='add_collection_name' value='Collection Name'>";
-	print "<input type='button' id='add_collection' value='Add To Collections' onClick='return onAddCollection(this.form);'>";
-	MySets::displaySetsTree("new_collection", "", @mysets);
-	print "</form>";
+	#my @mysets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1,"", ""));	
+	#unless (ref($mysets[0]) eq 'Set') {
+	#	pop @mysets;
+	#}
+	#return unless (scalar(@mysets) > 0); 
+
+	#print "<div><b>Add New Collection:</b></div>";
+	#print "<form id=\"new_collection\">";
+	#print "<input type='text' id='add_collection_name' value='Collection Name'>";
+	#print "<input type='button' id='add_collection' value='Add To Collections' onClick='return onAddCollection(this.form);'>";
+	#MySets::displaySetsTree("new_collection", "", @mysets);
+	#print "</form>";
 			
 }
 

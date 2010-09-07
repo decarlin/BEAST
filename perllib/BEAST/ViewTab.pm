@@ -161,7 +161,7 @@ sub getSetsSetsGif
 		print SETSY $set->toString()."\n";
 	}
 	close (SETSY);
-	
+
 	my $err_str;
 	my $sets_overlap_prog = SetsOverlap->new(\$err_str, {
 		'gold_file' => $setsXfilename,
@@ -171,6 +171,7 @@ sub getSetsSetsGif
 		'tmp_base_file' => $filename
 	});
 
+
 	unless (defined $sets_overlap_prog) {
 		print $err_str."\n";
 		return;
@@ -179,7 +180,7 @@ sub getSetsSetsGif
 	
 	$sets_overlap_prog->run;
 	my $test_sets_json = $sets_overlap_prog->parse_output_to_json;
-#	$sets_overlap_prog->print_raw_output;
+	#$sets_overlap_prog->print_raw_output;
 	$sets_overlap_prog->clean;
 
 	my $json = getJSONMetadata($session);

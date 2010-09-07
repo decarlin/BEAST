@@ -187,6 +187,8 @@ sub printTabTree
 	print "<form id=\"mysetsform\">";
 	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\">";
 	print "<input type='button' value='Clear' onClick=\"return onClearMySets();\"><br>";
+	print "<input type='text' id='add_collection_name' value='Collection Name'>";
+	print "<input type='button' id='add_collection' value='Add To Collections' onClick='return onAddCollection(this.form);'>";
 	if ($cgi->param('checkedelements[]')) {
 		my @checked = $cgi->param('checkedelements[]');	
 		my $checked_hash = BeastSession::buildCheckedHash(@checked);
