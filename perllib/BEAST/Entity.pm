@@ -90,7 +90,7 @@ sub insertDB
 
 	my $internal_id;
 	if (($internal_id = $db->existsEntity($self->get_ex_id, $self->get_keyspace)) > 0) {
-		$$err_str = "entity already exists: ".$self->get_name;
+		$$err_str = "entity already exists: ".$self->get_name." ".$self->get_ex_id;
 	} else {
 		my $desc = escapeSQLString($self->get_desc);
 		$internal_id = $db->insertEntity($self->get_name, $desc, $self->get_ex_id, $self->get_keyspace);

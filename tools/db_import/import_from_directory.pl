@@ -36,7 +36,7 @@ my $meta_file = $import_directory."/metas.tab";
 my $meta_mappings_file = $import_directory."/meta_mappings.tab";
 my $meta_sets_mappings_file = $import_directory."/meta_sets_mappings.tab";
 
-die &usage('no sets file') unless (-f $sets_file);
+#die &usage('no sets file') unless (-f $sets_file);
 #die &usage('no elements file') unless (-f $elements_file);
 #die &usage('no meta file') unless (-f $meta_file);
 #die &usage('no meta mappings file') unless (-f $meta_mappings_file);
@@ -52,16 +52,19 @@ if (-f $keyspaces_file) {
 
 my $entities = {};
 
-open (SETS_FH, $sets_file) || die;
-my @lines = <SETS_FH>;
-my $errstr = '';
-my @sets = Set::parseSetLines(\$errstr, @lines);
-my $sets_hash = {};
-close (SETS_FH);
-if ($sets[0] == 0) {
-	pop @sets;
-	print $errstr."\n";
-	die "Failed to parse set lines!\n";
+my @sets;
+if (-f $sets_file) {
+	open (SETS_FH, $sets_file) || die;
+	my @lines = <SETS_FH>;
+	my $errstr = '';
+	@sets = Set::parseSetLines(\$errstr, @lines);
+	my $sets_hash = {};
+	close (SETS_FH);
+	if ($sets[0] == 0) {
+		pop @sets;
+		print $errstr."\n";
+		die "Failed to parse set lines!\n";
+	}
 }
 
 my @meta_lines;
@@ -226,8 +229,8 @@ foreach my $line (@meta_sets_mapping_lines) {
 
 }
 
-#&add_elements;
-&add_sets;
+&add_elements;
+#&add_sets;
 #&add_metas;
 ##&add_meta_mappings;
 #&add_meta_set_mappings;
