@@ -12,6 +12,17 @@ use BEAST::Constants;
 
 package MySets;
 
+sub new
+{
+	my $class = shift;
+	my $self = {
+		_input 		=> shift,
+	};
+
+	bless $self, $class;
+	return $self;
+}
+
 sub updateActiveElements
 {
 	my $checkedHash = shift;
@@ -130,5 +141,63 @@ sub sortElementsList
 	return sort { $all_elements->{$a} <=> $all_elements->{$b} } keys %$all_elements;
 }
 
+sub printTabFlat
+{
+	my $self = shift;
+	my $session = shift;
+
+	my $cgi = $self->{'_input'};
+
+	print "<form id=\"mysetsform_flat\">";
+	print "<input type='button' value='Update' onClick=\"return onUpdateMySetsFlat(this.form);\">";
+	print "<input type='button' value='Clear' onClick=\"return onClearMySetsFlat();\"><br>";
+	if ($cgi->param('checkedelements[]')) {
+		my @checked = $cgi->param('checkedelements[]');	
+		my $checked_hash = BeastSession::buildCheckedHash(@checked);
+		#print Data::Dumper->Dump([$checked_hash]);
+		my @mysets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1, "", ""));
+		updateActiveElements($checked_hash, @mysets);	
+		BeastSession::saveObjsToSession($session, 'mysets', @mysets);
+	}
+
+	my @sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 1);
+	my $selected = BeastSession::getSelectedColumns($session);
+	return unless (scalar(@sets) > 0); 
+
+	displaySetsFlat("mysets_flat", $selected, @sets);
+	print "</form>";
+}
+
+sub printTabTree
+{
+	my $self = shift;
+	my $session = shift;
+
+	my $cgi = $self->{'_input'};
+
+	my @sets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1, "", ""));
+	my $selected = BeastSession::getSelectedColumns($session);
+
+	unless (ref($sets[0]) eq 'Set') {
+		pop @sets;
+	}
+
+	return unless (scalar(@sets) > 0); 
+
+	print "<form id=\"mysetsform\">";
+	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\">";
+	print "<input type='button' value='Clear' onClick=\"return onClearMySets();\"><br>";
+	if ($cgi->param('checkedelements[]')) {
+		my @checked = $cgi->param('checkedelements[]');	
+		my $checked_hash = BeastSession::buildCheckedHash(@checked);
+		#print Data::Dumper->Dump([$checked_hash]);
+		updateActiveElements($checked_hash, @sets);	
+		BeastSession::saveObjsToSession($session, 'mysets', @sets);
+	}
+
+	displaySetsTree("mysets", $selected, @sets);
+	print "</form>";
+
+}
 
 1;

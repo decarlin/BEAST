@@ -83,6 +83,9 @@ sub printTab
 	foreach (qw(human mouse yeast entrez go chemdiv boon_sga drugbank)) {
 		$checkedopts->{$_} = $default;
 	}
+	
+	# default OFF
+	$checkedopts->{'metatrans'} = 0;
 
 	# set based on the user's checks, after the submit
 	foreach (@checked) {
@@ -97,7 +100,7 @@ sub printTab
 	foreach (qw(entrez)) {
 		if ($checkedopts->{$_}) { push @$checked_keyspace_source_keys, $_; }
 	}
-	foreach (qw(go chemdiv boon_sga drugbank)) {
+	foreach (qw(go chemdiv boon_sga drugbank metatrans)) {
 		if ($checkedopts->{$_}) { push @$checked_info_keys, $_; }
 	}
 
@@ -129,7 +132,8 @@ sub printTab
 	my $chemdiv = Set->new('chemdiv', $checkedopts->{'chemdiv'}, {'type' => 'set_option'}, "");
 	my $boon_sga = Set->new('boon_sga', $checkedopts->{'boon_sga'}, {'type' => 'set_option'}, "");
 	my $drugbank = Set->new('drugbank', $checkedopts->{'drugbank'}, {'type' => 'set_option'}, "");
-	my $experimental = Set->new('experimental', 1, {'type' => 'meta_option'}, {'chemdiv' => $chemdiv, 'boon_sga' => $boon_sga, 'drugbank' => $drugbank});
+	my $metatrans = Set->new('metatrans', $checkedopts->{'metatrans'}, {'type' => 'set_option'}, "");
+	my $experimental = Set->new('experimental', 1, {'type' => 'meta_option'}, {'chemdiv' => $chemdiv, 'boon_sga' => $boon_sga, 'drugbank' => $drugbank, 'metatrans' => $metatrans});
 
 	my $source = Set->new('source', 1, {'type' => 'meta_option'}, {'experimental' => $experimental, 'curated' => $curated});
 	

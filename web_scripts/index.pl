@@ -44,6 +44,7 @@ my $importObj = ImportTab->new($cgi);
 my $browseObj = BrowseTab->new($cgi);
 my $collectionsObj = CollectionsTab->new($cgi);
 my $viewObj = ViewTab->new($cgi);
+my $mysetsObj = MySets->new($cgi);
 	
 #print Data::Dumper->Dump([$cgi]);
 #main
@@ -124,7 +125,7 @@ my $viewObj = ViewTab->new($cgi);
 		my $column = ViewTab::getColumn($gifInfo, $cgi->param('x_coord'), $cgi->param('y_coord'));
 		my $selected = { $column => 1 };
 		BeastSession::saveSelectedColumns($session, $selected);
-		displayMySetsFlat();
+		$mysetsObj->printTabFlat($session);
 	}
 	elsif ($action eq "clear")
 	{
@@ -140,9 +141,9 @@ my $viewObj = ViewTab->new($cgi);
 		}
 
 		if ($cgi->param('type') eq 'tree') {
-			displayMySetsTree();
+			$mysetsObj->printTabTree($session);
 		} elsif ($cgi->param('type') eq 'flat') {
-			displayMySetsFlat();
+			$mysetsObj->printTabFlat($session);
 		}
 	}
 	elsif ($action eq "mycollections")
@@ -175,59 +176,11 @@ my $viewObj = ViewTab->new($cgi);
 sub displayMySets()
 {
 	if ($cgi->param('type') eq "tree") {
-		displayMySetsTree();
+		$mysetsObj->printTabTree($session);
 	}  else {
-		displayMySetsFlat();
+		$mysetsObj->printTabFlat($session);
 	}
 }
-
-sub displayMySetsFlat()
-{
-	print "<form id=\"mysetsform_flat\">";
-	print "<input type='button' value='Update' onClick=\"return onUpdateMySetsFlat(this.form);\">";
-	print "<input type='button' value='Clear' onClick=\"return onClearMySetsFlat();\"><br>";
-	if ($cgi->param('checkedelements[]')) {
-		my @checked = $cgi->param('checkedelements[]');	
-		my $checked_hash = BeastSession::buildCheckedHash(@checked);
-		#print Data::Dumper->Dump([$checked_hash]);
-		my @mysets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1, "", ""));
-		MySets::updateActiveElements($checked_hash, @mysets);	
-		BeastSession::saveObjsToSession($session, 'mysets', @mysets);
-	}
-
-	@sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 1);
-	my $selected = BeastSession::getSelectedColumns($session);
-	return unless (scalar(@sets) > 0); 
-
-	MySets::displaySetsFlat("mysets_flat", $selected, @sets);
-	print "</form>";
-}
-
-sub displayMySetsTree()
-{
-	@sets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1, "", ""));
-	my $selected = BeastSession::getSelectedColumns($session);
-
-	unless (ref($sets[0]) eq 'Set') {
-		pop @sets;
-	}
-
-	return unless (scalar(@sets) > 0); 
-
-	print "<form id=\"mysetsform\">";
-	print "<input type='button' value='Update' onClick=\"return onUpdateMySets(this.form);\">";
-	print "<input type='button' value='Clear' onClick=\"return onClearMySets();\"><br>";
-	if ($cgi->param('checkedelements[]')) {
-		my @checked = $cgi->param('checkedelements[]');	
-		my $checked_hash = BeastSession::buildCheckedHash(@checked);
-		#print Data::Dumper->Dump([$checked_hash]);
-		MySets::updateActiveElements($checked_hash, @sets);	
-		BeastSession::saveObjsToSession($session, 'mysets', @sets);
-	}
-	MySets::displaySetsTree("mysets", $selected, @sets);
-	print "</form>";
-}
-
 
 # save and merge search results to mysets
 sub getMySetsJSON()
