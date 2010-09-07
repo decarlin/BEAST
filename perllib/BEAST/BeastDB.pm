@@ -543,6 +543,37 @@ sub getEntitiesForSet($$)
 	return $entities;
 }
 
+sub getEntityNameValuesForSet($$)
+{
+	my $self = shift;
+	my $set_id = shift;
+	my $threshold = shift;
+
+	my $template = "SELECT entity.name,set_entity.member_value FROM set_entity,entity ";
+	$template .= " WHERE entity.id=set_entity.entity_id AND set_entity.sets_id='$set_id'";
+
+	if ($threshold) {
+		$template .= " AND (member_value >= $threshold OR member_value is NULL)";	
+	} 
+
+
+	my $results = $self->runSQL($template);
+	my $rows_ref = $results->fetchall_arrayref();
+	my $names_values = {};
+	if (ref($rows_ref) eq 'ARRAY') {
+		foreach (@$rows_ref) {
+			my ($name, $value) = ($_->[0], $_->[1]);
+			if ($value =~ /.*\d+.*/) {
+				$names_values->{$name} = $value;
+			} else {
+				$names_values->{$name} = "";
+			}
+		}
+	}
+
+	return $names_values;
+}
+
 sub getEntityNameExIDForSet($$)
 {
 	my $self = shift;

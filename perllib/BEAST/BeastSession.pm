@@ -156,29 +156,9 @@ sub loadMergeLeafSets
 	die unless (ref($session) eq 'CGI::Session');
 	die unless ($key =~ /^\w+$/);
 
-	my @sets = loadLeafSetsFromSession($session, $key, 1, $load_elements);
-
 	my $checked_hash = buildCheckedHash(@$checkbox_arr_ref);
-	my @selected_sets = mergeWithCheckbox(\@sets, $checked_hash);
 
-	return @selected_sets;
-}
-
-sub loadMergeLeafSetsValues
-{
-	my $session = shift;
-	my $key = shift;
-	my $checkbox_arr_ref = shift;
-	my $load_elements = shift || 0;
-
-	die unless (ref($checkbox_arr_ref) eq 'ARRAY');
-	die unless (ref($session) eq 'CGI::Session');
-	die unless ($key =~ /^\w+$/);
-
-	my @sets = loadLeafSetsFromSession($session, $key, 1, $load_elements, undef);
-
-	my $checked_hash = buildCheckedHash(@$checkbox_arr_ref);
-	my @selected_sets = mergeWithCheckbox(\@sets, $checked_hash);
+	my @selected_sets = loadLeafSetsFromSession($session, $key, 1, $load_elements, $checked_hash);
 
 	return @selected_sets;
 }
@@ -246,13 +226,13 @@ sub loadSetsForActiveCollections
 	my @collectionX_setNames = $collectionX->get_set_names;
 	my @collectionY_setNames = $collectionY->get_set_names;
 
-	my @setsX = loadMergeLeafSetsValues($session, 'mysets', \@collectionX_setNames, 1);
+	my @setsX = loadMergeLeafSets($session, 'mysets', \@collectionX_setNames, 1);
 
 	my @setsY;
 	if ($X eq $Y) {
 		@setsY = @setsX;
 	} else {
-		@setsY = loadMergeLeafSetsValues($session, 'mysets', \@collectionY_setNames, 1);
+		@setsY = loadMergeLeafSets($session, 'mysets', \@collectionY_setNames, 1);
 	}
 
 	return (\@setsX, \@setsY);	
@@ -347,7 +327,10 @@ sub loadLeafSetsFromSession
 	# 1 yes, 0 no
 	my $keep_inactive = shift;
 	# 1 yes, 0 no
-	my $include_elements = shift;
+	my $include_elements = shift || 0;
+
+	my $checked_hash = shift || undef;
+	
 
 	## 
 	##  We do have to get the entities from the DB at this point
@@ -368,6 +351,11 @@ sub loadLeafSetsFromSession
 		my @set_leaves = $set->getLeafNodes();
 		foreach (@set_leaves) {
 			my $leaf = $_;
+
+			# don't retrieve unchecked leaves
+			if ($checked_hash) {
+				next unless (exists $checked_hash->{$leaf->get_name});
+			}
 
 			# no duplicates		
 			my $name = $leaf->get_name();
