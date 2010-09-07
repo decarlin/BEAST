@@ -156,8 +156,7 @@ sub loadMergeLeafSets
 	die unless (ref($session) eq 'CGI::Session');
 	die unless ($key =~ /^\w+$/);
 
-	my $element_opts = {'external_id' => 1};
-	my @sets = loadLeafSetsFromSession($session, $key, 1, $load_elements, $element_opts);
+	my @sets = loadLeafSetsFromSession($session, $key, 1, $load_elements);
 
 	my $checked_hash = buildCheckedHash(@$checkbox_arr_ref);
 	my @selected_sets = mergeWithCheckbox(\@sets, $checked_hash);
@@ -349,7 +348,6 @@ sub loadLeafSetsFromSession
 	my $keep_inactive = shift;
 	# 1 yes, 0 no
 	my $include_elements = shift;
-	my $entity_opts = shift || undef;
 
 	## 
 	##  We do have to get the entities from the DB at this point
@@ -383,35 +381,17 @@ sub loadLeafSetsFromSession
 			# If this is a user-uploaded set, however, they should already be attached
 			if ($include_elements == 1 && ($leaf->get_element_names eq "" || scalar($leaf->get_element_names) == 0) ) {
 
-				my $add_ext_id = undef;
-				if (defined $entity_opts && exists $entity_opts->{'external_id'}) {
-					$add_ext_id = 1;	
-				}
-
 				my $i = 0;
+				#my $entities = $beastDB->getEntityNameExIDForSet($leaf->get_id, Constants::SET_MEMBER_THRESHOLD);
 				my $entities = $beastDB->getEntitiesForSet($leaf->get_id, Constants::SET_MEMBER_THRESHOLD);
-
-				my $elements;
-				# either by membership value or external ID
-				if (defined $add_ext_id) {
-					foreach my $name (keys %$entities) {
-						my $ent = $entities->{$name};		
-						$elements->{$name} = $ent->get_ex_id;
-					}
-				} else { 
-					foreach my $name (keys %$entities) {
-						my $ent = $entities->{$name};		
-						$elements->{$name} = $ent->get_membership_value;
-					}
-				}
 
 				my @keys = keys %$entities;
 				if (!$leaf->get_metadata_value('organism')) {
-					my $ent = $entities->{$keys[0]};
-					my ($organism, $keysp_source) = $beastDB->getKeyspaceOrganismEntExId($ent->get_ex_id);
+					my ($organism, $keysp_source) = 
+						$beastDB->getKeyspaceOrganismEntExId($entities->{$keys[0]}->get_ex_id);
 					$leaf->set_metadata_value('organism', $organism);
 				}
-				$leaf->{'_elements'} = $elements;
+				$leaf->{'_elements'} = $entities;
 			}
 
 			# get the sets_info source

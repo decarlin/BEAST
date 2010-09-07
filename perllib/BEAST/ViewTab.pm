@@ -162,6 +162,7 @@ sub getSetsSetsGif
 	}
 	close (SETSY);
 
+
 	my $err_str;
 	my $sets_overlap_prog = SetsOverlap->new(\$err_str, {
 		'gold_file' => $setsXfilename,

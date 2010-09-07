@@ -28,7 +28,7 @@ sub getSetIdFromExternalId($);
 sub getSetsInfoForSet($$);
 sub getSetNameExtIdFromID($);
 sub getEntityNameFromID($);
-sub getEntityNameValuesForSet($$);
+sub getEntityNameExIDForSet($$);
 sub getKeyspaceOrganism($);
 sub getEntityIDFromExternalID($);
 sub getMetaIdFromExternalId($);
@@ -543,13 +543,13 @@ sub getEntitiesForSet($$)
 	return $entities;
 }
 
-sub getEntityNameValuesForSet($$)
+sub getEntityNameExIDForSet($$)
 {
 	my $self = shift;
 	my $set_id = shift;
 	my $threshold = shift;
 
-	my $template = "SELECT entity.name,set_entity.member_value FROM set_entity,entity ";
+	my $template = "SELECT entity.name,entity.entity_key FROM set_entity,entity ";
 	$template .= " WHERE entity.id=set_entity.entity_id AND set_entity.sets_id='$set_id'";
 
 	if ($threshold) {
@@ -559,19 +559,15 @@ sub getEntityNameValuesForSet($$)
 
 	my $results = $self->runSQL($template);
 	my $rows_ref = $results->fetchall_arrayref();
-	my $names_values = {};
+	my $names_ex_id = {};
 	if (ref($rows_ref) eq 'ARRAY') {
 		foreach (@$rows_ref) {
 			my ($name, $value) = ($_->[0], $_->[1]);
-			if (!$value || $value !~ /.*\d+.*/) {
-				$names_values->{$name} = "";
-			} else {
-				$names_values->{$name} = $value;
-			}
+			$names_ex_id->{$name} = $value;
 		}
 	}
 
-	return $names_values;
+	return $names_ex_id;
 }
 
 # sets -> keyspace.organism='blah'

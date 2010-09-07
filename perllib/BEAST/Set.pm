@@ -646,8 +646,12 @@ sub toString
 		my $element = $self->get_element($names[$i]);
 		if (ref($element) eq 'Set') {
 			$str .= "\t".$element->get_name;
+		# entity objects store the ex_id -- use this for comparison
+		} elsif (ref($element) eq 'Entity') {
+			$str .= "\t".$element->get_ex_id;
 		} else {
-			$str .= "\t".$names[$i];
+			#$str .= "\t".$names[$i];
+			$str .= "\t".$element;
 		}
 	}
 
