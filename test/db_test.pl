@@ -13,7 +13,7 @@ use Data::Dumper;
 
 my $setid = 114005;
 our $beastDB = BeastDB->new;
-$beastDB->connectDB();
+$beastDB->disconnectDB();
 
 print "Testing parents for set: $setid\n";
 my @results = $beastDB->getSetNameExtIdFromID($setid);

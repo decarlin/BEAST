@@ -336,7 +336,6 @@ sub loadLeafSetsFromSession
 	##  We do have to get the entities from the DB at this point
 	##
 	my $beastDB = BeastDB->new;
-	$beastDB->connectDB();
 
 	my $uniq_leaves = {};
 	
@@ -344,7 +343,7 @@ sub loadLeafSetsFromSession
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
 	}
-	
+
 	return unless (scalar(@sets) > 0); 
 	foreach (@sets) {
 		my $set = $_;
@@ -369,6 +368,8 @@ sub loadLeafSetsFromSession
 			# If this is a user-uploaded set, however, they should already be attached
 			if ($include_elements == 1 && ($leaf->get_element_names eq "" || scalar($leaf->get_element_names) == 0) ) {
 
+				$beastDB->lazyConnectDB();
+
 				my $i = 0;
 				#my $entities = $beastDB->getEntityNameExIDForSet($leaf->get_id, Constants::SET_MEMBER_THRESHOLD);
 				my $entities = $beastDB->getEntitiesForSet($leaf->get_id, Constants::SET_MEMBER_THRESHOLD);
@@ -384,6 +385,7 @@ sub loadLeafSetsFromSession
 
 			# get the sets_info source
 			if (!$leaf->get_source) {
+				$beastDB->lazyConnectDB();
 				my $source = $beastDB->getSetsInfoForSet($leaf->get_id, 'source');
 				$leaf->set_source($source);
 			}

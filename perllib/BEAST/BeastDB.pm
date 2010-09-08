@@ -22,6 +22,7 @@ our $FALSE=0;
 
 sub importSetToDB($);
 sub connectDB();
+sub lazyConnectDB();
 sub disconnectDB();
 sub runSQL($$);
 sub getSetIdFromExternalId($);
@@ -118,9 +119,21 @@ sub connectDB()
 	$self->{'_db_handle'} = $db_handle;
 }
 
+sub lazyConnectDB()
+{
+	my $self = shift;
+
+	if (exists $self->{'_db_handle'}) { return; }
+
+	$self->connectDB();
+}
+
+
 sub disconnectDB()
 {
 	my $self = shift;
+
+	return unless (ref($self->{'_db_handle'}) eq 'DBI::db');
 
 	$self->{'_db_handle'}->disconnect or die "Failed to disconnect DBH!";
 }
