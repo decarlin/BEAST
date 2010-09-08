@@ -21,6 +21,8 @@ use BEAST::BeastDB;
 use BEAST::Loader;
 use BEAST::Entity;
 
+$| = 1;
+
 my $import_directory = '';
 my $small_ent_mode = '';
 my $not_really;
@@ -236,9 +238,9 @@ foreach my $line (@meta_sets_mapping_lines) {
 
 }
 
-&add_elements;
-&add_metas;
-&add_meta_mappings;
+#&add_elements;
+#&add_metas;
+#&add_meta_mappings;
 &add_sets;
 &add_meta_set_mappings;
 print "DONE! \n\n";

@@ -206,6 +206,32 @@ sub getSelectedCollections
 	return ($collectionX, $collectionY);
 }
 
+sub loadCollectionClusters
+{
+	my $session = shift;
+
+	my ($X, $Y) = getSelectedCollectionNames($session);
+	if (  (!$X || $X eq "") || (!$Y || $Y eq "")) {
+		return "";
+	}
+
+	my ($collectionX, $collectionY) = getSelectedCollections($session, $X, $Y);
+	if ($X eq $Y) {
+		$collectionY = $collectionX;
+	}
+
+	if (  (!$collectionX || $collectionX eq "") || (!$collectionY || $collectionY eq "")) {
+		return "";
+	}
+	my @collectionX_setNames = $collectionX->get_set_names;
+	my @collectionY_setNames = $collectionY->get_set_names;
+
+	my @setsX = loadMergeSetsFromSession($session, 'mysets', \@collectionX_setNames);
+	my @setsY = loadMergeSetsFromSession($session, 'mysets', \@collectionY_setNames);
+
+	return (\@setsX, \@setsY);	
+}
+
 sub loadSetsForActiveCollections
 {
 	my $session = shift;

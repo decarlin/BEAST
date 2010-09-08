@@ -72,12 +72,19 @@ MULTILINE_STR
 		print "<input type='button' id='update_selected_collections' value='Update Selected' onClick='return onUpdateSelectedCollections();'><br>";
 		print "<div>&nbsp;</div>";
 
-		if ($selectedX) {
 
-
-		}
+		my ($setsX, $setsY) = BeastSession::loadCollectionClusters($session);
+		print "<div>Gold Collection:</div>";
+		MySets::displaySetsTree("collectionX", "", @$setsX);
+		print "<div>Test Collection:</div>";
+		MySets::displaySetsTree("collectionY", "", @$setsY);
 
 	}
+	
+
+	#
+	# ADD COLLECTION: MOVED TO MYSETS TAB
+	#
 
 	#my @mysets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1,"", ""));	
 	#unless (ref($mysets[0]) eq 'Set') {

@@ -617,15 +617,15 @@ sub insertDB
 				next;
 			}
 
-			if ($db->existsSetEntityRel($set_internal_id, $entity_id) > 0) {
-				$$error_ref .= "entity already in DB".$element_name."\n";
-			} else {
+			#if ($db->existsSetEntityRel($set_internal_id, $entity_id) > 0) {
+			#	$$error_ref .= "entity already in DB".$element_name."\n";
+			#} else {
 				my $element_value = $self->get_element($element_name);
 				if ($element_value eq "") {
 					$element_value = "NULL";	
 				}
 				$db->insertSetEntityRel($set_internal_id, $entity_id, $element_value);
-			}
+			#}
 		}
 	}
 					
