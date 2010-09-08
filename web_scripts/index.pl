@@ -22,6 +22,7 @@ use BEAST::ViewTab;
 use BEAST::CollectionsTab;
 use BEAST::MySets;
 use BEAST::Set;
+use BEAST::ClusteredCollection;
 use BEAST::BeastSession;
 use BEAST::DebugHelper;
 
@@ -305,7 +306,7 @@ sub addCollection()
 	my @checkboxdata = $cgi->param('checkedfilters[]');
 	my $name = $cgi->param('name');
 	my @collectionSets = BeastSession::loadMergeLeafSets($session, 'mysets', \@checkboxdata);
-	my $newCollection = Collection->new($name, @collectionSets);
+	my $newCollection = ClusteredCollection->new($name, @collectionSets);
 
 	# assuming homosets, get the source for any set to determine the 
 	# source and keyspace
