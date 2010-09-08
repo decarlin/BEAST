@@ -702,6 +702,7 @@ sub parseSetLines
 			} 
 		}
 		
+		Math::BigFloat->accuracy(3);
 		my $elements = {};
 		for my $i (1 .. $#components) 
 		{
@@ -710,7 +711,11 @@ sub parseSetLines
 			}
 
 			if ($components[$i] =~ /(\S+)\^(-?[\d\.]+)/) {
-				$elements->{$1} = $2;
+
+				my $el = $1;
+				my $float = Math::BigFloat->new($2);
+				# pare down the precision to 5 dec	
+				$elements->{$el} = $float->bstr();
 			} else {
 				$elements->{$components[$i]} = "";	
 			}
