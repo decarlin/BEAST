@@ -74,6 +74,13 @@ MULTILINE_STR
 
 
 		my ($setsX, $setsY) = BeastSession::loadCollectionClusters($session);
+		foreach my $set (@$setsX) {
+			$set->convertDisplay();
+		}
+		foreach my $set (@$setsY) {
+			$set->convertDisplay();
+		}
+
 		print "<div>Gold Collection:</div>";
 		MySets::displaySetsTree("collectionX", "", @$setsX);
 		print "<div>Test Collection:</div>";

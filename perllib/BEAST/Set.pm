@@ -477,6 +477,27 @@ sub mergeCheckbox_Simple
 	}
 }
 
+sub convertDisplay
+{
+	my $self = shift;
+
+	if ($self->get_metadata_value('type') eq 'meta') {
+		$self->set_metadata_value('type', 'meta_display');	
+	} else {
+		$self->set_metadata_value('type', 'set_display');	
+		return;
+	}
+	
+	foreach ($self->get_element_names) {
+		my $name = $_;
+	 	my $element = $self->get_element($name);
+	     
+	  	if (ref($element) eq 'Set') {
+			$element->convertDisplay();
+	  	}
+	}
+}
+
 
 sub getLeafNodes()
 {
