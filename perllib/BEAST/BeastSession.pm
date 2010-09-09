@@ -430,9 +430,14 @@ sub loadLeafSetsFromSession
 				my $entities = $beastDB->getEntitiesForSet($leaf->get_id, Constants::SET_MEMBER_THRESHOLD);
 
 				my @keys = keys %$entities;
+
+				# empty set -- need some kind of warning??
+				next if (scalar(@keys) == 0);
+
 				if (!$leaf->get_metadata_value('organism')) {
+					my $ent = $entities->{$keys[0]};
 					my ($organism, $keysp_source) = 
-						$beastDB->getKeyspaceOrganismEntExId($entities->{$keys[0]}->get_ex_id);
+						$beastDB->getKeyspaceOrganismEntExId($ent->get_ex_id);
 					$leaf->set_metadata_value('organism', $organism);
 				}
 				$leaf->{'_elements'} = $entities;
