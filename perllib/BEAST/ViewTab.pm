@@ -132,57 +132,23 @@ sub getSetsSetsGif
 		return "";
 	}
 
-	my $filename = "/tmp/".$session->id;
-	my $setsXfilename = $filename.".setsX";
-	my $setsYfilename = $filename.".setsY";
-	my @rows; # the gold stanard (X) file
-
-	my $setXOrganism = $setsX->[0]->get_metadata_value('organism');
-	my $setXSource = $setsX->[0]->get_source;
-	my $setYOrganism = $setsY->[0]->get_metadata_value('organism');
-	my $setYSource = $setsY->[0]->get_source;
-
-	unless (open(SETSX, ">$setsXfilename"))  { 
-		print "can't open tmp file!\n"; 
-		return; 
-	}
-	foreach my $set (@$setsX)  {
-		print SETSX $set->toString()."\n";
-		push @rows, $set->get_name;
-	}
-	close (SETSX);
-
-	unless (open(SETSY, ">$setsYfilename")) { 
-		print "can't open tmp file!\n"; 
-		return; 
-	}
-	# columns: the test set
-	foreach my $set (@$setsY)  {
-		print SETSY $set->toString()."\n";
-	}
-	close (SETSY);
-
-
+	## Any class that implements this virtual interface
+	# must implement run, get_json, and clean methods. 
 	my $err_str;
-	my $sets_overlap_prog = SetsOverlap->new(\$err_str, {
-		'gold_file' => $setsXfilename,
-		'test_file' => $setsYfilename,
-		'gold_universe_file' => "/".$setXSource."/".$setXOrganism."/universe.lst",
-		'test_universe_file' => "/".$setYSource."/".$setYOrganism."/universe.lst",
-		'tmp_base_file' => $filename
-	});
 
-
-	unless (defined $sets_overlap_prog) {
-		print $err_str."\n";
+	my $collectionComparator = BeastSession::getCollectionComparator($session, $setsX, $setsY);
+	if ($collectionComparator->run($session, \$err_str) == 0) {
+		print $err_str;
 		return;
 	}
-
-	
-	$sets_overlap_prog->run;
-	my $test_sets_json = $sets_overlap_prog->parse_output_to_json;
+	my $test_sets_json = $collectionComparator->get_json;
 	#$sets_overlap_prog->print_raw_output;
-	$sets_overlap_prog->clean;
+	$collectionComparator->clean;
+
+	my @rows;
+	foreach my $set (@$setsX) {
+		push @rows, $set->get_name;
+	}
 
 	my $json = getJSONMetadata($session);
 	my $row_json = getJSONRowdata(@rows);

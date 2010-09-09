@@ -190,8 +190,8 @@ sub getSelectedCollections
 	my $collectionX;
 	my $collectionY;
 	
-	my @mycollections = BeastSession::loadObjsFromSession($session, 'mycollections', Collection->new('constructor',""));	
-	unless (ref($mycollections[0]) eq 'Collection') {
+	my @mycollections = BeastSession::loadObjsFromSession($session, 'mycollections', ClusteredCollection->new('constructor',""));	
+	unless (ref($mycollections[0]) eq 'ClusteredCollection') {
 		return "";
 	}
 
@@ -223,13 +223,42 @@ sub loadCollectionClusters
 	if (  (!$collectionX || $collectionX eq "") || (!$collectionY || $collectionY eq "")) {
 		return "";
 	}
-	my @collectionX_setNames = $collectionX->get_set_names;
-	my @collectionY_setNames = $collectionY->get_set_names;
 
-	my @setsX = loadMergeSetsFromSession($session, 'mysets', \@collectionX_setNames);
-	my @setsY = loadMergeSetsFromSession($session, 'mysets', \@collectionY_setNames);
+	if (ref($collectionX) eq 'ClusteredCollection' && ref($collectionY) eq 'ClusteredCollection') {
+		my @clusterX = $collectionX->get_cluster;
+		my @clusterY = $collectionY->get_cluster;
 
-	return (\@setsX, \@setsY);	
+		return (\@clusterX, \@clusterY);	
+
+	} else {
+
+		my @collectionX_setNames = $collectionX->get_set_names;
+		my @collectionY_setNames = $collectionY->get_set_names;
+
+		my @setsX = loadMergeSetsFromSession($session, 'mysets', \@collectionX_setNames);
+		my @setsY = loadMergeSetsFromSession($session, 'mysets', \@collectionY_setNames);
+
+		return (\@setsX, \@setsY);	
+	}
+}
+
+sub getCollectionComparator
+{
+	my $session = shift;
+	my $collection1 = shift;
+	my $collection2 = shift;
+
+	my $comparator = $session->param('collection_comparator');
+
+	my $obj;
+	if ($comparator eq 'SetsOverlap') {
+		$obj = SetsOverlap->new($collection1, $collection2);
+	} else {
+	# the default
+		$obj = SetsOverlap->new($collection1, $collection2);
+	}	
+
+	return $obj;
 }
 
 sub loadSetsForActiveCollections

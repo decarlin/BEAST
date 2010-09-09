@@ -66,7 +66,7 @@ sub new
 	return $self;
 }
 
-# call after re-clustering -- get the order
+# call after re-clustering -- re-order according to the 
 sub recluster
 {
 	my $self = shift;
@@ -85,5 +85,13 @@ sub recluster
 		push @{$self->{'sets'}}, $leaf->get_name;
   	}
 }
+
+sub get_cluster
+{
+	my $self = shift;
+
+	return $self->{'cluster'};
+}
+
 
 1;

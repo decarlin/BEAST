@@ -74,6 +74,13 @@ MULTILINE_STR
 
 
 		my ($setsX, $setsY) = BeastSession::loadCollectionClusters($session);
+		unless (ref(${$setsX}[0]) eq 'Set') {
+			pop @$setsX;
+		}
+		unless (ref(${$setsY}[0]) eq 'Set') {
+			pop @$setsY;
+		}
+
 		foreach my $set (@$setsX) {
 			$set->convertDisplay();
 		}
@@ -82,9 +89,17 @@ MULTILINE_STR
 		}
 
 		print "<div>Gold Collection:</div>";
-		MySets::displaySetsTree("collectionX", "", @$setsX);
+		if (scalar(@$setsX) == 0) {
+			print "&nbsp;&nbsp;No Cluster Defined<br>";	
+		} else {
+			MySets::displaySetsTree("collectionX", "", @$setsX);
+		}
 		print "<div>Test Collection:</div>";
-		MySets::displaySetsTree("collectionY", "", @$setsY);
+		if (scalar(@$setsY) == 0) {
+			print "&nbsp;&nbsp;No Cluster Defined<br>";	
+		} else {
+			MySets::displaySetsTree("collectionY", "", @$setsY);
+		}
 
 	}
 	

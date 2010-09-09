@@ -18,16 +18,12 @@ use BEAST::Constants;
 sub new
 {
 	my $class = shift;
-	my $err_str = shift;
-	my $self = shift;
+	my $setsX = shift;
+	my $setsY = shift;
 
-#	my $self = {
-#		'gold_file' 
-#		'test_file'
-#		'gold_universe_file' 
-#		'test_universe_file'
-#		'tmp_base_file' 
-#	};	
+	my $self = {};
+	$self->{'gold_sets'} = $setsX;
+	$self->{'test_sets'} = $setsY;
 
 	$self->{'perl_lib_dir'} = Constants::PERL_LIB_DIR;
 	$self->{'perl_bin'} = Constants::PERL_32_BIN;
@@ -35,15 +31,6 @@ sub new
 	$self->{'universe_file_topdir'} = Constants::WEB_STATIC_DIR."/universe_files";
 	$self->{'normalization_constant'} = Constants::HEATMAP_NORM_CONSTANT;
 	
-	unless (-f Constants::WEB_STATIC_DIR."/universe_files".$self->{'gold_universe_file'}) {
-		$$err_str = "No Gold Universe File:".$self->{'gold_universe_file'}; 
-		return undef;
-	}
-	unless (-f Constants::WEB_STATIC_DIR."/universe_files".$self->{'test_universe_file'}) {
-		$$err_str = "No Test Universe File:".$self->{'test_universe_file'}; 
-		return undef;
-	}
-
 	bless $self, $class;
 	return $self;
 }
@@ -73,6 +60,58 @@ sub get_tmp_output_file
 sub run
 {
 	my $self = shift;
+	my $session = shift;
+	my $err_str = shift;
+
+	my $setsX = $self->{'gold_sets'};
+	my $setsY = $self->{'test_sets'};
+
+	# first write out the files
+	my $filename = "/tmp/".$session->id;
+	my $setsXfilename = $filename.".setsX";
+	my $setsYfilename = $filename.".setsY";
+	my @rows; # the gold stanard (X) file
+
+	my $setXOrganism = $setsX->[0]->get_metadata_value('organism');
+	my $setXSource = $setsX->[0]->get_source;
+	my $setYOrganism = $setsY->[0]->get_metadata_value('organism');
+	my $setYSource = $setsY->[0]->get_source;
+
+	unless (open(SETSX, ">$setsXfilename"))  { 
+		$$err_str =  "can't open tmp file!\n"; 
+		return 0;
+	}
+	foreach my $set (@$setsX)  {
+		print SETSX $set->toString()."\n";
+		push @rows, $set->get_name;
+	}
+	close (SETSX);
+
+	unless (open(SETSY, ">$setsYfilename")) { 
+		$$err_str = "can't open tmp file!\n"; 
+		return 0;
+	}
+	# columns: the test set
+	foreach my $set (@$setsY)  {
+		print SETSY $set->toString()."\n";
+	}
+	close (SETSY);
+
+	# set internal 
+	$self->{'gold_file'} = $setsXfilename;
+	$self->{'test_file'} = $setsYfilename;
+	$self->{'gold_universe_file'} = "/".$setXSource."/".$setXOrganism."/universe.lst";
+	$self->{'test_universe_file'} = "/".$setYSource."/".$setYOrganism."/universe.lst";
+	$self->{'tmp_base_file'} = $filename;
+
+	unless (-f Constants::WEB_STATIC_DIR."/universe_files".$self->{'gold_universe_file'}) {
+		$$err_str = "No Gold Universe File:".$self->{'gold_universe_file'}; 
+		return 0;
+	}
+	unless (-f Constants::WEB_STATIC_DIR."/universe_files".$self->{'test_universe_file'}) {
+		$$err_str = "No Test Universe File:".$self->{'test_universe_file'}; 
+		return 0;
+	}
 
 	$ENV{'MYPERLDIR'} = $self->{'perl_lib_dir'};
 
@@ -91,7 +130,7 @@ sub run
 	return 1;		
 }
 
-sub parse_output_to_json
+sub get_json
 {
 	my $self = shift;
 

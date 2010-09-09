@@ -190,6 +190,24 @@ sub get_ex_id
 	}
 }
 
+sub has_element
+{
+	my $self = shift;
+	my $element_name = shift;
+
+	if (exists $self->{'_elements'}->{$element_name}) { 
+		if ($self->{'_elements'}->{$element_name} eq "") {
+			# no membership value 
+			return 1;
+		} else {
+			# membership value...
+			return $self->{'_elements'}->{$element_name};
+		}
+	}
+
+	return 0;
+}
+
 sub get_element
 {
 	my $self = shift;
@@ -752,5 +770,21 @@ sub parseSetLines
 
 	return @sets;
 }
+
+# keyspace warning: all sets must have the same keyspace
+sub generateSetsUnion
+{
+	my @sets = shift;
+
+	my $elements = {};
+	foreach my $set (@sets) {
+		foreach my $name ($set->get_element_names) {
+			$elements->{$name} = 1;
+		}
+	}
+
+	return keys %$elements;
+}
+
 
 1;

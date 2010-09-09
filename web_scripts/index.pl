@@ -317,8 +317,8 @@ sub addCollection()
 	#$newCollection->set_organism($organism);
 
 	# add to the existing collections
-	my @collections = BeastSession::loadObjsFromSession($session, 'mycollections', Collection->new('constructor', ""));
-	unless (ref($collections[0]) eq 'Collection') {
+	my @collections = BeastSession::loadObjsFromSession($session, 'mycollections', ClusteredCollection->new('constructor', ""));
+	unless (ref($collections[0]) eq 'ClusteredCollection') {
 		pop @collections;
 	}
 	push @collections, $newCollection;
