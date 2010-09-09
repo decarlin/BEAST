@@ -597,31 +597,29 @@ function highlightElement(event, type) {
 	var scrollSpan = scrollDiv.scrollHeight - scrollDiv.offsetHeight;
 	var scrollIncrement = scrollSpan / columns.length;
 
-	var selectedColumnDiv;
 	// column math...
 	var colIndex = Math.floor(pos_x / column_width);
-	try
+
+	var selectedColumnDiv = document.getElementById("mysets_flat<>"+columns[colIndex]);
+	selectedColumnDiv.style.backgroundColor = "yellow";
+
+	var scrollHeight = 0;
+	var first_div = document.getElementById("mysets_flat"+"<>"+columns[0]);
+	var scrollZero = first_div.offsetTop;
+
+	scrollDiv.scrollTop = Math.floor(selectedColumnDiv.offsetTop - scrollZero);
+
+	for (var i=0; i < columns.length; i++)
 	{
-		var scrollHeight = 0;
-		var first_div = document.getElementById("mysets_flat"+"<>"+columns[0]);
-		var scrollZero = first_div.offsetTop;
-		for (var i=0; i < columns.length; i++)
-		{
+		if (i == colIndex) { continue; }
+		try {
 			var div_flat = document.getElementById("mysets_flat"+"<>"+columns[i]);
-			if (i == colIndex) {
-				selectedColumnDiv = div_flat;	
-				div_flat.style.backgroundColor = "yellow";
-				//scrollDiv.scrollTop = Math.floor(scrollIncrement * i);
-				scrollDiv.scrollTop = Math.floor(div_flat.offsetTop - scrollZero);
-			} else {
-				div_flat.style.backgroundColor = "white";
-			}
+			div_flat.style.backgroundColor = "white";
+		} catch (error) {
+			alert(columns[i]);
 		}
 	}
-	catch (error) 
-	{
-		//
-	}
+
 	return selectedColumnDiv;
 }
 
