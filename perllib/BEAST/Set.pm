@@ -680,7 +680,15 @@ sub toString
 
 	my @names = $self->get_element_names;	
 	
-	$str .= "\t".$self->get_element($names[0]);
+	my $first_element = $self->get_element($names[0]);
+	if (ref($first_element) eq 'Entity') {
+		$str .= "\t".$first_element->get_ex_id;
+	} elsif (ref($first_element) eq 'Set') {
+		$str .= "\t".$first_element->get_name;
+	} else {
+		$str .= "\t".$names[0];
+	}
+	
 	foreach my $i (1 .. (scalar(@names) - 1) ) {
 		my $element = $self->get_element($names[$i]);
 		if (ref($element) eq 'Set') {
@@ -689,8 +697,7 @@ sub toString
 		} elsif (ref($element) eq 'Entity') {
 			$str .= "\t".$element->get_ex_id;
 		} else {
-			#$str .= "\t".$names[$i];
-			$str .= "\t".$element;
+			$str .= "\t".$names[$i];
 		}
 	}
 

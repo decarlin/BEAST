@@ -434,6 +434,9 @@ sub loadLeafSetsFromSession
 				# empty set -- need some kind of warning??
 				next if (scalar(@keys) == 0);
 
+				# hack to threshold sets
+				# next unless (scalar(@keys) < 50 || scalar(@keys) > 10);
+
 				if (!$leaf->get_metadata_value('organism')) {
 					my $ent = $entities->{$keys[0]};
 					my ($organism, $keysp_source) = 

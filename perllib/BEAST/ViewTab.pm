@@ -71,6 +71,7 @@ sub printBase64GIF
 	my $type = shift;
 	my $rows = shift;
 
+
 	# parse the JSON info
 	my $json = JSON->new->utf8;
 	my $jsonObj = $json->decode($infoSTR);
@@ -149,6 +150,7 @@ sub getSetsSetsGif
 	foreach my $set (@$setsX) {
 		push @rows, $set->get_name;
 	}
+
 
 	my $json = getJSONMetadata($session);
 	my $row_json = getJSONRowdata(@rows);
