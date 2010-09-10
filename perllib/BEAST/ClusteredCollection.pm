@@ -87,12 +87,27 @@ sub recluster
 
 	# now redo the order of the set names
 	my @leaves = $new_cluster->getLeafNodes;
+
+	my @current_names = @{$self->{'sets'}};
+	my $all_sets_hash = {};
+	foreach my $name (@current_names) {
+		$all_sets_hash->{$name} = 1;	
+	}
+
+	# add the cluster to the beginning of the set
 	$self->{'sets'} = [];
 	foreach my $leaf (@leaves) {
 
+		next unless ($leaf->get_type eq 'set');
 		# we're not saving the sets here -- just pointing to the names
 		push @{$self->{'sets'}}, $leaf->get_name;
+		delete $all_sets_hash->{$leaf->get_name};
   	}
+
+	# add the remaining, non clustered set names
+	foreach my $name (keys %$all_sets_hash) {
+		push @{$self->{'sets'}}, $name;
+	}
 }
 
 # WARNINGS:

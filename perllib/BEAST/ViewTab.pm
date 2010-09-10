@@ -133,6 +133,7 @@ sub getSetsSetsGif
 		return "";
 	}
 
+
 	## Any class that implements this virtual interface
 	# must implement run, get_json, and clean methods. 
 	my $err_str;

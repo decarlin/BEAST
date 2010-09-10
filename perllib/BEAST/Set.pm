@@ -715,7 +715,8 @@ sub toString
 			$str .= "\t".$element->get_name;
 		# entity objects store the ex_id -- use this for comparison
 		} elsif (ref($element) eq 'Entity') {
-			$str .= "\t".$element->get_ex_id;
+			# ex_id plus a keyspace is sufficient to produce a unique ID
+			$str .= "\t".$element->get_ex_id.":".$element->get_keyspace;
 		} else {
 			$str .= "\t".$names[$i];
 		}
