@@ -77,8 +77,24 @@ sub new
 	return $self;
 }
 
+sub convert_entities
+{
+	my $self = shift;
 
-# this converts it to a json string
+	foreach ($self->get_element_names) {
+
+		my $name = $_;
+	 	my $element = $self->get_element($name);
+	     
+	  	if (ref($element) eq 'Set') {
+			$element->convert_entities;
+	  	} elsif (ref($element) eq 'Entity') {
+			$self->set_element($name, $element->get_membership_value);
+		}
+	}
+
+}
+
 sub serialize
 {
 	my $self = shift;

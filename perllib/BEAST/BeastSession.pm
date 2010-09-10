@@ -238,6 +238,25 @@ sub loadCollectionClusters
 
 			$clusterX = $collectionX->get_cluster;
 			$clusterY = $collectionY->get_cluster;
+
+
+			# we now need to save the clustering performed here to the session data
+			my @collections = 
+			BeastSession::loadObjsFromSession($session, 'mycollections', ClusteredCollection->new('constructor', ""));
+			unless (ref($collections[0]) eq 'ClusteredCollection') {
+				pop @collections;
+			}
+			my @new_collections;
+			foreach my $collection (@collections) {
+				if ($collection->get_name eq $collectionX->get_name) {
+					push @new_collections, $collectionX;
+				} elsif ($collection->get_name eq $collectionY->get_name) {
+					push @new_collections, $collectionY;
+				} else {
+					push @new_collections, $collection;
+				}
+			}
+			BeastSession::saveObjsToSession($session, 'mycollections', @new_collections);
 		}
 
 		my @arry1 = ($clusterX);
@@ -254,6 +273,8 @@ sub loadCollectionClusters
 
 		return (\@setsX, \@setsY);	
 	}
+
+	
 }
 
 sub getCollectionComparator
@@ -296,12 +317,17 @@ sub loadSetsForActiveCollections
 	my @collectionY_setNames = $collectionY->get_set_names;
 
 	my @setsX = loadMergeLeafSets($session, 'mysets', \@collectionX_setNames, 1);
+	# preserve the linear ordering assigned by the cluster
+	@setsX = $collectionX->order_sets(@setsX);
+	
 
 	my @setsY;
 	if ($X eq $Y) {
 		@setsY = @setsX;
 	} else {
 		@setsY = loadMergeLeafSets($session, 'mysets', \@collectionY_setNames, 1);
+		# preserve the linear ordering assigned by the cluster
+		@setsY = $collectionX->order_sets(@setsY);
 	}
 
 	return (\@setsX, \@setsY);	

@@ -95,6 +95,35 @@ sub recluster
   	}
 }
 
+# WARNINGS:
+# - no duplicate sets!
+# - @sets must be a superset of the collection sets
+sub order_sets
+{
+	my $self = shift;
+	my @sets = @_;
+
+	my $lookup = {};
+	foreach my $set (@sets) {
+		$lookup->{$set->get_name} = $set;
+	}		
+
+	my @sorted_sets;
+
+	foreach my $name (@{$self->{'sets'}}) {
+		die "\@sets not a superset of cluster sets" unless (exists ($lookup->{$name}));
+		push @sorted_sets, $lookup->{$name};
+		delete $lookup->{$name};
+	}
+
+	# add the rest that aren't in this cluster
+	foreach my $name (keys %$lookup) {
+		push @sorted_sets, $lookup->{$name};
+	}
+
+	return @sorted_sets;
+}
+
 sub get_cluster
 {
 	my $self = shift;

@@ -181,9 +181,24 @@ sub getSetsMembersGif
 	
 	my @sets = BeastSession::loadLeafSetsFromSession($session, 'mysets', 0, 1);
 
+	# reorder by clustering
+	my ($X, $Y) = BeastSession::getSelectedCollectionNames($session);
+	unless (  (!$X || $X eq "") || (!$Y || $Y eq "")) {
+		my ($collectionX, $collectionY) = BeastSession::getSelectedCollections($session, $X, $Y);
+		unless (!$collectionX || $collectionX eq "") {
+			@sets = $collectionX->order_sets(@sets);
+		}
+		unless (!$collectionY || $collectionY eq "") {
+			@sets = $collectionY->order_sets(@sets);
+		}
+	}
+
 	my $json = getJSONMetadata($session);
 
 	foreach my $set (@sets) {
+		# we have to remove the Entity objects and replace with a membership value
+		# to properly serialize set objects
+		$set->convert_entities;
 		$json = $json."\n"."[".$set->serialize()."]";
 	}
 
