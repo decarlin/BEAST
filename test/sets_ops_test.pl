@@ -68,3 +68,9 @@ print "Tree1: ".$tree1->serialize()."\n";
 print "Tree2: ".$tree2->serialize()."\n";
 $tree1->mergeTree($tree2);
 print "After Merge: ".$tree1->serialize()."\n";
+
+
+my @sets = ($set1, $set2);
+my @rows = Set::generateSetsUnion(@sets);
+print @rows;
+

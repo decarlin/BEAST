@@ -225,10 +225,24 @@ sub loadCollectionClusters
 	}
 
 	if (ref($collectionX) eq 'ClusteredCollection' && ref($collectionY) eq 'ClusteredCollection') {
-		my @clusterX = $collectionX->get_cluster;
-		my @clusterY = $collectionY->get_cluster;
 
-		return (\@clusterX, \@clusterY);	
+		my $clusterX = $collectionX->get_cluster;
+		my $clusterY = $collectionY->get_cluster;
+
+		unless (($clusterX && ref($clusterX) eq 'Set') && ($clusterY && ref($clusterY) eq 'Set')) {
+
+			my ($setsX, $setsY) = BeastSession::loadSetsForActiveCollections($session);
+
+			$collectionX->recluster($session->id, @$setsX);
+			$collectionY->recluster($session->id, @$setsY);
+
+			$clusterX = $collectionX->get_cluster;
+			$clusterY = $collectionY->get_cluster;
+		}
+
+		my @arry1 = ($clusterX);
+		my @arry2 = ($clusterY);
+		return (\@arry1, \@arry2);
 
 	} else {
 

@@ -201,7 +201,11 @@ sub has_element
 			return 1;
 		} else {
 			# membership value...
-			return $self->{'_elements'}->{$element_name};
+			my $value = $self->{'_elements'}->{$element_name}->get_membership_value;
+			unless ($value > 0) {
+				return 1;
+			}
+			return $value;
 		}
 	}
 
@@ -781,7 +785,7 @@ sub parseSetLines
 # keyspace warning: all sets must have the same keyspace
 sub generateSetsUnion
 {
-	my @sets = shift;
+	my @sets = @_;
 
 	my $elements = {};
 	foreach my $set (@sets) {

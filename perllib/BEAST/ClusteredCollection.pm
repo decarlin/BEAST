@@ -8,6 +8,7 @@ use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 # JSON object serialization
 use BEAST::Set;
 use BEAST::Collection;
+use BEAST::Cluster;
 use JSON -convert_blessed_universally;
 
 our $TRUE = 1;
@@ -70,13 +71,21 @@ sub new
 sub recluster
 {
 	my $self = shift;
-	my $new_cluster = shift;
+	my $session_id = shift;
+	# the set objects for this collection
+	my @sets = @_;
 
-	die unless (ref($new_cluster) eq 'Set');
+	my $clusterizer = Cluster->new($session_id, @sets);
+	$clusterizer->run;
+	my @clusters = $clusterizer->get_clusters;
 
+	my $new_cluster = Set->new($self->get_name, 1, {'type' => 'meta_display'}, {});
+	foreach my $cluster (@clusters) {
+		$new_cluster->set_element($cluster->get_name, $cluster);
+	}
 	$self->{'cluster'} = $new_cluster;
 
-	# now redo the order of the sets
+	# now redo the order of the set names
 	my @leaves = $new_cluster->getLeafNodes;
 	$self->{'sets'} = [];
 	foreach my $leaf (@leaves) {
