@@ -218,12 +218,12 @@ sub getJSONRowdata
 {
 	my @elements = @_;
 
-	my $json = "[{\"_metadata\":{\"type\":\"rows\"},\"_elements\":{";
-	$json .='"'.$elements[0].'":""';
+	my $json = "[{\"_metadata\":{\"type\":\"rows\"},\"_elements\":[";
+	$json .='"'.$elements[0].'"';
 	for my $i (1 .. (scalar(@elements) - 1)) {
-		$json .= ',"'.$elements[$i].'":""';	
+		$json .= ',"'.$elements[$i].'"';	
 	}
-	$json .= '}}]';
+	$json .= ']}]';
 
 	return $json;
 }

@@ -373,10 +373,9 @@ public class SetEntityGrid {
                             break;
                     case 3:
                             // this is the row list
-                            JSONObject elements = jsonObj.getJSONObject("_elements");
-                            Iterator<String> keys = elements.keys();
-                            while (keys.hasNext()) {          
-                                String element = keys.next();
+                            JSONArray elements = jsonObj.getJSONArray("_elements");
+                            for (int i=0; i < elements.length(); i++) {
+				String element = elements.getString(i);
                                 entities.add(new Entity(element));                               
                             }
                             
