@@ -327,7 +327,7 @@ sub loadSetsForActiveCollections
 	} else {
 		@setsY = loadMergeLeafSets($session, 'mysets', \@collectionY_setNames, 1);
 		# preserve the linear ordering assigned by the cluster
-		@setsY = $collectionX->order_sets(@setsY);
+		@setsY = $collectionY->order_sets(@setsY);
 	}
 
 	return (\@setsX, \@setsY);	
