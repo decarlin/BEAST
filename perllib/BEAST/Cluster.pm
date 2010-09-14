@@ -30,6 +30,7 @@ sub new
 	my $count = 0;
 	foreach my $set (@sets) {
 		my $eisen_name = "ARRY".$count."X";		
+		$set->set_metadata_value('type', 'set_display');
 		$lookup_hash->{$eisen_name} = $set;
 		$count++;
 	}

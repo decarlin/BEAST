@@ -88,13 +88,14 @@ MULTILINE_STR
 			$set->convertDisplay();
 		}
 
-		print "<div>Gold Collection:</div>";
+		print "<div><b><i>Gold Collection:</b></i></div>";
 		if (scalar(@$setsX) == 0) {
 			print "&nbsp;&nbsp;No Cluster Defined<br>";	
 		} else {
 			MySets::displaySetsTree("collectionX", "", @$setsX);
 		}
-		print "<div>Test Collection:</div>";
+		print "<br><br>";
+		print "<div><b><i>Test Collection:</b></i></div>";
 		if (scalar(@$setsY) == 0) {
 			print "&nbsp;&nbsp;No Cluster Defined<br>";	
 		} else {
