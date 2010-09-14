@@ -136,7 +136,7 @@ sub beginTreeSection($$)
 		print "<div id='$db_id\_$ts\_content' style='display:$display'>\n";
 	} elsif ($type eq 'meta_display') {
 		print "<span onClick=\"swapDivPlusMinus2('$divID\_content', '$divID\_arrow');\" class='expandable_header' >";
-		print "<img id='$divID\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$name";
+		print "<img id='$divID\_arrow' src='$arrow' height='10px' width='10px' />&nbsp;$name $desc";
 		print "</span>";
 		print "</div>\n";
 		print "<div id='$divID\_content' style='display:$display'>\n";

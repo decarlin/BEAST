@@ -128,7 +128,7 @@ sub getSetsSetsGif
 	my ($setsX, $setsY) = BeastSession::loadSetsForActiveCollections($session);
 
 	# hopefully only the test set will be local (don't need this for the DB sets)
-	filterNegativesAndThreshold($setsY);
+	#filterNegativesAndThreshold($setsY);
 	if ($setsX eq "" || $setsY eq "") {
 		return "";
 	}
@@ -144,7 +144,7 @@ sub getSetsSetsGif
 		return;
 	}
 	my $test_sets_json = $collectionComparator->get_json;
-	#$sets_overlap_prog->print_raw_output;
+	#$collectionComparator->print_raw_output;
 	$collectionComparator->clean;
 
 	my @rows;

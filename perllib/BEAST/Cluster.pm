@@ -129,7 +129,7 @@ sub get_clusters
 		$nodename2 = $node2->get_name;
 
 		# create a new heirarchy object
-		my $new_node = Set->new($node, 1, {'type' => 'meta_display'}, { $nodename1 => $node1, $nodename2 => $node2 });
+		my $new_node = Set->new($node, 1, {'type' => 'meta_display', 'name' => $score }, { $nodename1 => $node1, $nodename2 => $node2 });
 
 		# remember this node
 		$nodes->{$node} = $new_node;

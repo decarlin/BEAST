@@ -126,7 +126,10 @@ sub order_sets
 	my @sorted_sets;
 
 	foreach my $name (@{$self->{'sets'}}) {
-		die "\@sets not a superset of cluster sets" unless (exists ($lookup->{$name}));
+		unless (exists ($lookup->{$name})) {
+			#print Data::Dumper->Dump([@sets]);
+			die "\@sets not a superset of cluster sets".$name;
+		}
 		push @sorted_sets, $lookup->{$name};
 		delete $lookup->{$name};
 	}

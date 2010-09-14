@@ -98,6 +98,10 @@ sub run
 	}
 	close (SETSY);
 
+	#print `cat $setsXfilename`;
+	#print "<br><br>";
+	#print `cat $setsYfilename`;
+
 	# set internal 
 	$self->{'gold_file'} = $setsXfilename;
 	$self->{'test_file'} = $setsYfilename;

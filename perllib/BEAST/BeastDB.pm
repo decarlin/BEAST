@@ -532,7 +532,7 @@ sub getEntitiesForSet($$)
 	$template .= " WHERE entity.id=set_entity.entity_id AND set_entity.sets_id='$set_id'";
 
 	if ($threshold) {
-		$template .= " AND (member_value >= $threshold OR member_value is NULL)";	
+		$template .= " AND (member_value $threshold OR member_value is NULL)";	
 	} 
 
 
@@ -566,7 +566,7 @@ sub getEntityNameValuesForSet($$)
 	$template .= " WHERE entity.id=set_entity.entity_id AND set_entity.sets_id='$set_id'";
 
 	if ($threshold) {
-		$template .= " AND (member_value >= $threshold OR member_value is NULL)";	
+		$template .= " AND (member_value $threshold OR member_value is NULL)";	
 	} 
 
 
@@ -597,7 +597,7 @@ sub getEntityNameExIDForSet($$)
 	$template .= " WHERE entity.id=set_entity.entity_id AND set_entity.sets_id='$set_id'";
 
 	if ($threshold) {
-		$template .= " AND (member_value >= $threshold OR member_value is NULL)";	
+		$template .= " AND (member_value $threshold OR member_value is NULL)";	
 	} 
 
 

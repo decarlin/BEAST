@@ -700,23 +700,14 @@ sub toString
 
 	my @names = $self->get_element_names;	
 	
-	my $first_element = $self->get_element($names[0]);
-	if (ref($first_element) eq 'Entity') {
-		$str .= "\t".$first_element->get_ex_id;
-	} elsif (ref($first_element) eq 'Set') {
-		$str .= "\t".$first_element->get_name;
-	} else {
-		$str .= "\t".$names[0];
-	}
-	
-	foreach my $i (1 .. (scalar(@names) - 1) ) {
+	foreach my $i (0 .. (scalar(@names) - 1) ) {
 		my $element = $self->get_element($names[$i]);
 		if (ref($element) eq 'Set') {
 			$str .= "\t".$element->get_name;
 		# entity objects store the ex_id -- use this for comparison
 		} elsif (ref($element) eq 'Entity') {
 			# ex_id plus a keyspace is sufficient to produce a unique ID
-			$str .= "\t".$element->get_ex_id.":".$element->get_keyspace;
+			$str .= "\t".$element->get_ex_id;
 		} else {
 			$str .= "\t".$names[$i];
 		}
