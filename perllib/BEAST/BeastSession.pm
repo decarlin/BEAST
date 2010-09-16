@@ -405,6 +405,9 @@ sub loadImportSetsFromSession($)
 	my $session = shift;
 
 	my @sets = loadObjsFromSession($session, 'mysets', Set->new('constructor', 1,"", ""));	
+	unless (ref($sets[0]) eq 'Set') {
+		pop @sets;
+	}
 	foreach (@sets) {
 		my $set = $_;
 		if ($set->get_name eq 'ImportSets') {
@@ -412,6 +415,13 @@ sub loadImportSetsFromSession($)
 		}
 	}
 
+	# if it's not in mysets yet, load directly from 'importsets'
+	my @importSets = loadObjsFromSession($session, 'importsets', Set->new('constructor', 1,"", ""));	
+	unless (ref($importSets[0]) eq 'Set') {
+		pop @importSets;
+	}
+	return @importSets;
+	
 	return undef;
 }
 

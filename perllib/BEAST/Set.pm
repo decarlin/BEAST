@@ -782,7 +782,12 @@ sub parseSetLines
 		my $set = Set->new($name, "1", $metadata, $elements);
 		# set meta type to 'set' 
 		$set->set_metadata_value('type', 'set');
-		$set->set_metadata_value('id', 'local:'.$name);
+
+		# generate a 'fake' local id that allows us to identify this
+		# as a local variable
+		my $id = int(rand(1000000));
+		$set->set_metadata_value('id', 'local_'.$id);
+
 		push @sets, $set;
 		$count++;
 	}

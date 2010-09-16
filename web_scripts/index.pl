@@ -265,17 +265,21 @@ sub getEntitiesForSet
 
 	my $entities;
 
-	if ($id =~ /^local:(.*)/) {
-		my $name = $1;	
+	if ($id =~ /^local_.*/) {
 
 		my @importSets = BeastSession::loadImportSetsFromSession($session);
+		unless (ref($importSets[0]) eq 'Set') {
+			pop @importSets;
+		}
+
 		foreach (@importSets) {
 			my $set = $_;
-			if ($set->get_name eq $name) {
+			if ($set->get_id eq $id) {
 				my @ents = $set->get_element_names;
 				return @ents;
 			}
 		}
+
 	} else {
 		my $beastDB = BeastDB->new;
 		$beastDB->connectDB();
