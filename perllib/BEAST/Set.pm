@@ -215,13 +215,11 @@ sub has_element
 		if ($self->{'_elements'}->{$element_name} eq "") {
 			# no membership value 
 			return 1;
-		} else {
+		} elsif (ref($self->{'_elements'}->{$element_name}) eq "Entity") {
 			# membership value...
-			my $value = $self->{'_elements'}->{$element_name}->get_membership_value;
-			unless ($value > 0) {
-				return 1;
-			}
-			return $value;
+			return $self->{'_elements'}->{$element_name}->get_membership_value;
+		} elsif ($self->{'_elements'}->{$element_name} =~ /.*\d+/) {
+			return $self->{'_elements'}->{$element_name};
 		}
 	}
 
@@ -773,7 +771,9 @@ sub parseSetLines
 				my $el = $1;
 				my $float = Math::BigFloat->new($2);
 				# pare down the precision to 5 dec	
-				$elements->{$el} = $float->bstr();
+				my $numeric = $float->bstr();
+				chomp($numeric);
+				$elements->{$el} = $numeric;
 			} else {
 				$elements->{$components[$i]} = "";	
 			}

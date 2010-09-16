@@ -60,7 +60,12 @@ sub get_membership_value
 {
 	my $self = shift;
 
-	return $self->{'_membership_value'};
+	if (defined $self->{'_membership_value'} && ($self->{'_membership_value'} =~ /.*\d+.*/) ) {
+		return $self->{'_membership_value'};
+	}
+
+	# if undefined
+	return 1;
 }
 
 

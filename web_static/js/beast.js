@@ -616,7 +616,7 @@ function highlightElement(event, type) {
 			var div_flat = document.getElementById("mysets_flat"+"<>"+columns[i]);
 			div_flat.style.backgroundColor = "white";
 		} catch (error) {
-			alert(columns[i]);
+			//alert(columns[i]);
 		}
 	}
 

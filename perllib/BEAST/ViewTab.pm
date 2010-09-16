@@ -218,10 +218,21 @@ sub getJSONRowdata
 {
 	my @elements = @_;
 
+	# use eval to remove any quotations, etc
 	my $json = "[{\"_metadata\":{\"type\":\"rows\"},\"_elements\":[";
-	$json .='"'.$elements[0].'"';
+
+	my $tmp = $elements[0];
+	if ($tmp =~ /^\".*\"$/) {
+		$tmp = eval($tmp);
+	}
+
+	$json .='"'.$tmp.'"';
 	for my $i (1 .. (scalar(@elements) - 1)) {
-		$json .= ',"'.$elements[$i].'"';	
+		my $tmp = $elements[$i];
+		if ($tmp =~ /^\".*\"$/) {
+			$tmp = eval($tmp);
+		}
+		$json .= ',"'.$tmp.'"';	
 	}
 	$json .= ']}]';
 

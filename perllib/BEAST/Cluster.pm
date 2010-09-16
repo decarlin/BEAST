@@ -61,6 +61,7 @@ sub makeTabbedInputFile
 			$first_line++;
 			print TMP $set->has_element($entity);
 			#print "\t".$set->has_element($entity);
+			#print "\t".Data::Dumper->Dump([$set->get_element($entity)]);
 		}
 		print TMP "\n";
 		#print "<br>";

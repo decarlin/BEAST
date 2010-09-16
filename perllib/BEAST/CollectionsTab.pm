@@ -74,6 +74,8 @@ MULTILINE_STR
 
 
 		my ($setsX, $setsY) = BeastSession::loadCollectionClusters($session);
+		if ( (!$setsX || $setsX eq "") || (!$setsY || $setsY eq "")) { return;}
+
 		unless (ref(${$setsX}[0]) eq 'Set') {
 			pop @$setsX;
 		}
