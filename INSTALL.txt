@@ -1,0 +1,28 @@
+Installation on a CentOS Linux Distro.
+
+	MYSQL server:
+		- install mysql server with yum or direct rpm source. Import the database from a dump
+		mysql BEAST_dev < beast_dump.sql
+
+
+	Install Apache:
+		- check httpd running.
+		- Add Listen beast.soe.ucsc.edu:80 to /etc/httpd/conf/httpd.conf
+
+	Open Firewall to allow connections for port 80:
+		- append rule: 
+			-A RH-Firewall-1-INPUT -m state --state NEW -m tcp -p tcp --dport 80 -j ACCEPT
+		to /etc/sysconfig/iptables
+		and then /etc/init.d/iptables restart
+
+	Troubleshooting: 
+		- try telneting through port 80 from another machine. If it's blocked, or if you 
+		get a 'no route to host' error, the firewall (iptables is probably misconfigured)
+	
+
+
+	Installing GIT:	
+	
+
+		- Generate a ssh public key using ssh-keygen on the machine, then copy and paste the
+		.pub file to github (import ssh keys).
