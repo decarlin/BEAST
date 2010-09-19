@@ -116,6 +116,9 @@ sub get_clusters
 			delete $nodes->{$arry1};
 			
 		}
+
+		return unless (ref($node1) eq 'Set');
+
 		$nodename1 = $node1->get_name;
 
 		if (exists $arry_to_set->{$arry2}) {

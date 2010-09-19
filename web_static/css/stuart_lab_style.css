@@ -1,0 +1,177 @@
+BODY
+{
+	font-family:	verdana, arial, helvetica, sans-serif;
+	font-size:	10px;
+	color:		#003366;
+}
+
+TABLE
+{
+	font-size:	10px;
+	color:		#000000;
+	font-family:	verdana, arial, helvetica, sans-serif
+}
+
+TD
+{
+	font-size:	10px;
+	color:		#000000;
+	font-family:	verdana, arial, helvetica, sans-serif
+}
+
+.clickable_element
+{
+	cursor:		pointer;
+}
+
+.clickable_tr
+{
+	cursor:		pointer;
+}
+
+.clickable_td
+{
+	cursor:		pointer;
+}
+
+
+
+.expandable_header
+{
+	cursor:		pointer;
+}
+
+.header_row
+{
+	font-size:	9px;
+	color:		#000000;
+}
+
+.navLink
+{
+	font-size:	10px;
+	color:		#003366;
+	cursor:		pointer;
+}
+
+.data_selectable
+{
+	font-size:	10px;
+	color:		#003366;
+	cursor:		pointer;
+}
+
+
+.sortable_header_row
+{
+	font-size:			9px;
+	color:				#003366;
+	cursor:				pointer;
+	text-decoration:	underline;
+}
+
+TABLE.results_table
+{
+	border-collapse:	collapse;
+	background-color:	white;
+	padding:			2px;
+}
+
+
+
+A:link
+{
+	color:		#003333;
+	text-decoration:	underline
+}
+A:visited
+{
+	color:		#003366;
+	text-decoration:	underline
+}
+A:hover
+{
+	color:		#6699CC;
+	text-decoration:	underline
+}
+
+
+
+A.small:link
+{
+	font-family:	verdana, arial, helvetica, sans-serif;
+	font-size:	8px;
+	font-weight:	normal;
+	text-decoration:	underline;
+	color:		red;
+}
+A.small:visited
+{
+	font-family:	verdana, arial, helvetica, sans-serif;
+	font-size:	8px;
+	font-weight:	normal;
+	text-decoration:	underline;
+	color:		#003333;
+}
+A.small:hover
+{
+	font-family:	verdana, arial, helvetica, sans-serif;
+	font-size:	8px;
+	font-weight:	normal;
+	text-decoration:	underline;
+	color:		#6699CC;
+}
+
+
+
+A.medium:link
+{
+	font-family:	verdana, arial, helvetica, sans-serif;
+	font-size:	9px;
+	font-weight:	normal;
+	text-decoration:	underline;
+	color:		red;
+}
+A.medium:visited
+{
+	font-family:	verdana, arial, helvetica, sans-serif;
+	font-size:	9px;
+	font-weight:	normal;
+	text-decoration:	underline;
+	color:		#003333;
+}
+A.medium:hover
+{
+	font-family:	verdana, arial, helvetica, sans-serif;
+	font-size:	9px;
+	font-weight:	normal;
+	text-decoration:	underline;
+	color:		#6699CC;
+}
+
+
+
+A.large:link
+{
+	font-family:	verdana, arial, helvetica, sans-serif;
+	font-size:	10px;
+	font-weight:	normal;
+	text-decoration:	underline;
+	color:		red;
+}
+A.large:visited
+{
+	font-family:	verdana, arial, helvetica, sans-serif;
+	font-size:	10px;
+	font-weight:	normal;
+	text-decoration:	underline;
+	color:		#003333;
+}
+A.large:hover
+{
+	font-family:	verdana, arial, helvetica, sans-serif;
+	font-size:	10px;
+	font-weight:	normal;
+	text-decoration:	underline;
+	color:		#6699CC;
+}
