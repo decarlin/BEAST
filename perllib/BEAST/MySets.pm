@@ -5,6 +5,7 @@
 use strict;
 use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
+use lib "/var/www/html/BEAST/perllib";
 use Data::Dumper;
 use BEAST::Set;
 use BEAST::CheckBoxTree;

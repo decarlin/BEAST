@@ -26,3 +26,8 @@ Installation on a CentOS Linux Distro.
 
 		- Generate a ssh public key using ssh-keygen on the machine, then copy and paste the
 		.pub file to github (import ssh keys).
+
+	PERL Packages:
+
+		- requires 5.8.x or later and DBI/DBD and SQL packages, along
+		  with JSON.pm

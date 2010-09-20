@@ -7,6 +7,8 @@ package ImportTab;
 use strict;
 use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
+use lib "/var/www/html/BEAST/perllib";
+
 use htmlHelper;
 use Data::Dumper;
 

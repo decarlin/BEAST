@@ -5,6 +5,7 @@
 use strict;
 use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
+use lib "/var/www/html/BEAST/perllib";
 # JSON object serialization
 use BEAST::Set;
 use BEAST::Collection;
