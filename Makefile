@@ -1,6 +1,9 @@
 SYSBIO_CGI-BIN=/projects/sysbio/www/cgi-bin
 SYSBIO_MAP=/projects/sysbio/map/Projects
 
+HTDOCS=/var/www/html
+CGI_BIN=/var/www/cgi-bin
+
 sysbio:
 	# For supported sysbio machines
 	cp -R web_scripts/* ${SYSBIO_CGI-BIN}/BEAST/
