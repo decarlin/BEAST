@@ -7,7 +7,7 @@ package SetsOverlap;
 use strict;
 use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
-use lib "/var/www/html/BEAST/perllib";
+use lib "/projects/sysbio/beast/perllib";
 
 our $TRUE = 1;
 our $FALSE = 0;

@@ -31,3 +31,13 @@ Installation on a CentOS Linux Distro.
 
 		- requires 5.8.x or later and DBI/DBD and SQL packages, along
 		  with JSON.pm
+
+	Install BEAST:
+	
+		- create sysbio user and allow it to modify /var/www/html and
+		  /var/www/cgi-bin.
+		- create /projects/sysbio/beast
+			/projects/sysbio/beast/perllib
+		run 'make soe' to install from the git repository
+
+	
