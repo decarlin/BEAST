@@ -40,4 +40,9 @@ Installation on a CentOS Linux Distro.
 			/projects/sysbio/beast/perllib
 		run 'make soe' to install from the git repository
 
+	SQL Config: 
+		- mysql --user=root mysql
+		- add a new read-only beast user, set the passwd, : CREATE
+		  USER 'beast_user'@'localhost' IDENTIFIED BY 'passwd';
+		- GRANT SELECT ON *.* TO 'beast_user'@'localhost'
 	
