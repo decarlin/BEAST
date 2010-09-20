@@ -1,9 +1,8 @@
 SYSBIO_CGI-BIN=/projects/sysbio/www/cgi-bin
 SYSBIO_MAP=/projects/sysbio/map/Projects
 
-HTDOCS=/var/www/html
-CGI_BIN=/var/www/cgi-bin
-INSTALL_DIR=/projects/sysbio/beast
+HTDOCS=/var/www/html/BEAST
+CGI_BIN=/var/www/cgi-bin/BEAST
 
 sysbio:
 	# For supported sysbio machines
@@ -16,16 +15,15 @@ sysbio:
 
 soe:
 	# For beast.soe.ucsc.edu:	
-	mkdir -p ${CGI_BIN}/BEAST/bin
-	mkdir -p ${HTDOCS}/BEAST/web_static
+	mkdir -p ${CGI_BIN}/bin
+	mkdir -p ${HTDOCS}/perllib
 	
-	cp -R web_scripts/* ${CGI_BIN}/BEAST/
-	cp -R perllib/* ${INSTALL_DIR}/perllib
-	cp -R web_static/* ${HTDOCS}/BEAST
+	cp -R web_scripts/* ${CGI_BIN}
+	cp -R perllib/* ${CGI_BIN}/perllib
+	cp -R web_static/* ${HTDOCS}
 	
 	cd javalib/src/heatmap && make jar
-	cp -R javalib/src/heatmap/heatmap.jar ${INSTALL_DIR}/bin
+	cp -R javalib/src/heatmap/heatmap.jar ${CGI_BIN}/bin
 	
-	chown -R :sysbio ${CGI_BIN}/BEAST/
-	chown -R :sysbio ${HTDOCS}/BEAST/
-	chown -R :sysbio ${INSTALL_DIR}/perllib/*
+	chown -R :sysbio ${CGI_BIN}
+	chown -R :sysbio ${HTDOCS}

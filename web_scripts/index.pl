@@ -9,7 +9,7 @@ use CGI;
 use CGI::Carp qw(fatalsToBrowser);	#the die could be used safely in web envrionment
 use Data::Dumper;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
-use lib "/projects/sysbio/beast/perllib";
+use lib "/var/www/cgi-bin/BEAST/perllib";
 use utils;		  #contains useful, simple functions such as trim, max, min, and log_base
 use htmlHelper;
 
