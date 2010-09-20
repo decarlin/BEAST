@@ -96,7 +96,7 @@ sub new
 	} else {
 		$self = {
 		'_db_name' 	=> 'BEAST_dev',
-		'_hostname'	=> 'disco.cse.ucsc.edu',
+		'_hostname'	=> 'localhost',
 		'_port'		=> '3306',
 		'_username'	=> 'beast_user',
 		'_pass'		=> 'beast_guest',

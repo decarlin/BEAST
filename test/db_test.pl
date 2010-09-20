@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use lib "/projects/sysbio/map/Projects/BEAST/perllib";
+use lib "/var/www/cgi-bin/BEAST/perllib";
 
 use BEAST::BeastDB;
 use BEAST::Search;
@@ -13,7 +13,7 @@ use Data::Dumper;
 
 my $setid = 114005;
 our $beastDB = BeastDB->new;
-$beastDB->disconnectDB();
+$beastDB->connectDB();
 
 print "Testing parents for set: $setid\n";
 my @results = $beastDB->getSetNameExtIdFromID($setid);
