@@ -49,3 +49,14 @@ Installation on a CentOS Linux Distro.
 	Java Compatability:
 
 		- Install ant, javac and java	
+
+
+	SOE Libs:
+
+		install cluster-eisen, sets_overlap.pl and the perl/lib
+		directory from sysbio
+
+	DB Indexing:
+
+		- re index
+	

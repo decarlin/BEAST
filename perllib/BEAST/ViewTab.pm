@@ -249,7 +249,7 @@ sub runJavaImageGen
 	my $filename = "/tmp/".$session->id.".txt";
 	my $info_filename = $filename.".json";
 
-	my $command = Constants::JAVA_32_BIN." -jar ".Constants::HEATMAP_JAR." 1 > ".Constants::JAVA_ERROR_LOG." 2>&1";
+	my $command = Constants::JAVA_64_BIN." -jar ".Constants::HEATMAP_JAR." 1 > ".Constants::JAVA_ERROR_LOG." 2>&1";
 	open COMMAND, "|-", "$command" || die "Can't pipe to java binary!";
 	print COMMAND $json;
 	close COMMAND;
