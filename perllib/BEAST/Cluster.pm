@@ -158,8 +158,8 @@ sub run
 	$self->makeTabbedInputFile;
 	$self->runCMD;
 
-	my $tempfile = "/tmp/".$self->{'session_id'}."tab";
-	my $output = "/tmp/".$self->{'session_id'}."atr";
+	my $tempfile = "/tmp/".$self->{'session_id'}.".tab";
+	my $output = "/tmp/".$self->{'session_id'}.".atr";
 
 	unlink($tempfile);
 	unlink($output);
