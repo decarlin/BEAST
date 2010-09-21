@@ -23,17 +23,17 @@ our $VERSION    = 1.0;
 
 
 use constant TEMP_DIR => "/projects/sysbio/map/Papers/MetaTrans/perl/Data";
-use constant JAVA_32_BIN => "/projects/sysbio/apps/i386/jre/jre1.6.0_21/bin/java -Xms64m -Xms512m ";
-use constant PERL_32_BIN => "/usr/bin/perl";
+#use constant JAVA_32_BIN => "/projects/sysbio/apps/i386/jre/jre1.6.0_21/bin/java -Xms64m -Xms512m ";
+#use constant PERL_32_BIN => "/usr/bin/perl";
+use constant PERL_64_BIN => "perl";
 use constant PERL_LIB_DIR => "/projects/sysbio/lab_apps/perl";
 use constant JAVA_64_BIN => "java -Xms128m -Xms1024m";
 use constant HEATMAP_JAR => "/var/www/cgi-bin/BEAST/bin/heatmap.jar";
 use constant SETS_OVERLAP => "/projects/sysbio/lab_apps/perl/Tools/sets_overlap.pl";
-use constant CLUSTER_EISEN_32 => "/projects/sysbio/apps/i386/bin/cluster-eisen";
 use constant CLUSTER_EISEN_64 => "/projects/sysbio/apps/x86_64/bin/cluster-eisen";
 use constant JAVA_ERROR_LOG => "/tmp/beast_java_errlog.txt";
-use constant WEB_STATIC_DIR => "/projects/sysbio/map/Projects/BEAST/web_static";
-use constant WEB_SCRIPT_DIR => "/projects/sysbio/map/Projects/BEAST/web_scripts";
+use constant WEB_STATIC_DIR => "/var/www/html/BEAST";
+use constant WEB_SCRIPT_DIR => "/var/www/cgi-bin/BEAST";
 use constant SET_MEMBER_THRESHOLD => " < 0";
 use constant HEATMAP_NORM_CONSTANT => 20;
 use constant VIEW_WIDTH => "750";

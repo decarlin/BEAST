@@ -76,7 +76,7 @@ sub runCMD
 {
 	my $self = shift;
 
-	my $cmd = Constants::CLUSTER_EISEN_32." -f /tmp/".$self->{'session_id'}.".tab -g 0 -e 2";
+	my $cmd = Constants::CLUSTER_EISEN_64." -f /tmp/".$self->{'session_id'}.".tab -g 0 -e 2";
 	print `$cmd`;
 
 	my $outfile = "/tmp/".$self->{'session_id'}.".atr";
