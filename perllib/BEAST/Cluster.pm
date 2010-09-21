@@ -76,10 +76,14 @@ sub runCMD
 {
 	my $self = shift;
 
-	my $cmd = Constants::CLUSTER_EISEN_64." -f /tmp/".$self->{'session_id'}.".tab -g 0 -e 2";
+	my $cmd = Constants::CLUSTER_EISEN_64." -f /tmp/".$self->{'session_id'}.".tab -g 0 -e 2 ";
 	print `$cmd`;
 
 	my $outfile = "/tmp/".$self->{'session_id'}.".atr";
+
+	if (! -f $outfile) {
+		return 0;
+	}
 
 	open (OUTPUT, $outfile) || return 0;
 	my @lines = <OUTPUT>;
@@ -87,6 +91,15 @@ sub runCMD
 	$self->{'output'} = [ @lines ];
 
 	return 1;
+}
+
+sub print_atr_output
+{
+	my $self = shift;
+	
+	foreach my $line (@{$self->{'output'}}) {
+		print $line."<br>";
+	}
 }
 
 sub get_clusters
@@ -156,13 +169,15 @@ sub run
 	my $self = shift;
 
 	$self->makeTabbedInputFile;
-	$self->runCMD;
+	my $status = $self->runCMD;
 
 	my $tempfile = "/tmp/".$self->{'session_id'}.".tab";
 	my $output = "/tmp/".$self->{'session_id'}.".atr";
 
 	unlink($tempfile);
 	unlink($output);
+
+	return $status;
 }
 
 1;
