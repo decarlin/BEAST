@@ -23,30 +23,42 @@ import javax.swing.JApplet;
 public class SetEntityGrid {
     
     private static Color background;
-    private static Grid grid;
+    private Grid grid;
     
-    private static String FILENAME = "heatmap.gif";
-    private static String INFO_FILE;
-    private static String ACTION = "gif";
-    private static Rectangle2D.Double SUB_GRID;
-    
-    private static int GRID_HEIGHT = 400;
-    private static int GRID_WIDTH = 400;
+    private String FILENAME = "heatmap.gif";
+    private String INFO_FILE = "heatmap.info";
+    private String ACTION = "base64gif";
+    public Rectangle2D.Double SUB_GRID;
+   
+    // defaults 
+    private int GRID_HEIGHT = 400;
+    private int GRID_WIDTH = 400;
     private final static int ROW_BORDER = 0;
     private final static int COLUMN_BORDER = 0;
     
-    private static double CELL_WIDTH;
-    private static double CELL_HEIGHT;
+    private double CELL_WIDTH;
+    private double CELL_HEIGHT;
     
     private ArrayList<Set> sets = null;
     private ArrayList<Entity> entities = null;
     private HashMap<String,String> set_entity_mappings = null;
     
-    public SetEntityGrid(ArrayList<Set> newsets, ArrayList<Entity> entities) {
+    public SetEntityGrid(int width, int height, String action, String filename, String info_filename, ArrayList<Set> newsets, ArrayList<Entity> entities) {
+	this.GRID_WIDTH = width;
+	this.GRID_HEIGHT = height;
+	this.FILENAME = filename;
+	this.INFO_FILE = info_filename;
         this.sets = newsets;
         this.entities = entities;
     }
-    
+
+    public SetEntityGrid(int width, int height, ArrayList<Set> newsets, ArrayList<Entity> entities) {
+	this.GRID_WIDTH = width;
+	this.GRID_HEIGHT = height;
+        this.sets = newsets;
+        this.entities = entities;
+    }
+
     public void setBackground(Color c) {
         background = c;
     }
@@ -200,28 +212,77 @@ public class SetEntityGrid {
         this.grid = grid;
     }
     
-    public String getZoomJSON() {
-        
-        String json = new String();
-        
-        HashMap<String, ArrayList<String>> map = this.grid.getSetsEntitiesForDimension(SUB_GRID);
-        
-        ArrayList<String> sets = map.get("sets");
-        ArrayList<String> entities = map.get("entities");
-        
-        JSONArray jsonArray = new JSONArray();
-        JSONObject setsObj = new JSONObject();
-        JSONObject entObj = new JSONObject();
-        try {
-            setsObj.put("sets", sets);
-            entObj.put("entities", entities);
-            jsonArray.put(setsObj);
-            jsonArray.put(entObj);
-        } catch (JSONException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+    public String getBase64Gif (BufferedReader in) throws Exception {
+    	
+        ArrayList<Set> sets = new ArrayList<Set>();
+        // rows
+        ArrayList<Entity> entities = new ArrayList<Entity>();
+              
+        String line;
+       
+        JSONClassifier classifier = new JSONClassifier();
+       
+	int width = 0;
+	int height = 0;
+        boolean tabDelimInput = false;
+        boolean foundInfo = false;
+        //for (int j=0; j < lines.length; j++) {
+        while ((line = in.readLine()) != null && line.length() != 0) {
+            
+          //line = lines[j];
+          
+            try { 
+                JSONArray arr1 = new JSONArray(line);
+                JSONObject jsonObj = arr1.getJSONObject(0);
+                int jsonType = classifier.classify(jsonObj);
+                
+                switch (jsonType) {
+            
+                    case 1: 
+                            Set set = new Set(jsonObj);
+                            sets.add(set);
+                            set.getEntities();
+                            break;
+                    case 2: 
+                            JSONObject data = jsonObj.getJSONObject("_metadata");
+                            if (ACTION.compareTo("gif") == 0 || ACTION.compareTo("base64gif") == 0) {
+                                height = data.getInt("height");
+                                width = data.getInt("width");
+                            }
+                            foundInfo = true;
+                            break;
+                    case 3:
+                            // this is the row list
+                            JSONArray elements = jsonObj.getJSONArray("_elements");
+                            for (int i=0; i < elements.length(); i++) {
+				String element = elements.getString(i);
+                                entities.add(new Entity(element));                               
+                            }
+                            
+                        
+                }
+                
+            } catch (Exception e) {
+                System.out.println("Can't parse line:" + line);
+                e.printStackTrace();
+            }
+
         }
-        return jsonArray.toString();
+            
+        if (foundInfo == false) {
+            throw new Exception("No metadata/info found for set of JSON strings!");        
+        }
+        
+        SetEntityGrid heatmap = new SetEntityGrid(width, height, sets, entities);
+        heatmap.buildGrid();
+        
+        BufferedImage image =
+            new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        
+        Graphics2D g2 = (Graphics2D)image.createGraphics();
+        this.grid.paintGrid(g2, Color.RED, Color.BLACK, Color.GREEN);
+        
+        return imageToBase64String(image);     
     }
     
     /**
@@ -268,6 +329,15 @@ public class SetEntityGrid {
         
         boolean tabDelimInput = false;
         boolean foundInfo = false;
+
+	int grid_height = 0;
+	int grid_width = 0;
+	String action = null;
+	String filename = null;
+	String info_filename = null;
+
+	Rectangle2D.Double subgrid = null;
+
         //for (int j=0; j < lines.length; j++) {
         while ((line = in.readLine()) != null && line.length() != 0) {
             
@@ -300,24 +370,24 @@ public class SetEntityGrid {
                       String key_value[] = elements[i].split("\\^");
                       if (key_value[0].compareTo("WIDTH") == 0) {
                           
-                         GRID_WIDTH = new Integer(key_value[1]);
+                         grid_width = new Integer(key_value[1]);
                           
                       } else if (key_value[0].compareTo("HEIGHT") == 0) {
                        
-                          GRID_HEIGHT = new Integer(key_value[1]);
+                          grid_height = new Integer(key_value[1]);
                           
                       } else if (key_value[0].compareTo("OUTPUT") == 0) {
                           if (key_value[1].compareTo("gif") == 0) {
-                              ACTION = "gif";
+                              action = "gif";
                           } else if (key_value[1].compareTo("base64gif") == 0) {
-                              ACTION = "base64gif";
+                              action = "base64gif";
                           } else {
                               Exception e = new Exception("undefined output type!");
                               e.printStackTrace();
                               throw e;                         
                           }
                       } else if (key_value[0].compareTo("FILENAME") == 0) {
-                          FILENAME = key_value[1];
+                          filename = key_value[1];
                       }
                       		
                   }
@@ -354,15 +424,15 @@ public class SetEntityGrid {
                             break;
                     case 2: 
                             JSONObject data = jsonObj.getJSONObject("_metadata");
-                            ACTION = data.getString("action");
-                            if (ACTION.compareTo("gif") == 0 || ACTION.compareTo("base64gif") == 0) {
-                                FILENAME = data.getString("filename");
-                                INFO_FILE = FILENAME + ".json";
-                                GRID_HEIGHT = data.getInt("height");
-                                GRID_WIDTH = data.getInt("width");
+                            action = data.getString("action");
+                            if (action.compareTo("gif") == 0 || action.compareTo("base64gif") == 0) {
+                                filename = data.getString("filename");
+                                info_filename = filename + ".json";
+                                grid_height = data.getInt("height");
+                                grid_width = data.getInt("width");
                             }
-                            if (ACTION.compareTo("zoom") == 0) {
-                                SUB_GRID = new Rectangle2D.Double(
+                            if (action.compareTo("zoom") == 0) {
+                                subgrid = new Rectangle2D.Double(
                                         data.getDouble("xcoordinate"),
                                         data.getDouble("ycoordinate"),
                                         data.getDouble("width"),
@@ -393,15 +463,18 @@ public class SetEntityGrid {
             throw new Exception("No metadata/info found for set of JSON strings!");        
         }
         
-        SetEntityGrid heatmap = new SetEntityGrid(sets, entities);
+        SetEntityGrid heatmap = new SetEntityGrid(grid_width, grid_height, action, filename, info_filename, sets, entities);
+	heatmap.SUB_GRID = subgrid;
         heatmap.buildGrid();
         
-        if (ACTION.compareTo("gif") == 0) {
+        if (action.compareTo("gif") == 0) {
             heatmap.makeGif();
-        } else if (ACTION.compareTo("zoom") == 0) {
+	/*
+        } else if (action.compareTo("zoom") == 0) {
             String json = heatmap.getZoomJSON();
             System.out.print(json);
-        } else if (ACTION.compareTo("base64gif") == 0) {
+	*/
+        } else if (action.compareTo("base64gif") == 0) {
             heatmap.makeGifEncodeToString();
         }
         
