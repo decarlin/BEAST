@@ -23,7 +23,7 @@ import javax.swing.JApplet;
 public class SetEntityGrid {
     
     private static Color background;
-    private Grid grid;
+    public Grid grid;
     
     private String FILENAME = "heatmap.gif";
     private String INFO_FILE = "heatmap.info";
@@ -212,7 +212,7 @@ public class SetEntityGrid {
         this.grid = grid;
     }
     
-    public String getBase64Gif (BufferedReader in) throws Exception {
+    public static String getBase64Gif (BufferedReader in) throws Exception {
     	
         ArrayList<Set> sets = new ArrayList<Set>();
         // rows
@@ -227,10 +227,11 @@ public class SetEntityGrid {
         boolean tabDelimInput = false;
         boolean foundInfo = false;
         //for (int j=0; j < lines.length; j++) {
-        while ((line = in.readLine()) != null && line.length() != 0) {
-            
+        while (true) {
+            line = in.readLine(); 
+   	    if (line.matches("^EOF")) { break; }
+ 
           //line = lines[j];
-          
             try { 
                 JSONArray arr1 = new JSONArray(line);
                 JSONObject jsonObj = arr1.getJSONObject(0);
@@ -245,10 +246,8 @@ public class SetEntityGrid {
                             break;
                     case 2: 
                             JSONObject data = jsonObj.getJSONObject("_metadata");
-                            if (ACTION.compareTo("gif") == 0 || ACTION.compareTo("base64gif") == 0) {
-                                height = data.getInt("height");
-                                width = data.getInt("width");
-                            }
+                            height = data.getInt("height");
+                            width = data.getInt("width");
                             foundInfo = true;
                             break;
                     case 3:
@@ -280,7 +279,7 @@ public class SetEntityGrid {
             new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         
         Graphics2D g2 = (Graphics2D)image.createGraphics();
-        this.grid.paintGrid(g2, Color.RED, Color.BLACK, Color.GREEN);
+        heatmap.grid.paintGrid(g2, Color.RED, Color.BLACK, Color.GREEN);
         
         return imageToBase64String(image);     
     }
