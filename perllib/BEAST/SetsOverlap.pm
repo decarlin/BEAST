@@ -27,7 +27,7 @@ sub new
 	$self->{'test_sets'} = $setsY;
 
 	$self->{'perl_lib_dir'} = Constants::PERL_LIB_DIR;
-	$self->{'perl_bin'} = Constants::PERL_32_BIN;
+	$self->{'perl_bin'} = Constants::PERL_64_BIN;
 	$self->{'sets_overlap'} = Constants::SETS_OVERLAP;
 	$self->{'universe_file_topdir'} = Constants::WEB_STATIC_DIR."/universe_files";
 	$self->{'normalization_constant'} = Constants::HEATMAP_NORM_CONSTANT;

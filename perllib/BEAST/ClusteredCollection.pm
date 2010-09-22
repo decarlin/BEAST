@@ -77,8 +77,15 @@ sub recluster
 	my @sets = @_;
 
 	my $clusterizer = Cluster->new($session_id, @sets);
-	$clusterizer->run;
+	unless ($clusterizer->run > 0) {
+		print "Failed to run cluster-eisen!";
+		return 0;
+	}
 	my @clusters = $clusterizer->get_clusters;
+
+
+	# debug
+	#$clusterizer->print_atr_output;
 
 	my $new_cluster = Set->new($self->get_name, 1, {'type' => 'meta_display'}, {});
 	foreach my $cluster (@clusters) {

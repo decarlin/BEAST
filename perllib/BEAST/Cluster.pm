@@ -76,10 +76,16 @@ sub runCMD
 {
 	my $self = shift;
 
-	my $cmd = Constants::CLUSTER_EISEN_32." -f /tmp/".$self->{'session_id'}.".tab -g 0 -e 2";
+	my $cmd = Constants::CLUSTER_EISEN_64." -f /tmp/".$self->{'session_id'}.".tab -g 0 -e 2 2>/tmp/beast_cluster_err.log";
 	print `$cmd`;
 
 	my $outfile = "/tmp/".$self->{'session_id'}.".atr";
+
+	if (! -f $outfile) {
+		print `cat /tmp/beast_cluster_err.log`;
+		unlink("/tmp/beast_cluster_err.log");
+		return 0;
+	}
 
 	open (OUTPUT, $outfile) || return 0;
 	my @lines = <OUTPUT>;
@@ -87,6 +93,15 @@ sub runCMD
 	$self->{'output'} = [ @lines ];
 
 	return 1;
+}
+
+sub print_atr_output
+{
+	my $self = shift;
+	
+	foreach my $line (@{$self->{'output'}}) {
+		print $line."<br>";
+	}
 }
 
 sub get_clusters
@@ -156,13 +171,17 @@ sub run
 	my $self = shift;
 
 	$self->makeTabbedInputFile;
-	$self->runCMD;
+	my $status = $self->runCMD;
 
-	my $tempfile = "/tmp/".$self->{'session_id'}."tab";
-	my $output = "/tmp/".$self->{'session_id'}."atr";
+	my $tempfile = "/tmp/".$self->{'session_id'}.".tab";
+	my $output = "/tmp/".$self->{'session_id'}.".atr";
+	my $cdt = "/tmp/".$self->{'session_id'}.".cdt";
 
 	unlink($tempfile);
 	unlink($output);
+	unlink($cdt);
+
+	return $status;
 }
 
 1;
