@@ -25,5 +25,5 @@ soe:
 	cd javalib/src/heatmap && make jar
 	cp -R javalib/src/heatmap/heatmap.jar ${CGI_BIN}/bin
 	
-	chown -R :sysbio ${CGI_BIN}
-	chown -R :sysbio ${HTDOCS}
+	#chown -R :sysbio ${CGI_BIN}
+	#chown -R :sysbio ${HTDOCS}

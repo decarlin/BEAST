@@ -9,6 +9,8 @@ use warnings;
 use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use lib "/var/www/cgi-bin/BEAST/perllib";
 use POSIX;
+use IO::Socket;
+
 use htmlHelper;
 use Data::Dumper;
 use BEAST::BeastSession;
@@ -50,45 +52,39 @@ sub printTab
 	# sanity check first: if no sets 
 	return if (BeastSession::checkMySetsNull($session) == 0);
 	# b64 encoded string
-	my ($base64gif, $info, $rows);
+	my ($base64gif, $rows, $columns);
 	if ($type eq 'members') {
-		($base64gif, $info, $rows) = getSetsMembersGif($session);
+		($base64gif, $rows, $columns) = getSetsMembersGif($session);
 	} elsif ($type eq 'sets') {
-		($base64gif, $info, $rows) = getSetsSetsGif($session);
+		($base64gif, $rows, $columns) = getSetsSetsGif($session);
 	}
 
-	if ($base64gif eq "" || $info eq "") {
+	if ($base64gif eq "") {
 		return;
 	}
 	
-	printBase64GIF($base64gif, $info, $type, $rows);
+	printBase64GIF($base64gif, $type, $rows, $columns);
 }
 
 
 sub printBase64GIF
 {
 	my $base64gifSTR = shift;
-	my $infoSTR = shift;
 	my $type = shift;
 	my $rows = shift;
+	my $columns = shift;
 
+	my $num_rows = scalar(@$rows);
+	my $num_columns = scalar(@$columns);
 
-	# parse the JSON info
-	my $json = JSON->new->utf8;
-	my $jsonObj = $json->decode($infoSTR);
-
-	my $width = $jsonObj->{'column_width'};
-	my $columns = $jsonObj->{'columns'};
-	my @columns = @$columns;
-
-	my $height = $jsonObj->{'row_height'};
-	#my $rows = $jsonObj->{'rows'};
-	#my @rows = @$rows;
+	# compute the width 
+	my $width = Constants::VIEW_WIDTH / $num_columns;
+	my $height = Constants::VIEW_HEIGHT / $num_rows;
 
 	my $infoStr_cols = $width."^";
-	$infoStr_cols .= $columns[0];
-	for my $i (1 .. $#columns) {
-		$infoStr_cols .= ",".$columns[$i];
+	$infoStr_cols .= $columns->[0];
+	for my $i (1 .. scalar(@$columns) - 1) {
+		$infoStr_cols .= ",".$columns->[$i];
 	}
 
 	my $infoStr_rows = $height."^";
@@ -153,6 +149,11 @@ sub getSetsSetsGif
 		push @rows, $set->get_name;
 	}
 
+	my @columns;
+	foreach my $set (@$setsY) {
+		push @columns, $set->get_name;
+	}
+
 
 	my $json = getJSONMetadata($session);
 	my $row_json = getJSONRowdata(@rows);
@@ -160,8 +161,8 @@ sub getSetsSetsGif
 	$json .= "\n".$test_sets_json;
 
 	#print $json;
-	my ($gif, $info) = runJavaImageGen($session, $json);
-	return ($gif, $info, \@rows);
+	my $gif = runJavaImageGen($session, $json);
+	return ($gif, \@rows, \@columns);
 }
 
 sub getJSONMetadata
@@ -208,11 +209,16 @@ sub getSetsMembersGif
 	# build the list of entities -- the row column
 	my @elements_array = MySets::sortElementsList(@sets);
 
+	my @columns;
+	foreach my $set (@sets) {
+		push @columns, $set->get_name;
+	}
+
 	my $row_json = getJSONRowdata(@elements_array);
 	$json = $json."\n".$row_json;
 
-	my ($gif, $info) = runJavaImageGen($session, $json);
-	return ($gif, $info, \@elements_array);
+	my $gif = runJavaImageGen($session, $json);
+	return ($gif, \@elements_array, \@columns);
 }
 
 sub getJSONRowdata
@@ -246,52 +252,24 @@ sub runJavaImageGen
 	my $json = shift;
 
 	# tmp files
-	my $filename = "/tmp/".$session->id.".txt";
-	my $info_filename = $filename.".json";
+	my $sock = new IO::Socket::INET( 
+        	PeerAddr => "localhost",
+        	PeerPort => 7777, 
+        	Proto => 'tcp');
 
-	print `java -XX:ReservedCodeCacheSize=4m -version`;
-	return;
-
-	my $command = Constants::JAVA_64_BIN." -jar ".Constants::HEATMAP_JAR." 1 > ".Constants::JAVA_ERROR_LOG." 2>&1";
-	open COMMAND, "|-", "$command" || die "Can't pipe to java binary!";
-	print COMMAND $json;
-	close COMMAND;
-
-	# debug
-	# print $command;
-
-	my $base64gif = "";
-	if (-f $filename) {
-		open GIF, $filename || return "";
-		while (<GIF>) {
-			$base64gif .= $_;		
-		}
-		close GIF;
-		unlink($filename);
-
-		my $info;
-		if (-f $info_filename) {
-			open INFO, $info_filename || return "";
-			my @lines = <INFO>;
-			$info = $lines[0];
-			$info =~ s/^\s+//;	
-			close INFO;
-			unlink($info_filename);
-			BeastSession::saveGifInfoToSession($session, $info);
-		} else {
-			print "Error: couldn't create temp info file $info_filename";
-			my $errlog = Constants::JAVA_ERROR_LOG;
-			print `cat $errlog`;
-		}
-
-		return ($base64gif, $info);
-	} else {
-		print "Error: couldn't create temp file $filename";
-		my $errlog = Constants::JAVA_ERROR_LOG;
-		print `cat $errlog`;
+	unless ($sock) {
+		print "Couldn't connect to heatmap daemon!";
+		return;	
 	}
 
-	return "";
+	print $sock $json;
+	print $sock "EOF\n"; 
+
+	my $gifB64Str = "";
+	while (my $line = <$sock>) {
+		$gifB64Str .= $line;
+	}
+	return $gifB64Str;
 }
 
 sub getColumn($$$)
