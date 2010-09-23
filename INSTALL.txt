@@ -59,4 +59,15 @@ Installation on a CentOS Linux Distro.
 	DB Indexing:
 
 		- re index
+
+	LINUX Caveats:
+
+		- By default, SeLinux does not allow httpd to make connections
+		to the network - even to localhost. You need to run the
+		following command as root to fix this:
+		 $ setsebool -P httpd_can_network_connect=1
+
+		Otherwise you'll get a 'permission denied' error when you
+		try to connect from httpd, which can drive you crazy trying to
+		debug, as it has nothing to do with the code itself!
 	

@@ -257,12 +257,13 @@ sub runJavaImageGen
         	PeerPort => 7777, 
         	Proto => 'tcp');
 
+	my $stat = $!;
 	unless ($sock) {
-		print "Couldn't connect to heatmap daemon!";
+		print "Couldn't connect to heatmap daemon: $stat";
 		return;	
 	}
 
-	print $sock $json;
+	print $sock $json."\n";
 	print $sock "EOF\n"; 
 
 	my $gifB64Str = "";
