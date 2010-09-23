@@ -27,6 +27,8 @@ sub connectDB();
 sub lazyConnectDB();
 sub disconnectDB();
 sub runSQL($$);
+sub getKeyspaceSources();
+sub getOrganismsForKeyspaceSource($);
 sub getSetIdFromExternalId($);
 sub getSetsInfoForSet($$);
 sub getSetNameExtIdFromID($);
@@ -913,5 +915,44 @@ sub getChildren($)
 	}
 	return \%children;
 }
+
+sub getKeyspaceSources
+{
+	my $self = shift;
+
+	my $sql = "SELECT DISTINCT source FROM keyspace";
+
+	my @sources;
+
+	my $results = $self->runSQL($sql);
+	while (my(@data) = $results->fetchrow_array())
+	{
+		push @sources, $data[0];
+
+	}
+
+	return @sources;
+}
+
+sub getOrganismsForKeyspaceSource
+{
+	my $self = shift;
+	my $source = shift;
+
+	my $sql = "SELECT DISTINCT organism FROM keyspace WHERE source='$source'";
+
+	my @organisms;
+
+	my $results = $self->runSQL($sql);
+	while (my(@data) = $results->fetchrow_array())
+	{
+		push @organisms, $data[0];
+
+	}
+
+	return @organisms;
+}
+
+
 
 1;

@@ -735,10 +735,10 @@ sub parseSetLines
 
 		my @components = split(/\t/, $line);
 
-		unless ($line =~ /\^/) {
-			$$errstr = "$count Can't parse line: $line\n no '^' (carat)\n";
-			return 0;
-		}
+		#unless ($line =~ /\^/) {
+		#	$$errstr = "$count Can't parse line: $line\n no '^' (carat)\n";
+		#	return 0;
+		#}
 
 		my @meta_components;
 		my $name;

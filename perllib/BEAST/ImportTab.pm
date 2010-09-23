@@ -13,6 +13,7 @@ use htmlHelper;
 use Data::Dumper;
 
 use BEAST::Set;
+use BEAST::BeastDB;
 
 ###
 ### Build the Browse Tab
@@ -105,6 +106,20 @@ MULTI_LINE_STR
 	<p>
 MULTI_LINE_STR
 	if (scalar(@sets) > 0 && ref($sets[0]) eq 'Set') {
+
+		# get the set of valid keyspace, and source options	
+		my $beastDB = BeastDB->new;
+		$beastDB->connectDB();
+
+		my $sources_hash = {};
+		my @sources = $beastDB->getKeyspaceSources();
+		foreach my $source (@sources) {
+			$sources_hash->{$source} = [ $beastDB->getOrganismsForKeyspaceSource($source) ];
+		}
+		$beastDB->disconnectDB();
+		print Data::Dumper->Dump([$sources_hash]);		
+		
+			
 		MySets::displaySetsTree("import", "", @sets);
 		print <<MULTILINE_STR;
 			<input type='button' value='Add To My Sets' onClick="return onAddImportSets(this.form);"/><br>
