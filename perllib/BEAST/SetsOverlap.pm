@@ -122,14 +122,30 @@ sub run
 	$ENV{'MYPERLDIR'} = $self->{'perl_lib_dir'};
 
 	my $cmd = $self->get_cmd;
-	my $output = `$cmd`;
+	my $output = `$cmd 2>/tmp/sets_overlap.err`;
 
 	my $output_file = $self->get_tmp_output_file;
 
-	open (OUTPUT, $output_file) || return 0;
+	if (! -f $output_file) {
+		$$err_str = "Sets overlap failed: \n";
+		$$err_str .= `cat /tmp/sets_overlap.err`;
+		return 0;
+	}
+	unless (open (OUTPUT, $output_file)) {
+		$$err_str = "Sets overlap failed: $output ";
+		$$err_str .= `cat /tmp/sets_overlap.err`;
+		return 0;
+	}
+
 	my @lines = <OUTPUT>;
 	close (OUTPUT);
 	unlink($output_file);
+
+	if (scalar(@lines) == 0) {
+		$$err_str = "Sets overlap failed: $output ";
+		$$err_str .= `cat /tmp/sets_overlap.err`;
+		return 0;
+	}
 
 	$self->{'output'} = [ @lines ];
 
