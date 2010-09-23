@@ -12,13 +12,15 @@ public class HeatmapServer extends Thread {
 
 	public void run() {
 
+		BufferedReader in = null;
+		DataOutputStream out = null;
 		try {
 
-			BufferedReader in = new BufferedReader(new InputStreamReader(client.getInputStream()));
+			in = new BufferedReader(new InputStreamReader(client.getInputStream()));
 
 			String base64gif = SetEntityGrid.getBase64Gif(in);
 
-			DataOutputStream out = new DataOutputStream(client.getOutputStream());
+			out = new DataOutputStream(client.getOutputStream());
 			out.writeChars(base64gif);
 			out.flush();
 
@@ -28,8 +30,30 @@ public class HeatmapServer extends Thread {
 
 		} catch (IOException e) {
 			System.out.println("Service Failed!");
+			try {
+				if (in != null) {
+				in.close();
+				}
+				if (out != null) {
+				out.close();
+				}
+			} catch (Exception ex) {
+				//	
+				ex.printStackTrace();
+			}
 		} catch (Exception e) {
 			System.out.println("Failed to generate image!");
+			try {
+				if (in != null) {
+				in.close();
+				}
+				if (out != null) {
+				out.close();
+				}
+			} catch (Exception ex) {
+				ex.printStackTrace();
+				//	
+			}
 		}
 	}
 

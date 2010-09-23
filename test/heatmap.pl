@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-use lib "/projects/sysbio/map/Projects/BEAST/perllib";
+use lib "/var/www/cgi-bin/BEAST/perllib";
 
 use BEAST::Constants;
 

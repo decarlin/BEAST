@@ -229,7 +229,7 @@ public class SetEntityGrid {
         //for (int j=0; j < lines.length; j++) {
         while (true) {
             line = in.readLine(); 
-   	    if (line.matches("^EOF")) { break; }
+   	    if (line.matches("^EOF.*")) { break; }
  
           //line = lines[j];
             try { 
