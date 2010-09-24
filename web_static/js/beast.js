@@ -661,3 +661,31 @@ function onAddCollection(form) {
 		 'checkedfilters[]': selects} 
 	);
 }
+
+function contains (array, obj)  {
+	for(var i = 0; i < array.length; i++) {
+		if(array[i] == obj){
+      		return true;
+    		}
+  	}
+  	return false;
+}
+
+function onImportSourceChanged(select) {
+
+	var source = select.children[select.selectedIndex].value
+
+	// array
+	var organisms_for_source = document.getElementById(source).value.split(',');
+
+	var organism_select = document.getElementById('importOrganism');
+	var options = organism_select.children;
+	for (var i=0; i < options.length; i++) {
+		if (contains(organisms_for_source, options[i].value)) {
+			options[i].disabled = false;
+		} else {
+			options[i].disabled = true;
+		}
+	}
+}
+

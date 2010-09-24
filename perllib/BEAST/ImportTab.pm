@@ -14,6 +14,7 @@ use Data::Dumper;
 
 use BEAST::Set;
 use BEAST::BeastDB;
+use BEAST::Widgets;
 
 ###
 ### Build the Browse Tab
@@ -117,8 +118,9 @@ MULTI_LINE_STR
 			$sources_hash->{$source} = [ $beastDB->getOrganismsForKeyspaceSource($source) ];
 		}
 		$beastDB->disconnectDB();
-		print Data::Dumper->Dump([$sources_hash]);		
-		
+		#print Data::Dumper->Dump([$sources_hash]);		
+	
+		Widgets::printSelects($sources_hash);
 			
 		MySets::displaySetsTree("import", "", @sets);
 		print <<MULTILINE_STR;
