@@ -266,6 +266,13 @@ function onAddImportSets(form) {
 	// serialize the metadata selects
 	var selects = getChecked(form);
 
+	// import keyspace, source/organism 
+	var source = document.getElementById('importSource');
+	var organism = document.getElementById('importOrganism');
+
+	source = source.children[source.selectedIndex].value;
+	organism = organism.children[organism.selectedIndex].value;
+
 	var $mysets_tab = $('#mysets_tab').tabs();
 	var selected = $mysets_tab.tabs('option', 'selected');
 
@@ -274,12 +281,16 @@ function onAddImportSets(form) {
 		$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
 		  {'action':'addimportfile',
 		   'type':'tree',
+		   'source':source,
+		   'organism':organism,
 		   'importsets[]': selects }
 		);
  	} else if (selected == 1) {
 		$('#mysets_flat').empty().html('<img src="images/ajax-loader.gif" />');
 		$('#mysets_flat').load('/cgi-bin/BEAST/index.pl', 
 		  {'action':'addimportfile',
+		   'source':source,
+		   'organism':organism,
 		   'type':'flat',
 		   'importsets[]': selects }
 		);

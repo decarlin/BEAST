@@ -29,7 +29,7 @@ sub printSelects
 		print "<input id=\"$opt\" type=\"hidden\" value='$value_str'/>\n";
 	}
 
-	print "<select onChange=\"onImportSourceChanged(this);\">";
+	print "<select id=\"importSource\" onChange=\"onImportSourceChanged(this);\">";
 	print "<option value=\"none\">none</option>\n";
 	foreach my $opt (@top_nodes) {
 		print "<option value=\"$opt\">$opt</option>\n";

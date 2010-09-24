@@ -169,6 +169,21 @@ sub set_source
 	$self->set_metadata_value('source', $source);
 }
 
+sub get_organism
+{
+	my $self = shift;
+
+	return $self->get_metadata_value('organism');
+}
+
+sub set_organism
+{
+	my $self = shift;
+	my $organism = shift;
+
+	$self->set_metadata_value('organism', $organism);
+}
+
 sub is_active
 {
 	my $self = shift;

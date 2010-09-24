@@ -344,11 +344,18 @@ sub addImportSets()
 	if ($cgi->param('importsets[]')) {
 		my @checkboxdata = $cgi->param('importsets[]');
 		my @importSets = BeastSession::loadMergeSetsFromSession($session, 'importsets', \@checkboxdata);
+
+		# add the source, organism
+		my $organism = $cgi->param('organism');
+		my $source = $cgi->param('source');
+
 		# generate the top level set
 		my $metadata = { 'type' => 'meta' };
 		my $elements = {};
-		foreach (@importSets) {
-			$elements->{$_->get_name} = $_;
+		foreach my $set (@importSets) {
+			$set->set_source($source);	
+			$set->set_organism($organism);
+			$elements->{$set->get_name} = $set;
 		}
 		my $importSet = Set->new('ImportSets', "1", $metadata, $elements);
 		my @array;
