@@ -179,7 +179,6 @@ sub printTabTree
 	my @sets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1, "", ""));
 	my $selected = BeastSession::getSelectedColumns($session);
 
-	print Data::Dumper->Dump([@sets]);
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
 	}

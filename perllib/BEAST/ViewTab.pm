@@ -198,16 +198,18 @@ sub getSetsMembersGif
 
 	my $json = getJSONMetadata($session);
 
+	my @json_sets;
 	foreach my $set (@sets) {
 		# we have to remove the Entity objects and replace with a membership value
 		# to properly serialize set objects
-		$set->convert_entities;
-		$json = $json."\n"."[".$set->serialize()."]";
+		my $new_set = $set->to_json_heatmap_str;
+		$json = $json."\n"."[".$new_set->serialize()."]";
+		push @json_sets, $new_set;
 	}
 
 
 	# build the list of entities -- the row column
-	my @elements_array = MySets::sortElementsList(@sets);
+	my @elements_array = MySets::sortElementsList(@json_sets);
 
 	my @columns;
 	foreach my $set (@sets) {

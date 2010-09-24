@@ -93,7 +93,34 @@ sub convert_entities
 			$self->set_element($name, $element->get_membership_value);
 		}
 	}
+}
 
+# ensure uniqe elements by appending the keyspace source and organism
+sub to_json_heatmap_str
+{
+	my $self = shift;
+
+	my $organism = $self->get_organism || "none";
+	my $source = $self->get_source || "none";
+
+	my $new_set = Set->new($self->get_name, 1, {'source' => $source, 'organism' => $organism, 'type' => "set"}, {});
+
+	foreach ($self->get_element_names) {
+
+		my $name = $_;
+	 	my $element = $self->get_element($name);
+	     
+		my $uniq_name = $name."-".$organism."-".$source;
+
+	  	if (ref($element) eq 'Entity') {
+			my $uniq_name = $name."-".$organism."-".$source;
+			$new_set->set_element($uniq_name, $element->get_membership_value);
+		} else {
+			$new_set->set_element($uniq_name, $element);
+		}
+	}
+
+	return $new_set;
 }
 
 sub serialize
