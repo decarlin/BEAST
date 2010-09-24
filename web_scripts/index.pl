@@ -369,7 +369,8 @@ sub addImportSets()
 				my $set = $_;
 				my @tmp = ($set);
 				if ($set->get_name eq 'ImportSets') {
-					my @importedSets = Set::mergeDisjointCollections(\@tmp, \@array);
+					#my @importedSets = Set::mergeDisjointCollections(\@tmp, \@array);
+					my @importedSets = Set::mergeDisjointCollections(\@array, \@tmp);
 					push @mergedSets, $importedSets[0];
 					$already_contains_import = 1;
 				} else {
