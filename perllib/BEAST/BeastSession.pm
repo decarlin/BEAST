@@ -493,6 +493,7 @@ sub loadLeafSetsFromSession
 					my ($organism, $keysp_source) = 
 						$beastDB->getKeyspaceOrganismEntExId($ent->get_ex_id);
 					$leaf->set_organism($organism);
+					$leaf->set_keyspace_source($keysp_source);
 				}
 				$leaf->{'_elements'} = $entities;
 			}

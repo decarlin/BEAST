@@ -353,7 +353,7 @@ sub addImportSets()
 		my $metadata = { 'type' => 'meta' };
 		my $elements = {};
 		foreach my $set (@importSets) {
-			$set->set_source($source);	
+			$set->set_keyspace_source($source);	
 			$set->set_organism($organism);
 			$elements->{$set->get_name} = $set;
 		}

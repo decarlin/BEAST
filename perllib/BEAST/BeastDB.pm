@@ -419,14 +419,15 @@ sub getKeyspaceOrganismEntExId($)
 	my $self = shift;
 	my $ex_id = shift;
 
-	my $template = "SELECT organism FROM entity,keyspace WHERE entity.keyspace_id=keyspace.id AND entity.entity_key='$ex_id';";
+	my $template = "SELECT organism,source FROM entity,keyspace WHERE entity.keyspace_id=keyspace.id AND entity.entity_key='$ex_id';";
 
 	my $results = $self->runSQL($template);	
-	my (@data) = $results->fetchrow_array();
-	if ($#data == -1) {
-		return $FALSE;
-	} else {
-		return $data[0];
+	my $rows_ref = $results->fetchall_arrayref();
+	if (ref($rows_ref) eq 'ARRAY') {
+		foreach (@$rows_ref) {
+			# should be just one result!
+			return ($_->[0], $_->[1]);
+		}
 	}
 }
 

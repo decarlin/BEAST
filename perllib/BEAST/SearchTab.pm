@@ -102,7 +102,17 @@ sub printTab
 		if ($checkedopts->{$_}) { push @$checked_keyspace_source_keys, $_; }
 	}
 	foreach (qw(go chemdiv boon_sga drugbank metatrans)) {
-		if ($checkedopts->{$_}) { push @$checked_info_keys, $_; }
+
+		
+		if ($checkedopts->{$_}) { 
+	
+			# hack: go is entrez in the sets_info db entry (i.e. the keyspace source)
+			if ($_ eq 'go') {
+				push @$checked_info_keys, 'entrez';
+			} else {
+				push @$checked_info_keys, $_;
+			}
+		 }
 	}
 
 	# this hash represents the data logically, relative to how to database stores it, and will sent to 

@@ -101,7 +101,7 @@ sub to_json_heatmap_str
 	my $self = shift;
 
 	my $organism = $self->get_organism || "none";
-	my $source = $self->get_source || "none";
+	my $source = $self->get_keyspace_source || "none";
 
 	my $new_set = Set->new($self->get_name, 1, {'source' => $source, 'organism' => $organism, 'type' => "set"}, {});
 
@@ -194,6 +194,21 @@ sub set_source
 	my $source = shift;
 
 	$self->set_metadata_value('source', $source);
+}
+
+sub get_keyspace_source
+{
+	my $self = shift;
+
+	return $self->get_metadata_value('keyspace_source');
+}
+
+sub set_keyspace_source
+{
+	my $self = shift;
+	my $keysp_source = shift;
+
+	$self->set_metadata_value('keyspace_source', $keysp_source);
 }
 
 sub get_organism
