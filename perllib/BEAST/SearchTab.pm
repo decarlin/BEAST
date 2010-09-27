@@ -105,13 +105,7 @@ sub printTab
 
 		
 		if ($checkedopts->{$_}) { 
-	
-			# hack: go is entrez in the sets_info db entry (i.e. the keyspace source)
-			if ($_ eq 'go') {
-				push @$checked_info_keys, 'entrez';
-			} else {
-				push @$checked_info_keys, $_;
-			}
+			push @$checked_info_keys, $_;
 		 }
 	}
 

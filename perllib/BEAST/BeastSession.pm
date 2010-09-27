@@ -503,6 +503,15 @@ sub loadLeafSetsFromSession
 				$beastDB->lazyConnectDB();
 				my $source = $beastDB->getSetsInfoForSet($leaf->get_id, 'source');
 				$leaf->set_source($source);
+			
+				# add the keyspace info here	
+				my ($keysp_organism, $keysp_source) = $beastDB->getOrganismSourceForSet($leaf->get_id);
+
+				unless ($keysp_organism) { $keysp_organism = "none";}
+				unless ($keysp_source) { $keysp_source = "none";}
+
+				$leaf->set_keyspace_source($keysp_source);
+				$leaf->set_organism($keysp_organism);
 			}
 
 			$uniq_leaves->{$name} = $leaf;

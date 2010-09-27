@@ -73,10 +73,10 @@ sub run
 	my $setsYfilename = $filename.".setsY";
 	my @rows; # the gold stanard (X) file
 
-	my $setXOrganism = $setsX->[0]->get_metadata_value('organism');
-	my $setXSource = $setsX->[0]->get_source;
-	my $setYOrganism = $setsY->[0]->get_metadata_value('organism');
-	my $setYSource = $setsY->[0]->get_source;
+	my $setXOrganism = $setsX->[0]->get_organism;
+	my $setXSource = $setsX->[0]->get_keyspace_source;
+	my $setYOrganism = $setsY->[0]->get_organism;
+	my $setYSource = $setsY->[0]->get_keyspace_source;
 
 	unless (open(SETSX, ">$setsXfilename"))  { 
 		$$err_str =  "can't open tmp file!\n"; 

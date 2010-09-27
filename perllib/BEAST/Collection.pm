@@ -84,12 +84,40 @@ sub get_source
 	return $self->{'source'};
 }
 
+sub get_keyspace_organism
+{
+	my $self = shift;
+	return $self->{'keyspace_organism'};
+}
+
+sub get_keyspace_source
+{
+	my $self = shift;
+	return $self->{'keyspace_source'};
+}
+
 sub set_source
 {
 	my $self = shift;
 	my $source = shift;
 
 	$self->{'source'} = $source;
+}
+
+sub set_keyspace_organism
+{
+	my $self = shift;
+	my $keysp_organism = shift;
+
+	$self->{'keyspace_organism'} = $keysp_organism;
+}
+
+sub set_keyspace_source
+{
+	my $self = shift;
+	my $keysp_source = shift;
+
+	$self->{'keyspace_source'} = $keysp_source;
 }
 
 sub serialize

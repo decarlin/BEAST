@@ -303,7 +303,50 @@ sub getEntitiesForSet
 
 sub updateActiveCollections()
 {
-	BeastSession::saveSelectedCollections($session, $cgi->param('collectionX'), $cgi->param('collectionY'));
+	my $XName = $cgi->param('collectionX');
+	my $YName = $cgi->param('collectionY');
+
+	my $colX;
+	my $colY;
+
+	my @collections = BeastSession::loadObjsFromSession($session, 'mycollections', ClusteredCollection->new('constructor', ""));
+	unless (ref($collections[0]) eq 'ClusteredCollection') {
+		pop @collections;
+	}
+
+	# note: it is perfectly valid for X/Y to be the same collection (don't use elsif)
+	foreach my $col (@collections) {
+		if ($col->get_name eq $XName) {
+			$colX = $col;
+		}
+		if ($col->get_name eq $YName) {
+			$colY = $col;
+		}
+
+		print Data::Dumper->Dump([$colY]);
+	}
+
+	# all kinds of error checking
+	unless ($colX) {
+		print "Error: $XName not a valid collection!";
+		return 0;
+	}
+	unless ($colY) {
+		print "Error: $YName not a valid collection!";
+		return 0;
+	}
+
+	unless ($colX->get_keyspace_source eq $colY->get_keyspace_source) {
+		print "Error: Collections don't have the same keyspace source!";
+		return 0;
+	}
+	unless ($colX->get_keyspace_organism eq $colY->get_keyspace_organism) {
+		print "Error: Collections don't have the same keyspace organism!";
+		return 0;
+	}
+	
+
+	BeastSession::saveSelectedCollections($session, $XName, $YName);
 }
 
 sub addCollection()
@@ -313,6 +356,29 @@ sub addCollection()
 	my @collectionSets = BeastSession::loadMergeLeafSets($session, 'mysets', \@checkboxdata);
 	my $newCollection = ClusteredCollection->new($name, @collectionSets);
 
+	# force all sets in the collection to have a single keyspace, and set it
+	my $keyspace_organism;
+	my $keyspace_source;
+	foreach my $set (@collectionSets) {
+		unless ($keyspace_source) {
+			$keyspace_source = $set->get_keyspace_source();
+		}
+		unless ($keyspace_organism) {
+			$keyspace_organism = $set->get_organism();
+		}
+
+		unless ($keyspace_organism eq $set->get_organism() && $keyspace_source eq $set->get_keyspace_source()) {
+			print "Error: sets for a given collection must have the same keyspace!";
+			print "$keyspace_organism $keyspace_source";
+			return 1;
+		}
+	}
+	
+	# store the keyspace info for collections, it's used by other functions to check the 
+	# validity of collection operations
+	$newCollection->set_keyspace_source($keyspace_source);
+	$newCollection->set_keyspace_organism($keyspace_organism);
+	
 	# assuming homosets, get the source for any set to determine the 
 	# source and keyspace
 	# likewise get the keyspace for 
@@ -353,6 +419,7 @@ sub addImportSets()
 		my $metadata = { 'type' => 'meta' };
 		my $elements = {};
 		foreach my $set (@importSets) {
+			$set->set_source("user_import");
 			$set->set_keyspace_source($source);	
 			$set->set_organism($organism);
 			$elements->{$set->get_name} = $set;
