@@ -76,6 +76,14 @@ sub recluster
 	# the set objects for this collection
 	my @sets = @_;
 
+	# for the trivial case of only one set:
+	# set the cluster anyways, as the single set 
+	my $new_cluster = Set->new($self->get_name, 1, {'type' => 'meta_display'}, {});
+	$new_cluster->set_element($sets[0]->get_name, $sets[0]);
+	$self->{'cluster'} = $new_cluster;
+	return 1;
+
+
 	my $clusterizer = Cluster->new($session_id, @sets);
 	unless ($clusterizer->run > 0) {
 		print "Failed to run cluster-eisen!";

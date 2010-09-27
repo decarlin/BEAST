@@ -323,7 +323,6 @@ sub updateActiveCollections()
 			$colY = $col;
 		}
 
-		print Data::Dumper->Dump([$colY]);
 	}
 
 	# all kinds of error checking

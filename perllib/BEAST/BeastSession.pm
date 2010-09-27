@@ -240,7 +240,6 @@ sub loadCollectionClusters
 			$clusterX = $collectionX->get_cluster;
 			$clusterY = $collectionY->get_cluster;
 
-
 			# we now need to save the clustering performed here to the session data
 			my @collections = 
 			BeastSession::loadObjsFromSession($session, 'mycollections', ClusteredCollection->new('constructor', ""));
