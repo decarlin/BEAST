@@ -914,8 +914,7 @@ sub generateSetsUnion
 	my $id = int(rand(1000000));
 	return Set->new($name, "1",  
 		{'keyspace_source' => $keyspace_source, 'organism' => $keyspace_organism,
-			'source' => $source, 'type' => 'set', 'id' => 'local_'.$id }, 
-		$elements);
+			'source' => $source, 'type' => 'set', 'id' => 'local_'.$id }, $elements);
 }
 
 # 

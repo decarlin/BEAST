@@ -218,7 +218,8 @@ sub addSetFromOp()
 	my @checkboxdata = $cgi->param('checkedfilters[]');
 
 	# load the checked sets, perform the operation and generate a new set based on it called: new_set
-	my @workspace_leaf_sets = BeastSession::loadMergeLeafSets($session, 'mysets', \@checkboxdata);
+	# note: we have to load the elements for these sets into memory, which means this is a bit slower
+	my @workspace_leaf_sets = BeastSession::loadMergeLeafSets($session, 'mysets', \@checkboxdata, 1);
 	unless (ref($workspace_leaf_sets[0]) eq 'Set') {
 		pop @workspace_leaf_sets;
 	}
