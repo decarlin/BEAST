@@ -966,5 +966,19 @@ sub generateSetsIntersection
 		$elements);
 }
 
+# returns only the names of the elements
+sub generateSetsUnionSummary
+{
+	my @sets = @_;
+
+	my $elements = {};
+	foreach my $set (@sets) {
+		foreach my $name ($set->get_element_names) {
+			$elements->{$name} = 1;
+		}
+	}
+
+	return keys %$elements;
+}
 
 1;
