@@ -783,6 +783,8 @@ sub parseSetLines
 	for my $line (@lines) 
 	{
 		chomp($line);
+		# for any windows files: chomp doesn't strip \r's
+		$line =~ s/\r//g;
 
 		#fail 1
 		unless ($line =~ /\S+\t\S+/) {
@@ -821,7 +823,7 @@ sub parseSetLines
 		for my $i (1 .. $#components) 
 		{
 			if ($components[$i] =~ /.*\s+.*/) {
-				die "can't parse: $line!\n";
+				die "can't parse: $line! part $components[$i] has whitespace \n";
 			}
 
 			if ($components[$i] =~ /(\S+)\^(-?[\d\.]+)/) {
@@ -933,10 +935,7 @@ sub generateSetsIntersection
 	my $source;
 
 	# add the first sets elements
-	my $elements = {};
-	foreach my $name ($sets[0]->get_element_names) {
-		$elements->{$name} = $sets[0]->get_element($name);
-	}
+	my $elements = $sets[0]->{'_elements'};
 
 	#  we don't have to check that these are the same -- they always
 	# are for any intersection!
@@ -948,7 +947,7 @@ sub generateSetsIntersection
 
 		# remove any elements that aren't contained in this set
 		foreach my $name (keys %$elements) {
-			if ($set->has_element == 0) {
+			if ($set->has_element($name) == 0) {
 				delete $elements->{$name};
 			}
 		}
