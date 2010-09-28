@@ -28,7 +28,19 @@ sub new
 			'_desc'		=> $desc,
 			'_ex_id'	=> $ex_id,
 			'_keyspace'	=> $keyspace,
+			# this is necessary for the Set constructor to know that a serialized
+			# version of this is an Entity object, and use the Entity constructor 
+			# to instantiate from the serialized version
+			'type'	=> 'Entity',
 		};
+	} elsif (@_ == 1) {
+		my $json_text_or_hash = shift;
+		if (ref($json_text_or_hash) eq 'HASH') {
+			$self = $json_text_or_hash;
+		} else {
+			my $json = JSON->new->utf8;
+			$self = $json->decode($json_text_or_hash);
+		}
 	}
 
 	bless $self, $class;

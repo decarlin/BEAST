@@ -373,6 +373,7 @@ sub loadObjsFromSession($$$)
 	die unless ($key =~ /^\w+$/);
 
 	my $objsstr = $session->param($key);	
+
 	unless ($objsstr =~ /\S+/) { return 0; }
 	my @lines = split (/:SEP:/, $objsstr);
 	my @objs;
@@ -445,6 +446,7 @@ sub loadLeafSetsFromSession
 	my $uniq_leaves = {};
 	
 	my @sets = loadObjsFromSession($session, $key, Set->new('constructor', 1,"", ""));	
+
 	unless (ref($sets[0]) eq 'Set') {
 		pop @sets;
 	}
@@ -472,7 +474,6 @@ sub loadLeafSetsFromSession
 			# aren't already here.
 			# If this is a user-uploaded set, however, they should already be attached
 			if ($include_elements == 1 && ($leaf->get_element_names eq "" || scalar($leaf->get_element_names) == 0) ) {
-
 				$beastDB->lazyConnectDB();
 
 				my $i = 0;

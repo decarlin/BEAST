@@ -66,8 +66,20 @@ sub new
 			# element is just a gene name
 			next unless (ref($self->{'_elements'}->{$element_name}) eq 'HASH');
 
-			# element is another set -- create it
-			$self->{'_elements'}->{$element_name} = Set->new($self->{'_elements'}->{$element_name});
+			my $obj_type;
+			if (exists $self->{'_elements'}->{$element_name}->{'type'}) {
+				$obj_type = $self->{'_elements'}->{$element_name}->{'type'};
+			}
+
+			# Entity objects may be present rather than just plain keyvalues -- these
+			# are also a valid way of representing a Set's elements, and must be passed
+			# to the appropriate constructor
+			if ($obj_type eq 'Entity') { 
+				$self->{'_elements'}->{$element_name} = Entity->new($self->{'_elements'}->{$element_name});
+			} else {
+				# element is another set -- create it
+				$self->{'_elements'}->{$element_name} = Set->new($self->{'_elements'}->{$element_name});
+			}
 		}
 
 	} elsif (!@_) {
@@ -599,6 +611,8 @@ sub getLeafNodes()
 
 	my @leafnodes;	
 
+	print $self->get_name."<br>";
+
 	my @names = $self->get_element_names;
 	if ($#names == -1) { push @leafnodes, $self; }
 
@@ -606,7 +620,8 @@ sub getLeafNodes()
 	foreach (@names) {
 		my $name = $_;
 	 	my $element = $self->get_element($name);
-	     
+		print "	".$element->get_name;
+
 	  	next unless (ref($element) eq 'Set');
 
 		$set_isa_leaf = $FALSE;
