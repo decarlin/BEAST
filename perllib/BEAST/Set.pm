@@ -853,19 +853,119 @@ sub parseSetLines
 	return @sets;
 }
 
-# keyspace warning: all sets must have the same keyspace
+# 
+# Generate Sets Union:
+# 
+# INPUT: Takes a set of leaf sets, all which must be terminal -- i.e. their
+# elements are either key/value pairs, or Entity objects, and returns
+# the set that is the union
 sub generateSetsUnion
 {
+	my $name = shift;
 	my @sets = @_;
+
+	my $keyspace_source;
+	my $keyspace_organism;
+	my $source;
 
 	my $elements = {};
 	foreach my $set (@sets) {
+
+		# set and check the metadata
+		if ($keyspace_source) {
+			unless ($keyspace_source eq $set->get_keyspace_source) {
+				print "Error: Sets union not possible if sets don't have the same keyspace source!";
+				return 0;
+			}
+		} else {
+			$keyspace_source = $set->get_keyspace_source;
+		}
+
+		if ($keyspace_organism) {
+			unless ($keyspace_organism eq $set->get_organism) {
+				print "Error: Sets union not possible if sets don't have the same keyspace organism!";
+				return 0;
+			}
+		} else {
+			$keyspace_organism = $set->get_organism;
+		}
+
+		if ($source) {
+			unless ($source eq $set->get_source) {
+				print "Error: Sets union not possible if sets don't have the same source!";
+				return 0;
+			}
+		} else {
+			$source = $set->get_source;
+		}
+
 		foreach my $name ($set->get_element_names) {
-			$elements->{$name} = 1;
+			unless (exists $elements->{$name}) { 
+				if (ref($set->get_element($name)) eq 'Set') {
+					print "Error: not a leaf set $name, for union";
+					return 0;
+				}
+				$elements->{$name} = $set->get_element($name);
+			}
 		}
 	}
 
-	return keys %$elements;
+	# we have to generate a local id for this set, since it won't be in the database
+	my $id = int(rand(1000000));
+	return Set->new($name, "1",  
+		{'keyspace_source' => $keyspace_source, 'organism' => $keyspace_organism,
+			'source' => $source, 'type' => 'set', 'id' => 'local_'.$id }, 
+		$elements);
+}
+
+# 
+# Generate Sets Intersection:
+# 
+# INPUT: Takes a set of leaf sets, all which must be terminal -- i.e. their
+# elements are either key/value pairs, or Entity objects, and returns the set that is 
+# the intersection
+sub generateSetsIntersection
+{
+	my $name = shift;
+	my @sets = @_;
+
+	my $keyspace_source;
+	my $keyspace_organism;
+	my $source;
+
+	# add the first sets elements
+	my $elements = {};
+	foreach my $name ($sets[0]->get_element_names) {
+		$elements->{$name} = $sets[0]->get_element($name);
+	}
+
+	#  we don't have to check that these are the same -- they always
+	# are for any intersection!
+	$keyspace_source = $sets[0]->get_keyspace_source;
+	$keyspace_organism = $sets[0]->get_organism;
+	$source = $sets[0]->get_source;
+
+	foreach my $set (@sets) {
+
+		# remove any elements that aren't contained in this set
+		foreach my $name (keys %$elements) {
+			if ($set->has_element == 0) {
+				delete $elements->{$name};
+			}
+		}
+	}
+
+	if (scalar(keys %$elements) == 0) {
+		print "Chosen sets have no intersection!";
+		return 0;
+	}
+
+	# we have to generate a local id for this set, since it won't be in the database
+	my $id = int(rand(1000000));
+	return Set->new($name, "1",  
+		{'keyspace_source' => $keyspace_source, 'organism' => $keyspace_organism,
+			'source' => $source, 'type' => 'set', 'id' => 'local_'.$id }, 
+		$elements);
 }
 
 

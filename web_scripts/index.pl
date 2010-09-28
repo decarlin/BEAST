@@ -162,6 +162,11 @@ my $mysetsObj = MySets->new($cgi);
 		updateActiveCollections();
 		$collectionsObj->printTab($session);
 	} 
+	elsif ($action eq "add_set_from_op")
+	{
+		addSetFromOp();
+		$mysetsObj->printTabTree($session);
+	} 
 	# on new load
 
 #	DebugHelper::printRequestParameters($cgi);
@@ -204,6 +209,73 @@ sub getMySetsJSON()
 	my $collection = Set->new('collection', 1, {}, $elements);
 
 	print $collection->serialize();
+}
+
+sub addSetFromOp()
+{
+	my $operation = $cgi->param('operation');
+	my $new_set_name = $cgi->param('name');
+	my @checkboxdata = $cgi->param('checkedfilters[]');
+
+	# load the checked sets, perform the operation and generate a new set based on it called: new_set
+	my @workspace_leaf_sets = BeastSession::loadMergeLeafSets($session, 'mysets', \@checkboxdata);
+	unless (ref($workspace_leaf_sets[0]) eq 'Set') {
+		pop @workspace_leaf_sets;
+	}
+
+	my $newSet;
+	if ($operation eq "union") {
+		$newSet = Set::generateSetsUnion($new_set_name, @workspace_leaf_sets);
+	} elsif ($operation eq "intersection") {
+		$newSet = Set::generateSetsIntersection($new_set_name, @workspace_leaf_sets);
+	}
+	unless (ref($newSet) eq 'Set') {
+		# something went wrong: hopefully the Set function reported it to stdout...
+		return 0;
+	}
+
+	## Load all the user sets: if they have ImportSets already created, add it there; otherwise 
+	## create the import sets tab and add it (this is essentially the same code as in 'addImportSets'
+	my @all_sets = BeastSession::loadObjsFromSession($session, 'mysets', Set->new('constructor', 1, "", ""));
+	unless (ref($all_sets[0]) eq 'Set') {
+		pop @all_sets;
+	}
+
+	my @mergedSets;
+	# add the source, organism
+	my $organism = $cgi->param('organism');
+	my $source = $cgi->param('source');
+
+	# generate the top level set
+	my $metadata = { 'type' => 'meta' };
+	my $elements = {$new_set_name => $newSet};
+	my $importSet = Set->new('ImportSets', "1", $metadata, $elements);
+	my @array;
+	push @array, $importSet;
+
+	if (scalar(@all_sets) == 0) {
+		@mergedSets = @array;
+	} else {
+		my $already_contains_import = 0;
+	 	foreach my $set (@all_sets) {
+			my @tmp = ($set);
+			if ($set->get_name eq 'ImportSets') {
+				#my @importedSets = Set::mergeDisjointCollections(\@tmp, \@array);
+				my @importedSets = Set::mergeDisjointCollections(\@array, \@tmp);
+				push @mergedSets, $importedSets[0];
+				$already_contains_import = 1;
+			} else {
+				# add to the new set
+				push @mergedSets, $set;
+			}
+		}
+		if ($already_contains_import == 0) {
+			push @mergedSets, $importSet;
+		}	
+	}
+
+	return unless (scalar(@mergedSets) > 0);
+	BeastSession::saveObjsToSession($session, 'mysets', @mergedSets);
 }
 
 sub addSearchSets()

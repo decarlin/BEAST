@@ -197,8 +197,8 @@ sub printTabTree
 
 	print "<input type='text' id='add_set_from_operation_name' value='New Set Name'>";
 	print "<div/>";
-	print "<input type='button' id='add_set_union' value='New Set From Union' onClick='return onCreateSet_Ops(this.form, 'union');'>";
-	print "<input type='button' id='add_set_intersection' value='New Set From Union' onClick='return onCreateSet_Ops(this.form, 'intersection');'>";
+	print "<input type='button' id='add_set_union' value='New Set From Union' onClick='return onCreateSet_Union(this.form);'>";
+	print "<input type='button' id='add_set_intersection' value='New Set From Union' onClick='return onCreateSet_Intersection(this.form);'>";
 	print "<br>";
 	print "<br>";
 

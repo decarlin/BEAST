@@ -700,7 +700,7 @@ function onImportSourceChanged(select) {
 	}
 }
 
-function onCreateSet_Ops(form, operation) {
+function onCreateSet_Intersection(form) {
 
 	var new_set_name = document.getElementById('add_set_from_operation_name').value;
 
@@ -708,8 +708,21 @@ function onCreateSet_Ops(form, operation) {
 	$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
 	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
 		{'action':"add_set_from_op",
-		 'name':new_set_name
-		 'operation':operation
+		 'name':new_set_name,
+		 'operation':'intersection',
+		 'checkedfilters[]': selects} 
+	);
+}
+function onCreateSet_Union(form) {
+
+	var new_set_name = document.getElementById('add_set_from_operation_name').value;
+
+	var selects = getChecked(form);
+	$('#mysets_tree').empty().html('<img src="images/ajax-loader.gif" />');
+	$('#mysets_tree').load('/cgi-bin/BEAST/index.pl', 
+		{'action':"add_set_from_op",
+		 'name':new_set_name,
+		 'operation':'union',
 		 'checkedfilters[]': selects} 
 	);
 }
