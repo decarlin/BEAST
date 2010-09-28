@@ -426,6 +426,10 @@ sub addCollection()
 	my @checkboxdata = $cgi->param('checkedfilters[]');
 	my $name = $cgi->param('name');
 	my @collectionSets = BeastSession::loadMergeLeafSets($session, 'mysets', \@checkboxdata);
+	if (scalar(@collectionSets) == 0) {
+		print "Error: no sets found for collection!";
+		return 0;
+	}
 	my $newCollection = ClusteredCollection->new($name, @collectionSets);
 
 	# force all sets in the collection to have a single keyspace, and set it

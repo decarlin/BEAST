@@ -50,7 +50,7 @@ sub makeTabbedInputFile
 
 	open (TMP, ">$tempfile") || return 0;
 
-	my @rows = Set::generateSetsUnion(@sets);
+	my @rows = Set::generateSetsUnionSummary(@sets);
 
 	foreach my $entity (@rows) {
 		#print $entity;
@@ -82,6 +82,7 @@ sub runCMD
 	my $outfile = "/tmp/".$self->{'session_id'}.".atr";
 
 	if (! -f $outfile) {
+		print "Error log for cluster-eisen:";
 		print `cat /tmp/beast_cluster_err.log`;
 		unlink("/tmp/beast_cluster_err.log");
 		return 0;
