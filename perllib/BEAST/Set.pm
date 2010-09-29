@@ -611,8 +611,6 @@ sub getLeafNodes()
 
 	my @leafnodes;	
 
-	print $self->get_name."<br>";
-
 	my @names = $self->get_element_names;
 	if ($#names == -1) { push @leafnodes, $self; }
 
@@ -620,7 +618,6 @@ sub getLeafNodes()
 	foreach (@names) {
 		my $name = $_;
 	 	my $element = $self->get_element($name);
-		print "	".$element->get_name;
 
 	  	next unless (ref($element) eq 'Set');
 

@@ -198,6 +198,8 @@ sub getSetsMembersGif
 
 	my $json = getJSONMetadata($session);
 
+	print @sets;
+
 	my @json_sets;
 	foreach my $set (@sets) {
 		# we have to remove the Entity objects and replace with a membership value
