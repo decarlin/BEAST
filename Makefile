@@ -22,7 +22,7 @@ soe:
 	cp -R perllib/* ${CGI_BIN}/perllib
 	cp -R web_static/* ${HTDOCS}
 	
-	cd javalib/src/heatmap && make jar
+	cd javalib/src/heatmap && make server
 	cp -R javalib/src/heatmap/heatmap.jar ${CGI_BIN}/bin
 	
 	#chown -R :sysbio ${CGI_BIN}
