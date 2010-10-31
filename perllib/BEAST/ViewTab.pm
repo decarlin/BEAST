@@ -96,6 +96,7 @@ sub printBase64GIF
 	print "<input id=\"$type\_gif_info_columns\" type=\"hidden\" value='$infoStr_cols'/>";
 	print "<input id=\"$type\_gif_info_rows\" type=\"hidden\" value='$infoStr_rows'/>";
 	print "<img id=\"$type\_grid_image_div\" onClick='onImageClick(event, \"$type\")' onMouseMove='onImageHover(event, \"$type\")' src=\"data:image/gif;base64,".$base64gifSTR."\"/>";
+
 }
 
 # depricated: faster to do this in the SQL statement
@@ -197,8 +198,6 @@ sub getSetsMembersGif
 	}
 
 	my $json = getJSONMetadata($session);
-
-	print @sets;
 
 	my @json_sets;
 	foreach my $set (@sets) {

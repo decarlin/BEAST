@@ -21,7 +21,7 @@ public class HeatmapServer extends Thread {
 			String base64gif = SetEntityGrid.getBase64Gif(in);
 
 			out = new DataOutputStream(client.getOutputStream());
-			out.writeChars(base64gif);
+			out.writeUTF(base64gif);
 			out.flush();
 
 			// cleanup
