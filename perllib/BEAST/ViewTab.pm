@@ -10,6 +10,7 @@ use lib "/projects/sysbio/map/Projects/BEAST/perllib";
 use lib "/var/www/cgi-bin/BEAST/perllib";
 use POSIX;
 use IO::Socket;
+use Encode;
 
 use htmlHelper;
 use Data::Dumper;
@@ -93,9 +94,12 @@ sub printBase64GIF
 		$infoStr_rows .= ",".$rows->[$i];
 	}
 
+	chomp ($base64gifSTR);
+	my $imageString = substr($base64gifSTR, 2, -1);
+	
 	print "<input id=\"$type\_gif_info_columns\" type=\"hidden\" value='$infoStr_cols'/>";
 	print "<input id=\"$type\_gif_info_rows\" type=\"hidden\" value='$infoStr_rows'/>";
-	print "<img id=\"$type\_grid_image_div\" onClick='onImageClick(event, \"$type\")' onMouseMove='onImageHover(event, \"$type\")' src=\"data:image/gif;base64,".$base64gifSTR."\"/>";
+	print "<img id=\"$type\_grid_image_div\" onClick='onImageClick(event, \"$type\")' onMouseMove='onImageHover(event, \"$type\")' src=\"data:image/gif;base64,".$imageString."\"/>";
 
 }
 
